@@ -36,4 +36,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function getFullname()
+    {
+        return $this->first_name . ' ' . $this->last_name;
+    }
+
+    public function getAvatar()
+    {
+        return 'https://www.gravatar.com/avatar/' . md5($this->email);
+    }
 }
