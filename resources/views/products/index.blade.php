@@ -2,6 +2,9 @@
 
 @section('title', 'Product List')
 @section('content-header', 'Product List')
+@section('content-actions')
+<a href="{{route('products.create')}}" class="btn btn-primary">Create Product</a>
+@endsection
 @section('content')
 <div class="card">
     <div class="card-body">
@@ -23,7 +26,7 @@
                 <tr>
                     <td>{{$product->id}}</td>
                     <td>{{$product->name}}</td>
-                    <td>{{$product->image}}</td>
+                    <td><img src="{{ Storage::url($product->image) }}" alt="" width="100"></td>
                     <td>{{$product->barcode}}</td>
                     <td>{{$product->price}}</td>
                     <td>{{$product->created_at}}</td>
