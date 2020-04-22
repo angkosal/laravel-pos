@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductStoreRequest;
+use App\Http\Requests\ProductUpdateRequest;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -77,7 +79,7 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        //
+        return view('products.edit')->with('product', $product);
     }
 
     /**
@@ -87,9 +89,29 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Product $product)
+    public function update(ProductUpdateRequest $request, Product $product)
     {
-        //
+        $product->name = $request->name;
+        $product->description = $request->description;
+        $product->barcode = $request->barcode;
+        $product->price = $request->price;
+        $product->status = $request->status;
+
+        if ($request->hasFile('image')) {
+            // Delete old image
+            if ($product->image) {
+                Storage::delete($product->image);
+            }
+            // Store image
+            $image_path = $request->file('image')->store('products');
+            // Save to Database
+            $product->image = $image_path;
+        }
+
+        if (!$product->save()) {
+            return redirect()->back()->with('error', 'Sorry, there\'re a problem while updating product.');
+        }
+        return redirect()->route('products.index')->with('success', 'Success, your product have been updated.');
     }
 
     /**

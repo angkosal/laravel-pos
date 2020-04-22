@@ -16,6 +16,7 @@
                     <th>Image</th>
                     <th>Barcode</th>
                     <th>Price</th>
+                    <th>Status</th>
                     <th>Created At</th>
                     <th>Updated At</th>
                     <th>Actions</th>
@@ -29,6 +30,10 @@
                     <td><img src="{{ Storage::url($product->image) }}" alt="" width="100"></td>
                     <td>{{$product->barcode}}</td>
                     <td>{{$product->price}}</td>
+                    <td>
+                        <span
+                            class="right badge badge-{{ $product->status ? 'success' : 'danger' }}">{{$product->status ? 'Active' : 'Inactive'}}</span>
+                    </td>
                     <td>{{$product->created_at}}</td>
                     <td>{{$product->updated_at}}</td>
                     <td>
