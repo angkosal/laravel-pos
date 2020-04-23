@@ -12,6 +12,7 @@ class Product extends Model
         'image',
         'barcode',
         'price',
+        'quantity',
         'status'
     ];
 }
