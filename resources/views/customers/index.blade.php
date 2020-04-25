@@ -15,6 +15,7 @@
                 <thead>
                 <tr>
                     <th>ID</th>
+                    <th>Avatar</th>
                     <th>First Name</th>
                     <th>Last Name</th>
                     <th>Email</th>
@@ -28,6 +29,9 @@
                 @foreach ($customers as $customer)
                     <tr>
                         <td>{{$customer->id}}</td>
+                        <td>
+                            <img width="50" src="{{$customer->getAvatarUrl()}}" alt="">
+                        </td>
                         <td>{{$customer->first_name}}</td>
                         <td>{{$customer->last_name}}</td>
                         <td>{{$customer->email}}</td>
