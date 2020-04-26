@@ -6,6 +6,7 @@ use App\Http\Requests\CustomerStoreRequest;
 use App\Models\Customer;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class CustomerController extends Controller
 {
@@ -68,7 +69,6 @@ class CustomerController extends Controller
      */
     public function show(Customer $customer)
     {
-        //
     }
 
     /**
@@ -79,7 +79,7 @@ class CustomerController extends Controller
      */
     public function edit(Customer $customer)
     {
-        //
+        return view('customers.edit', compact('customer'));
     }
 
     /**
@@ -91,17 +91,39 @@ class CustomerController extends Controller
      */
     public function update(Request $request, Customer $customer)
     {
-        //
+        $customer->first_name = $request->first_name;
+        $customer->last_name = $request->last_name;
+        $customer->email = $request->email;
+        $customer->phone = $request->phone;
+        $customer->address = $request->address;
+
+        if ($request->hasFile('avatar')) {
+            // Delete old avatar
+            if ($customer->avatar) {
+                Storage::delete($customer->avatar);
+            }
+            // Store avatar
+            $avatar_path = $request->file('avatar')->store('customers');
+            // Save to Database
+            $customer->avatar = $avatar_path;
+        }
+
+        if (!$customer->save()) {
+            return redirect()->back()->with('error', 'Sorry, there\'re a problem while updating customer.');
+        }
+        return redirect()->route('customers.index')->with('success', 'Success, your customer have been updated.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Customer  $customer
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Customer $customer)
     {
-        //
+        if ($customer->avatar) {
+            Storage::delete($customer->avatar);
+        }
+
+        $customer->delete();
+
+       return response()->json([
+           'success' => true
+       ]);
     }
 }
