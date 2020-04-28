@@ -16934,3 +16934,31 @@ a.text-dark:focus {
   }
 }
 
+.user-cart .card {
+  height: 400px;
+}
+
+.user-cart .qty {
+  width: 45px;
+  float: left;
+}
+
+.order-product .item {
+  float: left;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  background: #fff;
+  margin: 0 2px 4px 2px;
+}
+
+.order-product .item img {
+  width: 100px;
+  height: 100px;
+  max-width: 100%;
+}
+
+.order-product .item h5 {
+  font-size: 13px;
+  text-align: center;
+}
+

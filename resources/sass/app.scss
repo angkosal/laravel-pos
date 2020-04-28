@@ -12,3 +12,32 @@
 @import "~bootstrap/scss/bootstrap";
 
 @import "~admin-lte/dist/css/adminlte.min.css";
+
+.user-cart {
+    .card {
+        height: 400px;
+    }
+    .qty {
+        width: 45px;
+        float: left;
+    }
+}
+
+.order-product {
+    .item {
+        float: left;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        background: #fff;
+        margin: 0 2px 4px 2px;
+        img {
+            width: 100px;
+            height: 100px;
+            max-width: 100%;
+        }
+        h5 {
+            font-size: 13px;
+            text-align: center;
+        }
+    }
+}

@@ -13,4 +13,6 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::post('/settings', 'SettingController@store')->name('settings.store');
     Route::resource('products', 'ProductController');
     Route::resource('customers', 'CustomerController');
+
+    Route::get('/cart', 'CartController@index')->name('cart.index');
 });
