@@ -36,4 +36,40 @@ class CartController extends Controller
 
         return response('', 204);
     }
+
+    public function changeQty(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        $cart = $request->user()->cart()->where('id', $request->product_id)->first();
+
+        if ($cart) {
+            $cart->pivot->quantity = $request->quantity;
+            $cart->pivot->save();
+        }
+
+        return response([
+            'success' => true
+        ]);
+    }
+
+    public function delete(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|integer|exists:products,id'
+        ]);
+        $request->user()->cart()->detach($request->product_id);
+
+        return response('', 204);
+    }
+
+    public function empty(Request $request)
+    {
+        $request->user()->cart()->detach();
+
+        return response('', 204);
+    }
 }
