@@ -69096,9 +69096,9 @@ var Cart = /*#__PURE__*/function (_Component) {
       cart: [],
       products: [],
       customers: [],
-      barcode: '',
-      search: '',
-      customer_id: ''
+      barcode: "",
+      search: "",
+      customer_id: ""
     };
     _this.loadCart = _this.loadCart.bind(_assertThisInitialized(_this));
     _this.handleOnChangeBarcode = _this.handleOnChangeBarcode.bind(_assertThisInitialized(_this));
@@ -69138,8 +69138,8 @@ var Cart = /*#__PURE__*/function (_Component) {
     value: function loadProducts() {
       var _this3 = this;
 
-      var search = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-      var query = !!search ? "?search=".concat(search) : '';
+      var search = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "";
+      var query = !!search ? "?search=".concat(search) : "";
       axios__WEBPACK_IMPORTED_MODULE_2___default.a.get("/admin/products".concat(query)).then(function (res) {
         var products = res.data.data;
 
@@ -69162,7 +69162,7 @@ var Cart = /*#__PURE__*/function (_Component) {
     value: function loadCart() {
       var _this4 = this;
 
-      axios__WEBPACK_IMPORTED_MODULE_2___default.a.get('/admin/cart').then(function (res) {
+      axios__WEBPACK_IMPORTED_MODULE_2___default.a.get("/admin/cart").then(function (res) {
         var cart = res.data;
 
         _this4.setState({
@@ -69179,16 +69179,16 @@ var Cart = /*#__PURE__*/function (_Component) {
       var barcode = this.state.barcode;
 
       if (!!barcode) {
-        axios__WEBPACK_IMPORTED_MODULE_2___default.a.post('/admin/cart', {
+        axios__WEBPACK_IMPORTED_MODULE_2___default.a.post("/admin/cart", {
           barcode: barcode
         }).then(function (res) {
           _this5.loadCart();
 
           _this5.setState({
-            barcode: ''
+            barcode: ""
           });
         })["catch"](function (err) {
-          sweetalert2__WEBPACK_IMPORTED_MODULE_3___default.a.fire('Error!', err.response.data.message, 'error');
+          sweetalert2__WEBPACK_IMPORTED_MODULE_3___default.a.fire("Error!", err.response.data.message, "error");
         });
       }
     }
@@ -69205,11 +69205,11 @@ var Cart = /*#__PURE__*/function (_Component) {
       this.setState({
         cart: cart
       });
-      axios__WEBPACK_IMPORTED_MODULE_2___default.a.post('/admin/cart/change-qty', {
+      axios__WEBPACK_IMPORTED_MODULE_2___default.a.post("/admin/cart/change-qty", {
         product_id: product_id,
         quantity: qty
       }).then(function (res) {})["catch"](function (err) {
-        sweetalert2__WEBPACK_IMPORTED_MODULE_3___default.a.fire('Error!', err.response.data.message, 'error');
+        sweetalert2__WEBPACK_IMPORTED_MODULE_3___default.a.fire("Error!", err.response.data.message, "error");
       });
     }
   }, {
@@ -69225,9 +69225,9 @@ var Cart = /*#__PURE__*/function (_Component) {
     value: function handleClickDelete(product_id) {
       var _this6 = this;
 
-      axios__WEBPACK_IMPORTED_MODULE_2___default.a.post('/admin/cart/delete', {
+      axios__WEBPACK_IMPORTED_MODULE_2___default.a.post("/admin/cart/delete", {
         product_id: product_id,
-        _method: 'DELETE'
+        _method: "DELETE"
       }).then(function (res) {
         var cart = _this6.state.cart.filter(function (c) {
           return c.id !== product_id;
@@ -69243,8 +69243,8 @@ var Cart = /*#__PURE__*/function (_Component) {
     value: function handleEmptyCart() {
       var _this7 = this;
 
-      axios__WEBPACK_IMPORTED_MODULE_2___default.a.post('/admin/cart/empty', {
-        _method: 'DELETE'
+      axios__WEBPACK_IMPORTED_MODULE_2___default.a.post("/admin/cart/empty", {
+        _method: "DELETE"
       }).then(function (res) {
         _this7.setState({
           cart: []
@@ -69271,16 +69271,16 @@ var Cart = /*#__PURE__*/function (_Component) {
     value: function addProductToCart(barcode) {
       var _this8 = this;
 
-      axios__WEBPACK_IMPORTED_MODULE_2___default.a.post('/admin/cart', {
+      axios__WEBPACK_IMPORTED_MODULE_2___default.a.post("/admin/cart", {
         barcode: barcode
       }).then(function (res) {
         _this8.loadCart();
 
         _this8.setState({
-          barcode: ''
+          barcode: ""
         });
       })["catch"](function (err) {
-        sweetalert2__WEBPACK_IMPORTED_MODULE_3___default.a.fire('Error!', err.response.data.message, 'error');
+        sweetalert2__WEBPACK_IMPORTED_MODULE_3___default.a.fire("Error!", err.response.data.message, "error");
       });
     }
   }, {
@@ -69410,8 +69410,8 @@ var Cart = /*#__PURE__*/function (_Component) {
 
 /* harmony default export */ __webpack_exports__["default"] = (Cart);
 
-if (document.getElementById('cart')) {
-  react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Cart, null), document.getElementById('cart'));
+if (document.getElementById("cart")) {
+  react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Cart, null), document.getElementById("cart"));
 }
 
 /***/ }),
