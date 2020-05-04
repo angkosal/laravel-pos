@@ -11,8 +11,10 @@ class Cart extends Component {
         this.state = {
             cart: [],
             products: [],
+            customers: [],
             barcode: '',
             search: '',
+            customer_id: '',
         };
 
         this.loadCart = this.loadCart.bind(this);
@@ -24,12 +26,21 @@ class Cart extends Component {
         this.loadProducts = this.loadProducts.bind(this)
         this.handleChangeSearch = this.handleChangeSearch.bind(this)
         this.handleSeach = this.handleSeach.bind(this)
+        this.setCustomerId = this.setCustomerId.bind(this)
     }
 
     componentDidMount() {
         // load user cart
         this.loadCart();
         this.loadProducts();
+        this.loadCustomers();
+    }
+
+    loadCustomers() {
+        axios.get(`/admin/customers`).then(res => {
+            const customers = res.data;
+            this.setState({customers});
+        })
     }
 
     loadProducts(search = '') {
@@ -126,8 +137,12 @@ class Cart extends Component {
             )
         })
     }
+    setCustomerId(event) {
+        this.setState({customer_id: event.target.value})
+    }
     render() {
-        const {cart, products, barcode} = this.state;
+        const {cart, products, customers, barcode} = this.state;
+        console.log(this.state.customer_id);
         return (
             <div className="row">
                 <div className="col-md-6 col-lg-4">
@@ -144,8 +159,12 @@ class Cart extends Component {
                             </form>
                         </div>
                         <div className="col">
-                            <select name="" id="" className="form-control">
+                            <select
+                                className="form-control"
+                                onChange={this.setCustomerId}
+                            >
                                 <option value="">Walking Customer</option>
+                                {customers.map(cus => <option key={cus.id} value={cus.id}>{`${cus.first_name} ${cus.last_name}`}</option>)}
                             </select>
                         </div>
                     </div>
@@ -176,7 +195,7 @@ class Cart extends Component {
                                                 <i className="fas fa-trash"></i>
                                             </button>
                                         </td>
-                                        <td className="text-right">$ {(c.price * c.pivot.quantity).toFixed(2)}</td>
+                                        <td className="text-right">{window.APP.currency_symbol} {(c.price * c.pivot.quantity).toFixed(2)}</td>
                                     </tr>
                                 ))}
                                 </tbody>
@@ -186,7 +205,7 @@ class Cart extends Component {
 
                     <div className="row">
                         <div className="col">Total:</div>
-                        <div className="col text-right">$ {this.getTotal(cart)}</div>
+                        <div className="col text-right">{window.APP.currency_symbol} {this.getTotal(cart)}</div>
                     </div>
                     <div className="row">
                         <div className="col">
@@ -194,10 +213,15 @@ class Cart extends Component {
                                 type="button"
                                 className="btn btn-danger btn-block"
                                 onClick={this.handleEmptyCart}
+                                disabled={!cart.length}
                             >Cancel</button>
                         </div>
                         <div className="col">
-                            <button type="button" className="btn btn-primary btn-block">Submit</button>
+                            <button
+                                type="button"
+                                className="btn btn-primary btn-block"
+                                disabled={!cart.length}
+                            >Submit</button>
                         </div>
                     </div>
                 </div>

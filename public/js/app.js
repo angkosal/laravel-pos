@@ -69095,8 +69095,10 @@ var Cart = /*#__PURE__*/function (_Component) {
     _this.state = {
       cart: [],
       products: [],
+      customers: [],
       barcode: '',
-      search: ''
+      search: '',
+      customer_id: ''
     };
     _this.loadCart = _this.loadCart.bind(_assertThisInitialized(_this));
     _this.handleOnChangeBarcode = _this.handleOnChangeBarcode.bind(_assertThisInitialized(_this));
@@ -69106,6 +69108,7 @@ var Cart = /*#__PURE__*/function (_Component) {
     _this.loadProducts = _this.loadProducts.bind(_assertThisInitialized(_this));
     _this.handleChangeSearch = _this.handleChangeSearch.bind(_assertThisInitialized(_this));
     _this.handleSeach = _this.handleSeach.bind(_assertThisInitialized(_this));
+    _this.setCustomerId = _this.setCustomerId.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -69115,18 +69118,32 @@ var Cart = /*#__PURE__*/function (_Component) {
       // load user cart
       this.loadCart();
       this.loadProducts();
+      this.loadCustomers();
+    }
+  }, {
+    key: "loadCustomers",
+    value: function loadCustomers() {
+      var _this2 = this;
+
+      axios__WEBPACK_IMPORTED_MODULE_2___default.a.get("/admin/customers").then(function (res) {
+        var customers = res.data;
+
+        _this2.setState({
+          customers: customers
+        });
+      });
     }
   }, {
     key: "loadProducts",
     value: function loadProducts() {
-      var _this2 = this;
+      var _this3 = this;
 
       var search = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
       var query = !!search ? "?search=".concat(search) : '';
       axios__WEBPACK_IMPORTED_MODULE_2___default.a.get("/admin/products".concat(query)).then(function (res) {
         var products = res.data.data;
 
-        _this2.setState({
+        _this3.setState({
           products: products
         });
       });
@@ -69143,12 +69160,12 @@ var Cart = /*#__PURE__*/function (_Component) {
   }, {
     key: "loadCart",
     value: function loadCart() {
-      var _this3 = this;
+      var _this4 = this;
 
       axios__WEBPACK_IMPORTED_MODULE_2___default.a.get('/admin/cart').then(function (res) {
         var cart = res.data;
 
-        _this3.setState({
+        _this4.setState({
           cart: cart
         });
       });
@@ -69156,7 +69173,7 @@ var Cart = /*#__PURE__*/function (_Component) {
   }, {
     key: "handleScanBarcode",
     value: function handleScanBarcode(event) {
-      var _this4 = this;
+      var _this5 = this;
 
       event.preventDefault();
       var barcode = this.state.barcode;
@@ -69165,9 +69182,9 @@ var Cart = /*#__PURE__*/function (_Component) {
         axios__WEBPACK_IMPORTED_MODULE_2___default.a.post('/admin/cart', {
           barcode: barcode
         }).then(function (res) {
-          _this4.loadCart();
+          _this5.loadCart();
 
-          _this4.setState({
+          _this5.setState({
             barcode: ''
           });
         })["catch"](function (err) {
@@ -69206,17 +69223,17 @@ var Cart = /*#__PURE__*/function (_Component) {
   }, {
     key: "handleClickDelete",
     value: function handleClickDelete(product_id) {
-      var _this5 = this;
+      var _this6 = this;
 
       axios__WEBPACK_IMPORTED_MODULE_2___default.a.post('/admin/cart/delete', {
         product_id: product_id,
         _method: 'DELETE'
       }).then(function (res) {
-        var cart = _this5.state.cart.filter(function (c) {
+        var cart = _this6.state.cart.filter(function (c) {
           return c.id !== product_id;
         });
 
-        _this5.setState({
+        _this6.setState({
           cart: cart
         });
       });
@@ -69224,12 +69241,12 @@ var Cart = /*#__PURE__*/function (_Component) {
   }, {
     key: "handleEmptyCart",
     value: function handleEmptyCart() {
-      var _this6 = this;
+      var _this7 = this;
 
       axios__WEBPACK_IMPORTED_MODULE_2___default.a.post('/admin/cart/empty', {
         _method: 'DELETE'
       }).then(function (res) {
-        _this6.setState({
+        _this7.setState({
           cart: []
         });
       });
@@ -69252,14 +69269,14 @@ var Cart = /*#__PURE__*/function (_Component) {
   }, {
     key: "addProductToCart",
     value: function addProductToCart(barcode) {
-      var _this7 = this;
+      var _this8 = this;
 
       axios__WEBPACK_IMPORTED_MODULE_2___default.a.post('/admin/cart', {
         barcode: barcode
       }).then(function (res) {
-        _this7.loadCart();
+        _this8.loadCart();
 
-        _this7.setState({
+        _this8.setState({
           barcode: ''
         });
       })["catch"](function (err) {
@@ -69267,14 +69284,23 @@ var Cart = /*#__PURE__*/function (_Component) {
       });
     }
   }, {
+    key: "setCustomerId",
+    value: function setCustomerId(event) {
+      this.setState({
+        customer_id: event.target.value
+      });
+    }
+  }, {
     key: "render",
     value: function render() {
-      var _this8 = this;
+      var _this9 = this;
 
       var _this$state = this.state,
           cart = _this$state.cart,
           products = _this$state.products,
+          customers = _this$state.customers,
           barcode = _this$state.barcode;
+      console.log(this.state.customer_id);
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -69294,12 +69320,16 @@ var Cart = /*#__PURE__*/function (_Component) {
       }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
-        name: "",
-        id: "",
-        className: "form-control"
+        className: "form-control",
+        onChange: this.setCustomerId
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
         value: ""
-      }, "Walking Customer")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, "Walking Customer"), customers.map(function (cus) {
+        return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+          key: cus.id,
+          value: cus.id
+        }, "".concat(cus.first_name, " ").concat(cus.last_name));
+      })))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "user-cart"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "card"
@@ -69315,37 +69345,39 @@ var Cart = /*#__PURE__*/function (_Component) {
           className: "form-control form-control-sm qty",
           value: c.pivot.quantity,
           onChange: function onChange(event) {
-            return _this8.handleChangeQty(c.id, event.target.value);
+            return _this9.handleChangeQty(c.id, event.target.value);
           }
         }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
           className: "btn btn-danger btn-sm",
           onClick: function onClick() {
-            return _this8.handleClickDelete(c.id);
+            return _this9.handleClickDelete(c.id);
           }
         }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
           className: "fas fa-trash"
         }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
           className: "text-right"
-        }, "$ ", (c.price * c.pivot.quantity).toFixed(2)));
+        }, window.APP.currency_symbol, " ", (c.price * c.pivot.quantity).toFixed(2)));
       }))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col"
       }, "Total:"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col text-right"
-      }, "$ ", this.getTotal(cart))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, window.APP.currency_symbol, " ", this.getTotal(cart))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         type: "button",
         className: "btn btn-danger btn-block",
-        onClick: this.handleEmptyCart
+        onClick: this.handleEmptyCart,
+        disabled: !cart.length
       }, "Cancel")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         type: "button",
-        className: "btn btn-primary btn-block"
+        className: "btn btn-primary btn-block",
+        disabled: !cart.length
       }, "Submit")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6 col-lg-8"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -69361,7 +69393,7 @@ var Cart = /*#__PURE__*/function (_Component) {
       }, products.map(function (p) {
         return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           onClick: function onClick() {
-            return _this8.addProductToCart(p.barcode);
+            return _this9.addProductToCart(p.barcode);
           },
           key: p.id,
           className: "item"
