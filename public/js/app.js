@@ -69296,10 +69296,31 @@ var Cart = /*#__PURE__*/function (_Component) {
     value: function handleClickSubmit() {
       var _this9 = this;
 
-      axios__WEBPACK_IMPORTED_MODULE_2___default.a.post('/admin/orders', {
-        customer_id: this.state.customer_id
-      }).then(function (res) {
-        _this9.loadCart();
+      sweetalert2__WEBPACK_IMPORTED_MODULE_3___default.a.fire({
+        title: 'Received Amount',
+        input: 'text',
+        inputValue: this.getTotal(this.state.cart),
+        showCancelButton: true,
+        confirmButtonText: 'Send',
+        showLoaderOnConfirm: true,
+        preConfirm: function preConfirm(amount) {
+          return axios__WEBPACK_IMPORTED_MODULE_2___default.a.post('/admin/orders', {
+            customer_id: _this9.state.customer_id,
+            amount: amount
+          }).then(function (res) {
+            _this9.loadCart();
+
+            return res.data;
+          })["catch"](function (err) {
+            sweetalert2__WEBPACK_IMPORTED_MODULE_3___default.a.showValidationMessage(err.response.data.message);
+          });
+        },
+        allowOutsideClick: function allowOutsideClick() {
+          return !sweetalert2__WEBPACK_IMPORTED_MODULE_3___default.a.isLoading();
+        }
+      }).then(function (result) {
+        if (result.value) {//
+        }
       });
     }
   }, {
@@ -69312,7 +69333,6 @@ var Cart = /*#__PURE__*/function (_Component) {
           products = _this$state.products,
           customers = _this$state.customers,
           barcode = _this$state.barcode;
-      console.log(this.state.customer_id);
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {

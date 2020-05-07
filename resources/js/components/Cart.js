@@ -138,13 +138,31 @@ class Cart extends Component {
         this.setState({ customer_id: event.target.value });
     }
     handleClickSubmit() {
-        axios.post('/admin/orders', {customer_id: this.state.customer_id}).then(res => {
-            this.loadCart();
-        });
+        Swal.fire({
+            title: 'Received Amount',
+            input: 'text',
+            inputValue: this.getTotal(this.state.cart),
+            showCancelButton: true,
+            confirmButtonText: 'Send',
+            showLoaderOnConfirm: true,
+            preConfirm: (amount) => {
+                return axios.post('/admin/orders', {customer_id: this.state.customer_id, amount}).then(res => {
+                    this.loadCart();
+                    return res.data;
+                }).catch(err => {
+                    Swal.showValidationMessage(err.response.data.message)
+                })
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        }).then((result) => {
+            if (result.value) {
+                //
+            }
+        })
+
     }
     render() {
         const { cart, products, customers, barcode } = this.state;
-        console.log(this.state.customer_id);
         return (
             <div className="row">
                 <div className="col-md-6 col-lg-4">

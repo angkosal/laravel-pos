@@ -22,8 +22,14 @@ class OrderController extends Controller
                 'quantity' => $item->pivot->quantity,
                 'product_id' => $item->id,
             ]);
+            $item->quantity = $item->quantity - $item->pivot->quantity;
+            $item->save();
         }
         $request->user()->cart()->detach();
+        $order->payments()->create([
+            'amount' => $request->amount,
+            'user_id' => $request->user()->id,
+        ]);
         return 'success';
     }
 }
