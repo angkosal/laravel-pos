@@ -50,7 +50,7 @@ class ProductController extends Controller
         $image_path = '';
 
         if ($request->hasFile('image')) {
-            $image_path = $request->file('image')->store('products');
+            $image_path = $request->file('image')->store('products', 'public');
         }
 
         $product = Product::create([
@@ -113,7 +113,7 @@ class ProductController extends Controller
                 Storage::delete($product->image);
             }
             // Store image
-            $image_path = $request->file('image')->store('products');
+            $image_path = $request->file('image')->store('products', 'public');
             // Save to Database
             $product->image = $image_path;
         }
