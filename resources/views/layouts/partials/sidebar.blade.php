@@ -22,54 +22,46 @@
         <!-- Sidebar Menu -->
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                <!-- Add icons to the links using the .nav-icon class
-                       with font-awesome or any other icon font library -->
                 <li class="nav-item has-treeview">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
-                        <p>
-                            Dashboard
-                        </p>
+                        <p>Dashboard</p>
                     </a>
                 </li>
                 <li class="nav-item has-treeview">
                     <a href="{{ route('products.index') }}" class="nav-link {{ activeSegment('products') }}">
                         <i class="nav-icon fas fa-th-large"></i>
-                        <p>
-                            Products
-                        </p>
+                        <p>Products</p>
                     </a>
                 </li>
                 <li class="nav-item has-treeview">
                     <a href="{{ route('cart.index') }}" class="nav-link {{ activeSegment('cart') }}">
                         <i class="nav-icon fas fa-cart-plus"></i>
-                        <p>
-                           Open POS
-                        </p>
+                        <p>Open POS</p>
+                    </a>
+                </li>
+                <li class="nav-item has-treeview">
+                    <a href="{{ route('orders.index') }}" class="nav-link {{ activeSegment('orders') }}">
+                        <i class="nav-icon fas fa-cart-plus"></i>
+                        <p>Orders</p>
                     </a>
                 </li>
                 <li class="nav-item has-treeview">
                     <a href="{{ route('customers.index') }}" class="nav-link {{ activeSegment('customers') }}">
                         <i class="nav-icon fas fa-users"></i>
-                        <p>
-                            Customers
-                        </p>
+                        <p>Customers</p>
                     </a>
                 </li>
                 <li class="nav-item has-treeview">
                     <a href="{{ route('settings.index') }}" class="nav-link {{ activeSegment('settings') }}">
                         <i class="nav-icon fas fa-cogs"></i>
-                        <p>
-                            Settings
-                        </p>
+                        <p>Settings</p>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="#" class="nav-link" onclick="document.getElementById('logout-form').submit()">
                         <i class="nav-icon fas fa-sign-out-alt"></i>
-                        <p>
-                            Logout
-                        </p>
+                        <p>Logout</p>
                         <form action="{{route('logout')}}" method="POST" id="logout-form">
                             @csrf
                         </form>
