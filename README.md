@@ -36,7 +36,7 @@ Rename or copy `.env.example` file to `.env` 1.`php artisan key:generate` to gen
 1. Migrate database table `php artisan migrate`
 1. Generate config `php artisan db:seed`
 
-### Install Node Dependencies
+### Install Node Dependencies(optional)
 
 1. `npm install` to install node dependencies
 1. `npm run dev` to build our javascript
@@ -63,3 +63,13 @@ Rename or copy `.env.example` file to `.env` 1.`php artisan key:generate` to gen
 1. `php artisan serve` or Laravel Homestead
 1. Visit `localhost:8000` in your browser
 1. Visit `/admin` if you want to access the admin. Email: `admin@gmail.com`, Password: `admin`.
+
+### Screenshots
+#### Product list
+![SS](https://raw.githubusercontent.com/angkosal/laravel-pos/master/screenshots/products_list.png)
+#### Create order
+![SS](https://raw.githubusercontent.com/angkosal/laravel-pos/master/screenshots/pos.png)
+#### Order list
+![SS](https://raw.githubusercontent.com/angkosal/laravel-pos/master/screenshots/order_list.png)
+#### Customer list
+![SS](https://raw.githubusercontent.com/angkosal/laravel-pos/master/screenshots/customer_list.png)
