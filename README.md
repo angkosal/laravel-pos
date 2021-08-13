@@ -86,7 +86,7 @@ Rename or copy `.env.example` file to `.env` 1.`php artisan key:generate` to gen
 
 Support this projects (Cambodia).
 
-![ABA logo](https://adscom.biz/wp-content/uploads/2017/02/ABA-logo-no-padding.png)
+<img src="https://adscom.biz/wp-content/uploads/2017/02/ABA-logo-no-padding.png" alt="ABA logo" width="150px" />
 
 #### ORNG SORL
 
