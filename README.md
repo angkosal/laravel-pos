@@ -65,11 +65,29 @@ Rename or copy `.env.example` file to `.env` 1.`php artisan key:generate` to gen
 1. Visit `/admin` if you want to access the admin. Email: `admin@gmail.com`, Password: `admin`.
 
 ### Screenshots
+
 #### Product list
+
 ![SS](https://raw.githubusercontent.com/angkosal/laravel-pos/master/screenshots/products_list.png)
+
 #### Create order
+
 ![SS](https://raw.githubusercontent.com/angkosal/laravel-pos/master/screenshots/pos.png)
+
 #### Order list
+
 ![SS](https://raw.githubusercontent.com/angkosal/laravel-pos/master/screenshots/order_list.png)
+
 #### Customer list
+
 ![SS](https://raw.githubusercontent.com/angkosal/laravel-pos/master/screenshots/customer_list.png)
+
+## Donation
+
+Support this projects (Cambodia).
+
+![ABA logo](https://adscom.biz/wp-content/uploads/2017/02/ABA-logo-no-padding.png)
+
+#### ORNG SORL
+
+#### 000 294 471
