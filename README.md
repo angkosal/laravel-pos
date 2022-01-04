@@ -50,7 +50,7 @@ Rename or copy `.env.example` file to `.env` 1.`php artisan key:generate` to gen
         'last_name' => 'admin',
         'email'=>'admin@gmail.com',
         'password' => bcrypt('admin')
-    ]
+    ]);
     ```
     hit enter.
 
