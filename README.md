@@ -8,7 +8,7 @@ The project was created while recording video "Create POS System Using Laravel"
 
 ### Requirements
 
-For system requirements you [Check Laravel Requirement](https://laravel.com/docs/8.x/deployment#server-requirements)
+For system requirements you [Check Laravel Requirement](https://laravel.com/docs/9.x/deployment#server-requirements)
 
 ### Clone the repository from github.
 
