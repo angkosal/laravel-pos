@@ -123,17 +123,47 @@ class Cart extends Component {
             this.loadProducts(event.target.value);
         }
     }
+
     addProductToCart(barcode) {
-        axios
-            .post("/admin/cart", { barcode })
-            .then(res => {
-                this.loadCart();
-                this.setState({ barcode: "" });
-            })
-            .catch(err => {
-                Swal.fire("Error!", err.response.data.message, "error");
-            });
+        let product = this.state.products.find(p => p.barcode === barcode);
+        if (!!product) {
+            // if product is already in cart
+            let cart = this.state.cart.find(c => c.id === product.id);
+            if (!!cart) {
+                // update quantity
+                this.setState({
+                    cart: this.state.cart.map(c => {
+                        if (c.id === product.id) {
+                            c.pivot.quantity = c.pivot.quantity + 1;
+                        }
+                        return c;
+                    })
+                });
+            } else {
+                product = {
+                    ...product,
+                    pivot: {
+                        quantity: 1,
+                        product_id: product.id,
+                        user_id: 1
+                    }
+                };
+
+                this.setState({ cart: [...this.state.cart, product] });
+            }
+
+            axios
+                .post("/admin/cart", { barcode })
+                .then(res => {
+                    // this.loadCart();
+                    console.log(res);
+                })
+                .catch(err => {
+                    Swal.fire("Error!", err.response.data.message, "error");
+                });
+      }
     }
+
     setCustomerId(event) {
         this.setState({ customer_id: event.target.value });
     }
