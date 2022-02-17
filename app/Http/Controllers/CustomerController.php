@@ -47,7 +47,7 @@ class CustomerController extends Controller
         $avatar_path = '';
 
         if ($request->hasFile('avatar')) {
-            $avatar_path = $request->file('avatar')->store('customers');
+            $avatar_path = $request->file('avatar')->store('customers', 'public');
         }
 
         $customer = Customer::create([
@@ -108,7 +108,7 @@ class CustomerController extends Controller
                 Storage::delete($customer->avatar);
             }
             // Store avatar
-            $avatar_path = $request->file('avatar')->store('customers');
+            $avatar_path = $request->file('avatar')->store('customers', 'public');
             // Save to Database
             $customer->avatar = $avatar_path;
         }
