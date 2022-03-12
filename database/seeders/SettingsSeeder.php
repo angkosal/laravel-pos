@@ -20,9 +20,11 @@ class SettingsSeeder extends Seeder
         ];
 
         foreach ($data as $value) {
-            if(!Setting::where('key', $value['key'])->first()) {
-                Setting::create($value);
-            }
+            Setting::updateOrCreate([
+                'key' => $value['key']
+            ], [
+                'value' => $value['value']
+            ]);
         }
     }
 }
