@@ -41,18 +41,9 @@ Rename or copy `.env.example` file to `.env` 1.`php artisan key:generate` to gen
 1. `npm install` to install node dependencies
 1. `npm run dev` to build our javascript
 
-### Create Admin Account
+### Seeding
 
-1. `php artisan tinker` and than paste
-    ```php
-    App\Models\User::create([
-        'first_name' => 'Admin',
-        'last_name' => 'admin',
-        'email'=>'admin@gmail.com',
-        'password' => bcrypt('admin')
-    ]);
-    ```
-    hit enter.
+1. `php artisan db:seed`, this will initialize settings and create and admin user for you [email: admin@gmail.com  - password: admin123]
 
 ### Create storage link
 
