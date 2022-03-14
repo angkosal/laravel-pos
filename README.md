@@ -34,16 +34,12 @@ Rename or copy `.env.example` file to `.env` 1.`php artisan key:generate` to gen
 ### Database
 
 1. Migrate database table `php artisan migrate`
-1. Generate config `php artisan db:seed`
+1. `php artisan db:seed`, this will initialize settings and create and admin user for you [email: admin@gmail.com  - password: admin123]
 
 ### Install Node Dependencies(optional)
 
 1. `npm install` to install node dependencies
 1. `npm run dev` to build our javascript
-
-### Seeding
-
-1. `php artisan db:seed`, this will initialize settings and create and admin user for you [email: admin@gmail.com  - password: admin123]
 
 ### Create storage link
 
