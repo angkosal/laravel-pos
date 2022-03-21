@@ -69469,23 +69469,13 @@ var Cart = /*#__PURE__*/function (_Component) {
         axios__WEBPACK_IMPORTED_MODULE_2___default.a.post("/admin/cart", {
           barcode: barcode
         }).then(function (res) {
+          // this.loadCart();
           console.log(res);
         })["catch"](function (err) {
           sweetalert2__WEBPACK_IMPORTED_MODULE_3___default.a.fire("Error!", err.response.data.message, "error");
         });
       }
-    } // addProductToCart(barcode) {
-    //     axios
-    //         .post("/admin/cart", { barcode })
-    //         .then(res => {
-    //             this.loadCart();
-    //             this.setState({ barcode: "" });
-    //         })
-    //         .catch(err => {
-    //             Swal.fire("Error!", err.response.data.message, "error");
-    //         });
-    // }
-
+    }
   }, {
     key: "setCustomerId",
     value: function setCustomerId(event) {

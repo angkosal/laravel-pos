@@ -17105,3 +17105,8 @@ a.text-dark:focus {
   text-align: center;
 }
 
+.product-list .product-img {
+  max-width: 70px;
+  max-height: 70px;
+}
+

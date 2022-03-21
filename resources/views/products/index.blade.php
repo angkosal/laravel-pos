@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="{{ asset('plugins/sweetalert2/sweetalert2.min.css') }}">
 @endsection
 @section('content')
-<div class="card">
+<div class="card product-list">
     <div class="card-body">
         <table class="table">
             <thead>
@@ -31,7 +31,7 @@
                 <tr>
                     <td>{{$product->id}}</td>
                     <td>{{$product->name}}</td>
-                    <td><img src="{{ Storage::url($product->image) }}" alt="" width="100"></td>
+                    <td><img class="product-img" src="{{ Storage::url($product->image) }}" alt=""></td>
                     <td>{{$product->barcode}}</td>
                     <td>{{$product->price}}</td>
                     <td>{{$product->quantity}}</td>
