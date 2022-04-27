@@ -2,7 +2,7 @@
     <h1 align="center">POS System Using Laravel</h1>
 </p>
 
-The project was created while recording video "Create POS System Using Laravel"
+The project was created while recording video "[Create POS System Using Laravel](https://www.youtube.com/watch?v=Y_NRk0lOOJc&list=PL2hV0q47BY-G9f5xG9Vq-wGjSyy1BekOv)"
 
 ## Installation
 
@@ -55,16 +55,16 @@ Rename or copy `.env.example` file to `.env` 1.`php artisan key:generate` to gen
 
 #### Product list
 
-![SS](https://raw.githubusercontent.com/angkosal/laravel-pos/master/screenshots/products_list.png)
+![Product list](https://raw.githubusercontent.com/angkosal/laravel-pos/master/screenshots/products_list.png)
 
 #### Create order
 
-![SS](https://raw.githubusercontent.com/angkosal/laravel-pos/master/screenshots/pos.png)
+![Create order](https://raw.githubusercontent.com/angkosal/laravel-pos/master/screenshots/pos.png)
 
 #### Order list
 
-![SS](https://raw.githubusercontent.com/angkosal/laravel-pos/master/screenshots/order_list.png)
+![Order list](https://raw.githubusercontent.com/angkosal/laravel-pos/master/screenshots/order_list.png)
 
 #### Customer list
 
-![SS](https://raw.githubusercontent.com/angkosal/laravel-pos/master/screenshots/customer_list.png)
+![Customer list](https://raw.githubusercontent.com/angkosal/laravel-pos/master/screenshots/customer_list.png)
