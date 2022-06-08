@@ -91,7 +91,7 @@ class Cart extends Component {
 
         axios
             .post("/admin/cart/change-qty", { product_id, quantity: qty })
-            .then(res => {})
+            .then(res => { })
             .catch(err => {
                 Swal.fire("Error!", err.response.data.message, "error");
             });
@@ -133,23 +133,25 @@ class Cart extends Component {
                 // update quantity
                 this.setState({
                     cart: this.state.cart.map(c => {
-                        if (c.id === product.id) {
+                        if (c.id === product.id && product.quantity > c.pivot.quantity) {
                             c.pivot.quantity = c.pivot.quantity + 1;
                         }
                         return c;
                     })
                 });
             } else {
-                product = {
-                    ...product,
-                    pivot: {
-                        quantity: 1,
-                        product_id: product.id,
-                        user_id: 1
-                    }
-                };
+                if (product.quantity > 0) {
+                    product = {
+                        ...product,
+                        pivot: {
+                            quantity: 1,
+                            product_id: product.id,
+                            user_id: 1
+                        }
+                    };
 
-                this.setState({ cart: [...this.state.cart, product] });
+                    this.setState({ cart: [...this.state.cart, product] });
+                }
             }
 
             axios
@@ -161,7 +163,7 @@ class Cart extends Component {
                 .catch(err => {
                     Swal.fire("Error!", err.response.data.message, "error");
                 });
-      }
+        }
     }
 
     setCustomerId(event) {
@@ -176,7 +178,7 @@ class Cart extends Component {
             confirmButtonText: 'Send',
             showLoaderOnConfirm: true,
             preConfirm: (amount) => {
-                return axios.post('/admin/orders', {customer_id: this.state.customer_id, amount}).then(res => {
+                return axios.post('/admin/orders', { customer_id: this.state.customer_id, amount }).then(res => {
                     this.loadCart();
                     return res.data;
                 }).catch(err => {
@@ -320,7 +322,7 @@ class Cart extends Component {
                                 className="item"
                             >
                                 <img src={p.image_url} alt="" />
-                                <h5>{p.name}</h5>
+                                <h5 style={window.APP.warning_quantity > p.quantity ? { color: 'red' } : {}}>{p.name}({p.quantity})</h5>
                             </div>
                         ))}
                     </div>
