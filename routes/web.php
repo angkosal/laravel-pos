@@ -12,9 +12,7 @@ use Illuminate\Support\Facades\Auth;
 Route::get('/', function () {
     return redirect('/admin');
 });
-
 Auth::routes();
-
 Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
