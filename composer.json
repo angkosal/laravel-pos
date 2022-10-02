@@ -18,11 +18,11 @@
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.6.7",
-        "spatie/laravel-ignition": "^1.0",
-        "fzaninotto/faker": "^1.9.1",
+        "fakerphp/faker": "^1.20",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^6.1",
-        "phpunit/phpunit": "^9.5.10"
+        "phpunit/phpunit": "^9.5.10",
+        "spatie/laravel-ignition": "^1.0"
     },
     "config": {
         "optimize-autoloader": true,
