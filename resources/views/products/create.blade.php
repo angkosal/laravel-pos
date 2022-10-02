@@ -102,7 +102,7 @@
 @section('js')
 <script src="{{ asset('plugins/bs-custom-file-input/bs-custom-file-input.min.js') }}"></script>
 <script>
-    $(document).ready(function () {
+    window.addEventListener('DONContentLoaded', () => {
         bsCustomFileInput.init();
     });
 </script>

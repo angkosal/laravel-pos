@@ -59,7 +59,7 @@
 @section('js')
 <script src="{{ asset('plugins/sweetalert2/sweetalert2.min.js') }}"></script>
 <script>
-    $(document).ready(function () {
+    window.addEventListener('DOMContentLoaded', () => {
         $(document).on('click', '.btn-delete', function () {
             $this = $(this);
             const swalWithBootstrapButtons = Swal.mixin({
@@ -88,6 +88,6 @@
                 }
             })
         })
-    })
+    });
 </script>
 @endsection
