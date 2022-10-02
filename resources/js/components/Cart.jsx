@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
+//import ReactDOM from "react-dom";
+import ReactDOM from 'react-dom/client';
 import axios from "axios";
 import Swal from "sweetalert2";
 import { sum } from "lodash";
@@ -335,5 +336,8 @@ class Cart extends Component {
 export default Cart;
 
 if (document.getElementById("cart")) {
-    ReactDOM.render(<Cart />, document.getElementById("cart"));
+    //ReactDOM.render(<Cart />, document.getElementById("cart"));
+    
+    const root = ReactDOM.createRoot(document.getElementById("cart"));
+    root.render(<Cart />);
 }
