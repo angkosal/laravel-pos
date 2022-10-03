@@ -19,7 +19,7 @@
 <body class="hold-transition login-page">
     <div class="login-box">
         <div class="login-logo">
-            <a href="../../index2.html">{{ config('app.name') }}</a>
+            {{ config('app.name') }}
         </div>
         <!-- /.login-logo -->
         <div class="card">

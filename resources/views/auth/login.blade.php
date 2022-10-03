@@ -17,8 +17,8 @@
     <div class="form-group">
 
         <div class="input-group">
-            <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
-                placeholder="Email" value="{{ old('email') }}" required autocomplete="email" autofocus>
+            <input type="text" name="username" class="form-control @error('username') is-invalid @enderror"
+                placeholder="Username" value="{{ old('username') }}" required autocomplete="username" autofocus>
             <div class="input-group-append">
                 <div class="input-group-text">
                     <span class="fas fa-envelope"></span>
@@ -65,10 +65,10 @@
     </div>
 </form>
 
-<p class="mb-1">
-    <a href="{{ route('password.request') }}">I forgot my password</a>
-</p>
-<p class="mb-0">
-    <a href="{{ route('register')}}" class="text-center">Register a new membership</a>
-</p>
+{{--<p class="mb-1">--}}
+{{--    <a href="{{ route('password.request') }}">I forgot my password</a>--}}
+{{--</p>--}}
+{{--<p class="mb-0">--}}
+{{--    <a href="{{ route('register')}}" class="text-center">Register a new membership</a>--}}
+{{--</p>--}}
 @endsection
