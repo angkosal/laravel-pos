@@ -65,4 +65,15 @@ class LoginController extends Controller
             //return redirect()->route('admin.home')->with('swal-success', 'Login Successful.');
         }
     }
+
+    /**
+     * The user has logged out of the application.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return mixed
+     */
+    protected function loggedOut(Request $request)
+    {
+        return redirect()->route('login');
+    }
 }
