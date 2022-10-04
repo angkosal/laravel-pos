@@ -47,6 +47,10 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class);
     }
 
+    public function store(){
+        return $this->hasOne(Store::class);
+    }
+
     public function isAdmin(){
         return $this->role->id == Role::ROLE_ADMIN;
     }

@@ -9,10 +9,17 @@ class Product extends Model
     protected $fillable = [
         'name',
         'description',
-        'image',
+        'media_path',
         'barcode',
         'price',
-        'quantity',
-        'status'
+        'status',
+        'store_id',
+        'category_id',
     ];
+
+    public function Store(){
+        return $this->belongsTo(Store::class);
+    }
+
+    
 }
