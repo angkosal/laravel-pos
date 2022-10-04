@@ -6,7 +6,9 @@ use App\Http\Requests\ProductStoreRequest;
 use App\Http\Requests\ProductUpdateRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
@@ -18,7 +20,7 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $products = new Product();
+        /*$products = new Product();
         if ($request->search) {
             $products = $products->where('name', 'LIKE', "%{$request->search}%");
         }
@@ -26,7 +28,12 @@ class ProductController extends Controller
         if (request()->wantsJson()) {
             return ProductResource::collection($products);
         }
-        return view('products.index')->with('products', $products);
+        return view('products.index')->with('products', $products);*/
+
+        $user = User::find(Auth::user()->id);
+        $products = $user->store->products;
+
+        return view('products.index', compact('products'));
     }
 
     /**

@@ -16,6 +16,9 @@ window.Popper = Popper;
 import jQuery from 'jquery';
 window.$ = window.jQuery = jQuery;
 
+import DataTable from 'datatables.net-bs4';
+DataTable(window, window.$);
+
 import 'bootstrap';
 import 'admin-lte';
 

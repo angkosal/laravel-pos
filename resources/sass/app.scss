@@ -19,6 +19,9 @@ $fa-font-path: "@fortawesome/fontawesome-free/webfonts";
 // AdminLTE
 @import "admin-lte/dist/css/adminlte.min.css";
 
+// DataTables
+@import 'datatables.net-bs4/css/dataTables.bootstrap4.min.css';
+
 .user-cart {
     .card {
         height: 400px;
