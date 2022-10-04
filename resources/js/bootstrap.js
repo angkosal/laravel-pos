@@ -19,6 +19,14 @@ window.$ = window.jQuery = jQuery;
 import 'bootstrap';
 import 'admin-lte';
 
+window.SwalWithBootstrap = Swal.mixin({
+      customClass: {
+            confirmButton: 'btn btn-primary mx-3',
+            cancelButton: 'btn btn-danger mx-3',
+      },
+      buttonsStyling: false,
+});
+
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
  * to our Laravel back-end. This library automatically handles sending the

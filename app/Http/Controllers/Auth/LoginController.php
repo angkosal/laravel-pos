@@ -61,9 +61,10 @@ class LoginController extends Controller
     {
         if ($user->isAdmin()) {
             Auth::logout();
-            return redirect()->route('login');
+            return redirect()->route('login')->with('swal-warning', 'Only Food Seller can be login.');
             //return redirect()->route('admin.home')->with('swal-success', 'Login Successful.');
         }
+        return redirect()->route('home')->with('swal-success', 'Login Successful.');
     }
 
     /**

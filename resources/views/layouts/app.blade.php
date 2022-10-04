@@ -80,4 +80,32 @@
         </main>
     </div>
 </body>
+
+@if(Session::get('swal-success'))
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        SwalWithBootstrap.fire({
+            title: 'Success',
+            html: '{{ Session::pull("swal-success") }}',
+            icon: 'success',
+            showConfirmButton: false,
+            timer: 1000,
+        });
+    });
+</script>
+@endif
+
+@if(Session::get('swal-warning'))
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        SwalWithBootstrap.fire({
+            title: 'Warning',
+            html: '{{ Session::pull("swal-warning") }}',
+            icon: 'warning',
+            showConfirmButton: true,
+        });
+    });
+</script>
+@endif
+
 </html>
