@@ -38,7 +38,7 @@
                     <td>{{$product->created_at}}</td>
                     <td>{{$product->updated_at}}</td>
                     <td>
-                        <a class="btn btn-primary" href="#">Detail</a>
+                        <a class="btn btn-primary" href="{{ route('products.details', ['product_id' => $product->id]) }}">Detail</a>
                     </td>
                 </tr>
                 @endforeach

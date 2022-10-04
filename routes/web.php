@@ -23,9 +23,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [HomeController::class, 'index'])->name('home');
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingController::class, 'store'])->name('settings.store');
-    Route::resource('products', ProductController::class);
+    //Route::resource('products', ProductController::class);
     Route::resource('customers', CustomerController::class);
     Route::resource('orders', OrderController::class);
+
+    // products routes
+    Route::get('/products', [ProductController::class, 'index'])->name('products');
+    Route::get('/products/{product_id}/details', [ProductController::class, 'details'])->name('products.details');
 
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart', [CartController::class, 'store'])->name('cart.store');
