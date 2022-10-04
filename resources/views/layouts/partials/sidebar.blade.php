@@ -46,12 +46,12 @@
                         <p>Orders</p>
                     </a>
                 </li>
-                <li class="nav-item has-treeview">
+                {{--<li class="nav-item has-treeview">
                     <a href="{{ route('customers.index') }}" class="nav-link {{ activeSegment('customers') }}">
                         <i class="nav-icon fas fa-users"></i>
                         <p>Customers</p>
                     </a>
-                </li>
+                </li>--}}
                 {{--<li class="nav-item has-treeview">
                     <a href="{{ route('settings.index') }}" class="nav-link {{ activeSegment('settings') }}">
                         <i class="nav-icon fas fa-cogs"></i>
