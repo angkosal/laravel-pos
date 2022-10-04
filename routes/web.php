@@ -10,13 +10,17 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
-    return redirect('/admin');
+    return redirect('/dashboard');
 });
 
 Auth::routes();
 
-Route::prefix('admin')->middleware('auth')->group(function () {
-    Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/logout', function () {
+    Auth::logout();
+})->name('logout');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [HomeController::class, 'index'])->name('home');
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingController::class, 'store'])->name('settings.store');
     Route::resource('products', ProductController::class);
@@ -28,4 +32,6 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::post('/cart/change-qty', [CartController::class, 'changeQty']);
     Route::delete('/cart/delete', [CartController::class, 'delete']);
     Route::delete('/cart/empty', [CartController::class, 'empty']);
+
+
 });
