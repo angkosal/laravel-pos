@@ -21,7 +21,7 @@ Route::get('/logout', function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [HomeController::class, 'index'])->name('home');
-    Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+    //Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     //Route::post('/settings', [SettingController::class, 'store'])->name('settings.store');
     //Route::resource('products', ProductController::class);
     Route::resource('customers', CustomerController::class);
