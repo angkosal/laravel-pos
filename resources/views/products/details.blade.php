@@ -58,7 +58,48 @@
             </div>
 
             <div class="row mb-4">
+                  <div class="col">
 
+                        <div class="card">
+                              <div class="card-header">
+                                    Product Options
+                              </div>
+
+                              <div class="card-body">
+
+                                    <div class="row row-cols-4">
+                                          @foreach($product->productOptions as $option)
+                                          <div class="col">
+                                                <div class="card">
+                                                      <div class="card-header">
+                                                            {{ $option->name }}
+                                                      </div>
+
+                                                      <div class="card-body">
+                                                            <ul class="list-group">
+                                                                  @foreach($option->optionDetails as $detail)
+                                                                  <li class="list-group-item d-flex justify-content-between">
+                                                                        <p class="mb-0">{{ $detail->name }}</p>
+                                                                        <p class="mb-0">{{ $detail->extra_price }}</p>
+                                                                  </li>
+                                                                  @endforeach
+                                                            </ul>
+                                                      </div>
+                                                </div>
+                                          </div>
+                                          @endforeach
+                                    </div>
+
+                              </div>
+                        </div>
+
+                  </div>
+            </div>
+
+            <div class="row mb-0">
+                  <div class="col-md-8 offset-md-3">
+                        <a class="btn btn-primary" href="{{ route('products') }}">Back to Product list</a>
+                  </div>
             </div>
       </div>
 </div>
