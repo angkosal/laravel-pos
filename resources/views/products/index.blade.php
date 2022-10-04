@@ -2,9 +2,9 @@
 
 @section('title', 'Product List')
 @section('content-header', 'Product List')
-@section('content-actions')
-<a href="{{route('products.create')}}" class="btn btn-primary">Create Product</a>
-@endsection
+{{--@section('content-actions')--}}
+{{--<a href="{{route('products.create')}}" class="btn btn-primary">Create Product</a>--}}
+{{--@endsection--}}
 @section('css')
 <link rel="stylesheet" href="{{ asset('plugins/sweetalert2/sweetalert2.min.css') }}">
 @endsection
@@ -42,10 +42,10 @@
                     <td>{{$product->created_at}}</td>
                     <td>{{$product->updated_at}}</td>
                     <td>
-                        <a href="{{ route('products.edit', $product) }}" class="btn btn-primary"><i
-                                class="fas fa-edit"></i></a>
-                        <button class="btn btn-danger btn-delete" data-url="{{route('products.destroy', $product)}}"><i
-                                class="fas fa-trash"></i></button>
+{{--                        <a href="{{ route('products.edit', $product) }}" class="btn btn-primary"><i--}}
+{{--                                class="fas fa-edit"></i></a>--}}
+{{--                        <button class="btn btn-danger btn-delete" data-url="{{route('products.destroy', $product)}}"><i--}}
+{{--                                class="fas fa-trash"></i></button>--}}
                     </td>
                 </tr>
                 @endforeach
