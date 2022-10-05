@@ -9,7 +9,7 @@
 @section('content')
 <div class="card">
     <div class="card-body">
-        <div class="row">
+        {{--<div class="row">
             <div class="col-md-7"></div>
             <div class="col-md-5">
                 <form action="{{route('orders.index')}}">
@@ -26,43 +26,36 @@
                     </div>
                 </form>
             </div>
-        </div>
-        <table class="table">
+        </div>--}}
+        <table class="dataTable table table-stripped">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Customer Name</th>
-                    <th>Total</th>
-                    <th>Received Amount</th>
+                    <th>Student Number</th>
+                    <th>Student Name</th>
+                    <th>Pick Up Time</th>
+                    <th>Amount({{ config('settings.currency_symbol') }})</th>
                     <th>Status</th>
-                    <th>To Pay</th>
                     <th>Created At</th>
+                    <th>Action</th>
+                    
                 </tr>
             </thead>
             <tbody>
                 @foreach ($orders as $order)
                 <tr>
-                    <td>{{$order->id}}</td>
-                    <td>{{$order->getCustomerName()}}</td>
-                    <td>{{ config('settings.currency_symbol') }} {{$order->formattedTotal()}}</td>
-                    <td>{{ config('settings.currency_symbol') }} {{$order->formattedReceivedAmount()}}</td>
+                    <td>@if($order->student->is_a_sandbox_student) <i class="fa-solid fa-flask fa-fw"></i> @endif{{ $order->student->student_number }}</td>
+                    <td>{{ $order->student->first_name }} {{ $order->student->last_name }}</td>
+                    <td>{{ $order->pick_up_start->format('Y-m-d h:ia') }} to {{ $order->pick_up_end->format('Y-m-d h:ia') }}</td>
+                    <td>{{ $order->total_price }}</td>
+                    <td>{{ $order->getStatusString() }}</td>
+                    <td>{{ $order->created_at->format('Y-m-d h:ia') }}</td>
                     <td>
-                        @if($order->receivedAmount() == 0)
-                            <span class="badge badge-danger">Not Paid</span>
-                        @elseif($order->receivedAmount() < $order->total())
-                            <span class="badge badge-warning">Partial</span>
-                        @elseif($order->receivedAmount() == $order->total())
-                            <span class="badge badge-success">Paid</span>
-                        @elseif($order->receivedAmount() > $order->total())
-                            <span class="badge badge-info">Change</span>
-                        @endif
+                        <a class="btn btn-primary" href="{{ route('orders.details', ['order_id' => $order->id]) }}">Detail</a>
                     </td>
-                    <td>{{config('settings.currency_symbol')}} {{number_format($order->total() - $order->receivedAmount(), 2)}}</td>
-                    <td>{{$order->created_at}}</td>
                 </tr>
                 @endforeach
             </tbody>
-            <tfoot>
+            {{--<tfoot>
                 <tr>
                     <th></th>
                     <th></th>
@@ -72,9 +65,8 @@
                     <th></th>
                     <th></th>
                 </tr>
-            </tfoot>
+            </tfoot>--}}
         </table>
-        {{ $orders->render() }}
     </div>
 </div>
 @endsection
