@@ -16,16 +16,15 @@ class ProductResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id'=> $this->id,
+            'id' => $this->id,
             'name'=> $this->name,
             'description' => $this->description,
-            'image' => $this->image,
+            'media_path' => $this->media_path,
             'barcode' => $this->barcode,
             'price' => $this->price,
-            'quantity' => $this->quantity,
             'status' => $this->status,
-            'created_at' => $this->created_at,
-            'image_url' => Storage::url($this->image)
+            'store_id' => $this->store_id,
+            'category_id' => $this->category_id,
         ];
     }
 }
