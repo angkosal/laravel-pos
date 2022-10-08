@@ -11,11 +11,12 @@
     <div class="sidebar">
         <!-- Sidebar user (optional) -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-            <div class="image">
-                <img src="{{ auth()->user()->getAvatar() }}" class="img-circle elevation-2" alt="User Image">
+            <div class="image align-self-center">
+                <img src="{{ auth()->user()->store->logo_path ? '' : config('app.main_system_url') . '/storage/defaults/store.png' }}" class="bg-white elevation-2" alt="User Image">
             </div>
             <div class="info">
-                <a href="#" class="d-block">{{ auth()->user()->getFullname() }}</a>
+                <p class="mb-0 text-white">{{ auth()->user()->getFullname() }}</p>
+                <p class="mb-0 text-white">{{ auth()->user()->store->name }}</p>
             </div>
         </div>
 

@@ -59,18 +59,9 @@ class User extends Authenticatable
         return $this->role->id == Role::ROLE_SELLER;
     }
 
-    public function cart()
-    {
-        return $this->belongsToMany(Product::class, 'user_cart')->withPivot('quantity');
-    }
-
     public function getFullname()
     {
         return $this->first_name . ' ' . $this->last_name;
     }
 
-    public function getAvatar()
-    {
-        return 'https://www.gravatar.com/avatar/' . md5($this->email);
-    }
 }

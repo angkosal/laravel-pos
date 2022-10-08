@@ -56,7 +56,7 @@ return [
 
     'asset_url' => env('ASSET_URL', null),
 
-    'main_system_url' => env('MAIN_SYSTEM_URL', null),
+    'main_system_url' => env('MAIN_SYSTEM_URL', ''),
 
     /*
     |--------------------------------------------------------------------------
