@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Resources\ProductResource;
 use App\Models\Order;
 use App\Models\OrderDetail;
+use App\Models\Payment;
+use App\Models\PaymentType;
 use App\Models\Product;
 use App\Models\Student;
 use App\Models\User;
@@ -78,13 +80,12 @@ class CartController extends Controller
                 $query->where('student_number', $student_number);
             })
             ->whereHas('orderDetails', function ($query) use ($productIds) {
-                $query->whereIn('product_id', $productIds);
+                $query->whereIn('product_id', $productIds)->where('is_pickup', false);
             })
+            ->where('status', '>=', Order::PAYMENT_SUCCESS)
 //            ->whereDate('pick_up_start', '>=', $now)
 //            ->whereDate('pick_up_end', '<=', $now)
             ->get();
-
-        //$orders = filterOrders($orders);
 
         foreach ($orders as $order) {
             $details = OrderDetail::where('order_id', $order->id)->whereIn('product_id', $productIds)->get();
@@ -100,7 +101,80 @@ class CartController extends Controller
 
     public function store(Request $request)
     {
+
         $request->validate([
+            'isNewOrder' => 'required|boolean',
+            'student_number' => 'required',
+            'order_details' => 'required_if:isNewOrder,==,true',
+            'order_ids' => 'required_if:isNewOrder,==,false',
+        ]);
+
+        $user = User::find(Auth::user()->id);
+        $productIds = $user->store->products()->pluck('id')->toArray();
+
+        if($request->isNewOrder){
+
+            $student = Student::where('student_number', $request->student_number)->first();
+            $orderDetails = $request->order_details;
+
+            $order = Order::create([
+                'student_id' => $student->id,
+                'pick_up_start' => Carbon::now(),
+                'pick_up_end' => Carbon::now(),
+                'total_price' => $request->total_price,
+                'status' => Order::PICKUP_ALL,
+                'is_sandbox_order' => $student->is_a_sandbox_student,
+            ]);
+
+            $order->payments()->create([
+                'payment_type_id' => PaymentType::PAYMENT_CASH,
+                'amount' => $request->total_price,
+                'status' => Payment::STATUS_SUCCESS,
+                'is_sandbox_payment' => $student->is_a_sandbox_student,
+            ]);
+
+            //dd($orderDetails);
+
+            foreach($orderDetails as $detail){
+                $order->orderDetails()->create([
+                    'product_id' => $detail['product_id'],
+                    'product_options' => $detail['product_options'],
+                    'price' => $detail['price'],
+                    'notes' => $detail['notes'],
+                    'is_pickup' => true,
+                ]);
+            }
+
+            return response()->json(['message' => 'Order created successful.']);
+
+        } else {
+
+            $orders = Order::whereIn('id', $request->order_ids)->get();
+
+            foreach($orders as $order){
+                $details = $order->orderDetails()->whereIn('product_id', $productIds)->get();
+                foreach ($details as $detail) {
+                    $detail->update([
+                        'is_pickup' => true,
+                    ]);
+                }
+
+                if($order->orderDetails()->where('is_pickup', false)->count() == 0){
+                    $order->update([
+                        'status' => Order::PICKUP_ALL,
+                    ]);
+                } else {
+                    $order->update([
+                        'status' => Order::PICKUP_PARTIALLY,
+                    ]);
+                }
+            }
+
+            return response()->json(['message' => 'Orders update successful.']);
+
+        }
+
+        /*$request->validate([
             'barcode' => 'required|exists:products,barcode',
         ]);
         $barcode = $request->barcode;
@@ -126,42 +200,7 @@ class CartController extends Controller
             $request->user()->cart()->attach($product->id, ['quantity' => 1]);
         }
 
-        return response('', 204);
+        return response('', 204);*/
     }
 
-    public function changeQty(Request $request)
-    {
-        $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'quantity' => 'required|integer|min:1',
-        ]);
-
-        $cart = $request->user()->cart()->where('id', $request->product_id)->first();
-
-        if ($cart) {
-            $cart->pivot->quantity = $request->quantity;
-            $cart->pivot->save();
-        }
-
-        return response([
-            'success' => true
-        ]);
-    }
-
-    public function delete(Request $request)
-    {
-        $request->validate([
-            'product_id' => 'required|integer|exists:products,id'
-        ]);
-        $request->user()->cart()->detach($request->product_id);
-
-        return response('', 204);
-    }
-
-    public function empty(Request $request)
-    {
-        $request->user()->cart()->detach();
-
-        return response('', 204);
-    }
 }

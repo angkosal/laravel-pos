@@ -40,5 +40,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::get('/cart/products', [CartController::class, 'getProducts']);
     Route::get('/cart/get_student_orders', [CartController::class, 'getStudentOrders']);
-    Route::get('cart/get_products_barcode', [CartController::class, 'getProductsByBarcode']);
+    Route::get('/cart/get_products_barcode', [CartController::class, 'getProductsByBarcode']);
+    Route::post('/cart/store', [CartController::class, 'store']);
 });

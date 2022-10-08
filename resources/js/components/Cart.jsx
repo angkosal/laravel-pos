@@ -32,8 +32,11 @@ function ExistOrders(props) {
                                     <td>{productFound.name}</td>
                                     <td>
                                         {detail.product_options.map((option, index) => {
-                                            let optionFound = productFound.product_options.find(opt => { return opt.id === parseInt(Object.keys(option)[0]) });
-                                            let detailFound = optionFound.option_details.find(detail => { return detail.id === option[Object.keys(option)[0]] });
+                                            let key = Object.keys(option)[0];
+                                            let optionFound = productFound.product_options.find(opt => { return opt.id === parseInt(key) });
+                                            let detailFound = optionFound.option_details.find(detail => { return detail.id == option[key.toString()] });
+                                            console.log(optionFound);
+                                            console.log(detailFound);
                                             return <div key={index}>
                                                 <p className="mb-0">{optionFound.name}: {detailFound.name}</p>
                                             </div>;
@@ -271,7 +274,6 @@ class Cart extends Component {
                 orders.push(orderDetail);
 
                 let total = (parseFloat(this.state.total) + parseFloat(value.price)).toFixed(2);
-                console.log(total);
 
                 this.setState({ newOrder: orders, total: total });
             });
@@ -311,7 +313,7 @@ class Cart extends Component {
     }
 
     handleScanBarcode(event) {
-        
+
         if(event.keyCode === 13){
 
             const barcode = this.state.barcode;
@@ -339,7 +341,67 @@ class Cart extends Component {
     }
 
     handleClickSubmit() {
-        Swal.fire({
+
+        if(this.state.isOrderExist){
+            let orderIds = [];
+            this.state.orders.forEach(order => {
+               orderIds.push(order.id);
+            });
+
+            window.axios.post(
+                base_url + '/cart/store',
+                {
+                    isNewOrder: !this.state.isOrderExist,
+                    student_number: this.state.student_number,
+                    order_ids: orderIds,
+                })
+                .then(response => {
+                    window.SwalWithBootstrap.fire({
+                        title: 'Success',
+                        text: response.data.message,
+                        icon: 'success',
+                    }).then(() => {
+                        this.handleEmptyOrder();
+                    });
+                })
+                .catch(error => {
+                    console.log(error);
+                    window.SwalWithBootstrap.fire({
+                        title: 'Error',
+                        text: response.message,
+                        icon: 'error',
+                    });
+                });
+        } else {
+            console.log(this.state.newOrder);
+
+            window.axios.post(base_url + '/cart/store', {
+                isNewOrder: !this.state.isOrderExist,
+                student_number: this.state.student_number,
+                order_details: this.state.newOrder,
+                total_price: this.state.total,
+            })
+                .then(response => {
+                    console.log(response);
+                    window.SwalWithBootstrap.fire({
+                        title: 'Success',
+                        text: response.data.message,
+                        icon: 'success',
+                    }).then(() => {
+                        this.handleEmptyOrder();
+                    });
+                })
+                .catch(error => {
+                    console.log(error);
+                    window.SwalWithBootstrap.fire({
+                        title: 'Error',
+                        text: error.message,
+                        icon: 'error',
+                    });
+                });
+        }
+
+        /*Swal.fire({
             title: 'Received Amount',
             input: 'text',
             inputValue: this.getTotal(this.state.cart),
@@ -359,7 +421,7 @@ class Cart extends Component {
             if (result.value) {
                 //
             }
-        })
+        })*/
 
     }
 
