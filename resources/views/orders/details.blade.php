@@ -76,6 +76,7 @@
                                                       <th>Option</th>
                                                       <th>Notes</th>
                                                       <th>Price({{ config('settings.currency_symbol') }})</th>
+                                                      <th>Status</th>
                                                 </tr>
                                           </thead>
                                           <tbody>
@@ -92,6 +93,7 @@
                                                       </td>
                                                       <td>{{ $detail->notes ?: 'None' }}</td>
                                                       <td>{{ $detail->price }}</td>
+                                                      <td>{{ $detail->is_pickup ? 'Picked Up' : 'Not Pick Up' }}</td>
                                                 </tr>
                                                 @endforeach
                                           </tbody>
@@ -119,7 +121,8 @@
                                                       <th>Product</th>
                                                       <th>Option</th>
                                                       <th>Notes</th>
-                                                      <th>Price({{ config('payment.currency_symbol') }})</th>
+                                                      <th>Price({{ config('settings.currency_symbol') }})</th>
+                                                      <th>Status</th>
                                                 </tr>
                                           </thead>
                                           <tbody>
@@ -137,6 +140,7 @@
                                                       </td>
                                                       <td>{{ $detail->notes ?: 'None' }}</td>
                                                       <td>{{ $detail->price }}</td>
+                                                      <td>{{ $detail->is_pickup ? 'Picked Up' : 'Not Pick Up' }}</td>
                                                 </tr>
                                                 @endforeach
                                           </tbody>
