@@ -21,6 +21,7 @@ class OrderDetail extends Model
         'product_options',
         'price',
         'notes',
+        'is_pickup',
     ];
 
     /**

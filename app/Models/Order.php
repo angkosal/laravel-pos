@@ -11,7 +11,7 @@ class Order extends Model
 
     use HasFactory, SoftDeletes;
 
-    const PAYMENT_PENDING = 1, PAYMENT_FAILURE = 2, PAYMENT_SUCCESS = 3;
+    const PAYMENT_PENDING = 1, PAYMENT_FAILURE = 2, PAYMENT_SUCCESS = 3, PICKUP_PARTIALLY = 4, PICKUP_ALL = 5;
 
     /**
      * The attributes that are mass assignable.
@@ -50,6 +50,8 @@ class Order extends Model
             case Order::PAYMENT_PENDING: return 'Payment Pending';
             case Order::PAYMENT_FAILURE: return 'Payment Failure';
             case Order::PAYMENT_SUCCESS: return 'Payment Success';
+            case Order::PICKUP_PARTIALLY: return 'Partially Picked Up';
+            case Order::PICKUP_ALL: return 'All Picked Up';
             default: return 'Undefined';
         }
     }
