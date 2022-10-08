@@ -12,7 +12,7 @@
         <!-- Sidebar user (optional) -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image align-self-center">
-                <img src="{{ auth()->user()->store->logo_path ? '' : config('app.main_system_url') . '/storage/defaults/store.png' }}" class="bg-white elevation-2" alt="User Image">
+                <img src="{{ auth()->user()->store->logo_path ? '' : config('app.main_system_url') . '/storage/defaults/store.png' }}" onerror="this.src = '{{ asset('/storage/defaults/error.png') }}'" class="bg-white elevation-2" alt="User Image">
             </div>
             <div class="info">
                 <p class="mb-0 text-white">{{ auth()->user()->getFullname() }}</p>

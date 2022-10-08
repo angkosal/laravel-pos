@@ -28,7 +28,7 @@
                 @foreach ($products as $product)
                 <tr>
                     <td>{{$product->name}}</td>
-                    <td><img class="product-img" src="{{ $product->media_path ? config('app.main_system_url') . '/' . $product->media_path : config('app.main_system_url') . '/storage/defaults/product.png' }}" alt=""></td>
+                    <td><img class="product-img" src="{{ $product->media_path ? config('app.main_system_url') . '/' . $product->media_path : config('app.main_system_url') . '/storage/defaults/product.png' }}" onerror="this.src = '{{ asset('/storage/defaults/error.png') }}'" alt=""></td>
                     <td>{{$product->barcode ?: 'None'}}</td>
                     <td>{{$product->price}}</td>
                     <td>
