@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Customer;
+use App\Models\OrderDetail;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -25,26 +29,21 @@ class HomeController extends Controller
      */
     public function index()
     {
-        //$orders = Order::with(['items', 'payments'])->get();
-        //$customers_count = Customer::count();
 
-        /*return view('home', [
-            'orders_count' => $orders->count(),
-            'income' => $orders->map(function($i) {
-                if($i->receivedAmount() > $i->total()) {
-                    return $i->total();
-                }
-                return $i->receivedAmount();
-            })->sum(),
-            'income_today' => $orders->where('created_at', '>=', date('Y-m-d').' 00:00:00')->map(function($i) {
-                if($i->receivedAmount() > $i->total()) {
-                    return $i->total();
-                }
-                return $i->receivedAmount();
-            })->sum(),
-            'customers_count' => $customers_count
-        ]);*/
+        $user = User::find(Auth::user()->id);
+        $productIds = $user->store->products()->pluck('id')->toArray();
+        $ordersCount = Order::whereHas('orderDetails', function ($query) use ($productIds) {
+            $query->whereIn('product_id', $productIds);
+        })->whereDate('pick_up_start', Carbon::today())->count();
 
-        return view('home');
+        $productsPickUpCount = OrderDetail::whereHas('order', function ($query) {
+            $query->whereDate('pick_up_start', Carbon::today());
+        })->count();
+        $productsPickedUpCount = OrderDetail::whereHas('order', function ($query) {
+            $query->whereDate('pick_up_start', Carbon::today());
+        })->where('is_pickup', true)->count();
+
+        return view('home', compact('ordersCount', 'productsPickUpCount', 'productsPickedUpCount'));
+
     }
 }
