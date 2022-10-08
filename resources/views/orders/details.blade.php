@@ -50,7 +50,7 @@
                               </li>
                               <li class="list-group-item d-flex justify-content-between">
                                     <p class="mb-0">Status</p>
-                                    <p class="mb-0">{{ $order->getStatusString() }}</p>
+                                    <p class="mb-0 badge @if($order->status == \App\Models\Order::PAYMENT_PENDING || $order->status == \App\Models\Order::PICKUP_PARTIALLY) badge-warning @elseif($order->status == \App\Models\Order::PAYMENT_FAILURE) badge-danger @elseif($order->status == \App\Models\Order::PAYMENT_SUCCESS || $order->status == \App\Models\Order::PICKUP_ALL) badge-success @endif">{{ $order->getStatusString() }}</p>
                               </li>
                               <li class="list-group-item d-flex justify-content-between">
                                     <p class="mb-0">Created At</p>
@@ -93,7 +93,7 @@
                                                       </td>
                                                       <td>{{ $detail->notes ?: 'None' }}</td>
                                                       <td>{{ $detail->price }}</td>
-                                                      <td>{{ $detail->is_pickup ? 'Picked Up' : 'Not Pick Up' }}</td>
+                                                      <td><div class="badge {{ $detail->is_pickup ? 'badge-success' : 'badge-warning' }}">{{ $detail->is_pickup ? 'Picked Up' : 'Not Pick Up' }}</div></td>
                                                 </tr>
                                                 @endforeach
                                           </tbody>
@@ -140,7 +140,7 @@
                                                       </td>
                                                       <td>{{ $detail->notes ?: 'None' }}</td>
                                                       <td>{{ $detail->price }}</td>
-                                                      <td>{{ $detail->is_pickup ? 'Picked Up' : 'Not Pick Up' }}</td>
+                                                      <td><div class="badge {{ $detail->is_pickup ? 'badge-success' : 'badge-warning' }}">{{ $detail->is_pickup ? 'Picked Up' : 'Not Pick Up' }}</div></td>
                                                 </tr>
                                                 @endforeach
                                           </tbody>

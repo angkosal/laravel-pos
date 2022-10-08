@@ -37,7 +37,7 @@
                     <th>Status</th>
                     <th>Created At</th>
                     <th>Action</th>
-                    
+
                 </tr>
             </thead>
             <tbody>
@@ -47,7 +47,7 @@
                     <td>{{ $order->student->first_name }} {{ $order->student->last_name }}</td>
                     <td>{{ $order->pick_up_start->format('Y-m-d h:ia') }} to {{ $order->pick_up_end->format('Y-m-d h:ia') }}</td>
                     <td>{{ $order->total_price }}</td>
-                    <td>{{ $order->getStatusString() }}</td>
+                    <td><div class="mb-0 badge @if($order->status == \App\Models\Order::PAYMENT_PENDING || $order->status == \App\Models\Order::PICKUP_PARTIALLY) badge-warning @elseif($order->status == \App\Models\Order::PAYMENT_FAILURE) badge-danger @elseif($order->status == \App\Models\Order::PAYMENT_SUCCESS || $order->status == \App\Models\Order::PICKUP_ALL) badge-success @endif">{{ $order->getStatusString() }}</div></td>
                     <td>{{ $order->created_at->format('Y-m-d h:ia') }}</td>
                     <td>
                         <a class="btn btn-primary" href="{{ route('orders.details', ['order_id' => $order->id]) }}">Detail</a>

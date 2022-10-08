@@ -26,19 +26,19 @@
                               </li>
                               <li class="list-group-item d-flex justify-content-between">
                                     <p class="mb-0">Description</p>
-                                    <p class="mb-0">{{ $product->description }}</p>
+                                    <p class="mb-0">{{ $product->description ?: 'None' }}</p>
                               </li>
                               <li class="list-group-item d-flex justify-content-between">
                                     <p class="mb-0">Price</p>
-                                    <p class="mb-0">{{ $product->price }}</p>
+                                    <p class="mb-0">{{ config('settings.currency_symbol') }}{{ $product->price }}</p>
                               </li>
                               <li class="list-group-item d-flex justify-content-between">
                                     <p class="mb-0">Barcode</p>
-                                    <p class="mb-0">{{ $product->barcode }}</p>
+                                    <p class="mb-0">{{ $product->barcode ?: 'None' }}</p>
                               </li>
                               <li class="list-group-item d-flex justify-content-between">
                                     <p class="mb-0">Status</p>
-                                    <p class="mb-0">{{ $product->status ? 'Available' : 'Unavailable' }}</p>
+                                  <div class="badge {{ $product->status ? 'badge-success' : 'badge-danger' }}">{{ $product->status ? 'Available' : 'Unavailable' }}</div>
                               </li>
                         </ul>
                   </div>

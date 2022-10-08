@@ -17,7 +17,7 @@
                     <th>Name</th>
                     <th>Image</th>
                     <th>Barcode</th>
-                    <th>Price</th>
+                    <th>Price({{ config('settings.currency_symbol') }})</th>
                     <th>Status</th>
                     <th>Created At</th>
                     <th>Updated At</th>
@@ -29,14 +29,14 @@
                 <tr>
                     <td>{{$product->name}}</td>
                     <td><img class="product-img" src="{{ $product->media_path ? config('app.main_system_url') . '/' . $product->media_path : config('app.main_system_url') . '/storage/defaults/product.png' }}" alt=""></td>
-                    <td>{{$product->barcode}}</td>
+                    <td>{{$product->barcode ?: 'None'}}</td>
                     <td>{{$product->price}}</td>
                     <td>
                         <span
                             class="right badge badge-{{ $product->status ? 'success' : 'danger' }}">{{$product->status ? 'Available' : 'Unavailable'}}</span>
                     </td>
-                    <td>{{$product->created_at}}</td>
-                    <td>{{$product->updated_at}}</td>
+                    <td>{{$product->created_at->format('Y-m-d h:ia')}}</td>
+                    <td>{{$product->updated_at->format('Y-m-d h:ia')}}</td>
                     <td>
                         <a class="btn btn-primary" href="{{ route('products.details', ['product_id' => $product->id]) }}">Detail</a>
                     </td>
