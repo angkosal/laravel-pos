@@ -26,9 +26,11 @@ class CartController extends Controller
     }
 
     public function getProducts(Request $request){
-        $user = User::find($request->user_id);
-
-        $products = Product::where('store_id', $user->store->id)->with('productOptions.optionDetails')->get();
+        $user = User::find(Auth::user()->id);
+        $products = Product::where('store_id', $user->store->id)
+            ->where('status', true)
+            ->with('productOptions.optionDetails')
+            ->get();
 
         if ($request->search) {
             $products = Product::where('store_id', $user->store->id)->where('name', 'like', "%" . $request->search . "%")->get();
@@ -39,9 +41,26 @@ class CartController extends Controller
         ]);
     }
 
+    public function getProductsByBarcode(Request $request){
+        $user = User::find(Auth::user()->id);
+        $products = Product::where('store_id', $user->store->id)
+            ->where('barcode', $request->barcode)
+            ->where('status', true)
+            ->with('productOptions.optionDetails')
+            ->get();
+
+        if($products->count() == 0){
+            return response()->json(['message' => 'Product not found.'], 404);
+        }
+
+        return response()->json([
+            'products' => $products,
+        ]);
+    }
+
     public function getStudentOrders(Request $request){
         $student_number = $request->student_number;
-        $user = User::find($request->user_id);
+        $user = User::find(Auth::user()->id);
         $productIds = $user->store->products()->pluck('id')->toArray();
         $now = Carbon::now();
 
@@ -52,6 +71,8 @@ class CartController extends Controller
                 'message' => 'Student not found.',
             ], 404);
         }
+
+        $student = Student::where('student_number', $student_number)->first();
 
         $orders = Order::whereHas('student', function ($query) use ($student_number) {
                 $query->where('student_number', $student_number);
@@ -73,6 +94,7 @@ class CartController extends Controller
 
         return response()->json([
             'orders' => $orders,
+            'student' => $student,
         ]);
     }
 

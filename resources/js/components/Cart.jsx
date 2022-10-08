@@ -4,12 +4,12 @@ import ReactDOM from 'react-dom/client';
 import Swal from "sweetalert2";
 import { sum } from "lodash";
 import dateFormat from "dateformat";
+import { data } from "jquery";
 
 function ExistOrders(props) {
     const orders = props.orders;
     const products = props.products;
     return <div>
-        <h5>Order Exist</h5>
         {orders.map((order, index) => (
             <div key={index} className='card h-auto'>
                 <div className='card-header'>
@@ -18,110 +18,151 @@ function ExistOrders(props) {
                 <div className="card-body p-1">
                     <table className="table table-striped">
                         <thead>
-                        <tr>
-                            <th>Product</th>
-                            <th>Option</th>
-                            <th width="10%">Notes</th>
-                            <th>Price({window.APP.currency_symbol})</th>
-                        </tr>
+                            <tr>
+                                <th>Product</th>
+                                <th>Option</th>
+                                <th style={{ width: '10%' }}>Notes</th>
+                                <th>Price({window.APP.currency_symbol})</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        {order.order_details.map((detail, index) => {
-                            let productFound = products.find(product1 => {return product1.id === detail.product_id});
-                            return <tr key={index}>
-                                <td>{productFound.name}</td>
-                                <td>
-                                    {detail.product_options.map((option, index) => {
-                                        let optionFound = productFound.product_options.find(opt => {return opt.id === parseInt(Object.keys(option)[0])});
-                                        let detailFound = optionFound.option_details.find(detail => {return detail.id === option[Object.keys(option)[0]]});
-                                        return <div key={index}>
-                                            <p>{optionFound.name}: {detailFound.name}</p>
-                                        </div>;
-                                    })}
-                                </td>
-                                <td>{detail.notes}</td>
-                                <td>{detail.price}</td>
-                            </tr>;
-                        })}
+                            {order.order_details.map((detail, index) => {
+                                let productFound = products.find(product1 => { return product1.id === detail.product_id });
+                                return <tr key={index}>
+                                    <td>{productFound.name}</td>
+                                    <td>
+                                        {detail.product_options.map((option, index) => {
+                                            let optionFound = productFound.product_options.find(opt => { return opt.id === parseInt(Object.keys(option)[0]) });
+                                            let detailFound = optionFound.option_details.find(detail => { return detail.id === option[Object.keys(option)[0]] });
+                                            return <div key={index}>
+                                                <p className="mb-0">{optionFound.name}: {detailFound.name}</p>
+                                            </div>;
+                                        })}
+                                    </td>
+                                    <td>{detail.notes}</td>
+                                    <td>{detail.price}</td>
+                                </tr>;
+                            })}
                         </tbody>
                     </table>
                 </div>
             </div>
-            )
+        )
         )}
     </div>;
 
 }
 
 function NewOrder(props) {
-    return <h5>Order not Exist</h5>;
+    const products = props.products;
+    const isStudentExist = props.isStudentExist;
+    const newOrder = props.newOrder;
+    if (isStudentExist) {
+        return <div>
+            <div className="card h-auto">
+                <div className="card-header">
+                    New Order
+                </div>
+
+                <div className="card-body p-1">
+                    <table className="table table-stripped">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Option</th>
+                                <th style={{ width: '10%' }}>Notes</th>
+                                <th>Price({window.APP.currency_symbol})</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {newOrder.map((order, index) => {
+                                let productFound = products.find(product => { return product.id === order.product_id });
+                                return <tr key={index}>
+                                    <td>{productFound.name}</td>
+                                    <td>
+                                        {order.product_options.map((option, index) => {
+                                            let key = parseInt(Object.keys(option)[0]);
+                                            let optionFound = productFound.product_options.find(opt => { return opt.id === key });
+                                            let detailFound = optionFound.option_details.find(detail => { return detail.id == option[key.toString()] });
+                                            return <div key={index}>
+                                                <p className="mb-0">{optionFound.name}: {detailFound.name}</p>
+                                            </div>;
+                                        })}
+                                    </td>
+                                    <td>{order.notes}</td>
+                                    <td>{order.price}</td>
+                                </tr>;
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>;
+    }
+    return <div></div>;
 }
 
 function Orders(props) {
     const orders = props.orders;
+    const newOrder = props.newOrder;
     const products = props.products;
     const isOrderExist = props.isOrderExist;
-    if(isOrderExist){
+    const isStudentExist = props.isStudentExist;
+    if (isOrderExist) {
         return <ExistOrders orders={orders} products={products} />;
     }
 
-    return <NewOrder />;
+    return <NewOrder isStudentExist={isStudentExist} newOrder={newOrder} products={products} />;
 }
 
 class Cart extends Component {
+
+    static optionTemplate = '<div class="container"><div class="row row-cols-auto"><h5 class="col">option_name</h5></div><div class="row row-cols-auto mb-2">option_field</div></div>';
+    static detailTemplate = '<div class="col form-check form-check-inline"><input class="form-check-input" type="radio" id="id" name="name" value="value" checked><label class="form-check-label" for="">detail_name</label></div>';
+    static noteTemplate = '<div class="container"><div class="row"><h5 class="col-2">Note</h5><textarea class="form-control col" name="note" id="note" cols="10" rows="2"></textarea></div></div>';
+
     constructor(props) {
         super(props);
         this.state = {
             cart: [],
             allProducts: [],
             products: [],
-            customers: [],
             barcode: "",
             search: "",
-            customer_id: "",
             student_number: "",
+            student: {},
             orders: [],
+            newOrder: [],
+            total: 0,
             isOrderExist: false,
             isStudentExist: false,
         };
 
-        this.loadCart = this.loadCart.bind(this);
         this.handleOnChangeBarcode = this.handleOnChangeBarcode.bind(this);
         this.handleScanBarcode = this.handleScanBarcode.bind(this);
-        this.handleChangeQty = this.handleChangeQty.bind(this);
-        this.handleEmptyCart = this.handleEmptyCart.bind(this);
 
         this.handleChangeSearch = this.handleChangeSearch.bind(this);
         this.handleSeach = this.handleSeach.bind(this);
-        this.setCustomerId = this.setCustomerId.bind(this);
         this.handleClickSubmit = this.handleClickSubmit.bind(this)
 
         this.loadProducts = this.loadProducts.bind(this);
 
         this.handleOnChangeStudentNumber = this.handleOnChangeStudentNumber.bind(this);
         this.handleGetStudentOrder = this.handleGetStudentOrder.bind(this);
+        this.handleProductClicked = this.handleProductClicked.bind(this);
+        this.handleEmptyOrder = this.handleEmptyOrder.bind(this);
 
     }
 
     componentDidMount() {
-        // load user cart
-        this.loadCart();
         this.loadProducts();
-        this.loadCustomers();
-    }
-
-    loadCustomers() {
-        axios.get(`/admin/customers`).then(res => {
-            const customers = res.data;
-            this.setState({ customers });
-        });
     }
 
     loadProducts(search = "") {
         const query = !!search ? `${search}` : "";
-        window.axios.get(base_url + '/cart/products?user_id=' + user_id + '&search=' + query)
+        window.axios.get(base_url + '/cart/products?search=' + query)
             .then(response => {
-                if(!search){
+                if (!search) {
                     const allProducts = response.data.products;
                     const products = response.data.products;
 
@@ -131,25 +172,24 @@ class Cart extends Component {
 
                     this.setState({ products });
                 }
-        });
+            });
     }
 
     handleOnChangeStudentNumber(event) {
         const student_number = event.target.value;
         const orders = [];
-        console.log(student_number);
-        this.setState({ student_number, orders, isOrderExist: false, isStudentExist: false });
+        this.setState({ student_number, student: {}, orders, isOrderExist: false, isStudentExist: false, newOrder: [] });
     }
 
     handleGetStudentOrder(event) {
         event.preventDefault();
         const { student_number } = this.state;
-        if(!!student_number){
-            axios.get(base_url + "/cart/get_student_orders?user_id=" + user_id + '&student_number=' + student_number)
+        if (!!student_number) {
+            axios.get(base_url + "/cart/get_student_orders?student_number=" + student_number)
                 .then(response => {
-                    console.log(response);
                     const orders = response.data.orders;
-                    this.setState({ orders, isOrderExist: orders.length > 0, isStudentExist: true });
+                    const student = response.data.student;
+                    this.setState({ orders, student, isOrderExist: orders.length > 0, isStudentExist: true });
                 })
                 .catch(error => {
                     console.log(error);
@@ -162,76 +202,101 @@ class Cart extends Component {
         }
     }
 
-    handleOnChangeBarcode(event) {
-        const barcode = event.target.value;
-        console.log(barcode);
-        this.setState({ barcode });
-    }
+    handleProductClicked(id) {
 
-    loadCart() {
-        axios.get("/admin/cart").then(res => {
-            const cart = res.data;
-            this.setState({ cart });
-        });
-    }
+        if (this.state.isStudentExist && !this.state.isOrderExist) {
+            const productFound = this.state.products.find(product => { return product.id === id });
+            let htmlResult = '';
+            for (let i = 0; i < productFound.product_options.length; i++) {
+                htmlResult = htmlResult + Cart.optionTemplate.replace('option_name', productFound.product_options[i].name);
+                let temp = '';
+                for (let j = 0; j < productFound.product_options[i].option_details.length; j++) {
+                    let detailHtml = Cart.detailTemplate;
+                    detailHtml = detailHtml.replace('id="id"', 'id="option' + productFound.product_options[i].id + '"');
+                    detailHtml = detailHtml.replace('name="name"', 'name="' + productFound.product_options[i].id + '"');
+                    detailHtml = detailHtml.replace('value="value"', 'value="' + productFound.product_options[i].option_details[j].id + '"');
+                    detailHtml = detailHtml.replace('detail_name', productFound.product_options[i].option_details[j].name + ' +' + window.APP.currency_symbol + productFound.product_options[i].option_details[j].extra_price);
 
-    handleScanBarcode(event) {
-        event.preventDefault();
-        const { barcode } = this.state;
-        if (!!barcode) {
-            axios
-                .post("/admin/cart", { barcode })
-                .then(res => {
-                    this.loadCart();
-                    this.setState({ barcode: "" });
-                })
-                .catch(err => {
-                    Swal.fire("Error!", err.response.data.message, "error");
-                });
-        }
-    }
+                    if (productFound.product_options[i].option_details[j].name !== 'None') {
+                        detailHtml = detailHtml.replace('checked', '');
+                    }
 
-    handleChangeQty(product_id, qty) {
-        const cart = this.state.cart.map(c => {
-            if (c.id === product_id) {
-                c.pivot.quantity = qty;
+                    temp = temp + detailHtml;
+                }
+
+                htmlResult = htmlResult.replace('option_field', temp);
             }
-            return c;
-        });
 
-        this.setState({ cart });
+            let html = '<p>' + productFound.description + '</p><p>' + window.APP.currency_symbol + productFound.price + '</p>' + htmlResult + Cart.noteTemplate;
 
-        axios
-            .post("/admin/cart/change-qty", { product_id, quantity: qty })
-            .then(res => { })
-            .catch(err => {
-                Swal.fire("Error!", err.response.data.message, "error");
+            window.SwalWithBootstrap.fire({
+                title: productFound.name,
+                imageWidth: 300,
+                imageHeight: 200,
+                imageUrl: productFound.media_path === null ? main_server_url + '/storage/defaults/product.png' : main_server_url + '/' + productFound.media_path,
+                showCancelButton: true,
+                reverseButtons: true,
+                html: html,
+                preConfirm: () => {
+                    let note = SwalWithBootstrap.getPopup().querySelector('#note').value;
+                    let data = {
+                        note: note,
+                        price: parseFloat(productFound.price).toFixed(2),
+                        options: [],
+                    }
+
+                    for (let i = 0; i < productFound.product_options.length; i++) {
+                        let input = SwalWithBootstrap.getPopup().querySelector('#option' + productFound.product_options[i].id + ':checked').value;
+                        data.options.push({
+                            [productFound.product_options[i].id]: input,
+                        });
+                        let details = productFound.product_options[i].option_details;
+                        let detailFound = details.find(detail => { return detail.id == input });
+                        data.price = (parseFloat(data.price) + parseFloat(detailFound.extra_price)).toFixed(2);
+                    }
+
+                    return data;
+                },
+            }).then((swalResult) => {
+                let value = swalResult.value;
+
+                let orderDetail = {
+                    product_id: productFound.id,
+                    product_options: value.options,
+                    price: value.price,
+                    notes: value.note,
+                }
+
+                let orders = this.state.newOrder;
+                orders.push(orderDetail);
+
+                let total = (parseFloat(this.state.total) + parseFloat(value.price)).toFixed(2);
+                console.log(total);
+
+                this.setState({ newOrder: orders, total: total });
             });
-    }
 
-    getTotal(cart) {
-        const total = cart.map(c => c.pivot.quantity * c.price);
-        return sum(total).toFixed(2);
-    }
+        } else {
+            if (this.state.isOrderExist) {
+                window.SwalWithBootstrap.fire({
+                    title: 'Warning',
+                    text: 'The student has order haven\'t complete.',
+                    icon: 'warning',
+                });
+            } else {
+                window.SwalWithBootstrap.fire({
+                    title: 'Warning',
+                    text: 'Please enter a student number first.',
+                    icon: 'warning',
+                });
+            }
+        }
 
-    handleClickDelete(product_id) {
-        axios
-            .post("/admin/cart/delete", { product_id, _method: "DELETE" })
-            .then(res => {
-                const cart = this.state.cart.filter(c => c.id !== product_id);
-                this.setState({ cart });
-            });
-    }
-
-    handleEmptyCart() {
-        axios.post("/admin/cart/empty", { _method: "DELETE" }).then(res => {
-            this.setState({ cart: [] });
-        });
     }
 
     handleChangeSearch(event) {
         const search = event.target.value;
-        this.setState({ search });
+        this.setState({ search, products: this.state.allProducts });
     }
 
     handleSeach(event) {
@@ -240,63 +305,37 @@ class Cart extends Component {
         }
     }
 
-    addProductToCart(barcode) {
+    handleOnChangeBarcode(event) {
+        const barcode = event.target.value;
+        this.setState({ barcode, products: this.state.allProducts });
+    }
 
-        if(!this.state.isOrderExist){
+    handleScanBarcode(event) {
+        
+        if(event.keyCode === 13){
 
-            if(!this.state.isStudentExist){
-                window.SwalWithBootstrap.fire({
-                    title: 'Warning',
-                    text: 'Please enter a valid student number first.',
-                    icon: 'warning',
+            const barcode = this.state.barcode;
+            if(!!barcode){
+
+                window.axios.get(base_url + '/cart/get_products_barcode?barcode=' + barcode).then(response => {
+                    const products = response.data.products;
+                    this.setState({products});
+                }).catch(error => {
+                    console.log(error);
+                    window.SwalWithBootstrap.fire({
+                        title: 'Error',
+                        html: error.response.data.message,
+                        icon: 'error',
+                    });
                 });
+
             }
 
         }
-
-        // let product = this.state.products.find(p => p.barcode === barcode);
-        // if (!!product) {
-        //     // if product is already in cart
-        //     let cart = this.state.cart.find(c => c.id === product.id);
-        //     if (!!cart) {
-        //         // update quantity
-        //         this.setState({
-        //             cart: this.state.cart.map(c => {
-        //                 if (c.id === product.id && product.quantity > c.pivot.quantity) {
-        //                     c.pivot.quantity = c.pivot.quantity + 1;
-        //                 }
-        //                 return c;
-        //             })
-        //         });
-        //     } else {
-        //         if (product.quantity > 0) {
-        //             product = {
-        //                 ...product,
-        //                 pivot: {
-        //                     quantity: 1,
-        //                     product_id: product.id,
-        //                     user_id: 1
-        //                 }
-        //             };
-        //
-        //             this.setState({ cart: [...this.state.cart, product] });
-        //         }
-        //     }
-        //
-        //     axios
-        //         .post("/admin/cart", { barcode })
-        //         .then(res => {
-        //             // this.loadCart();
-        //             console.log(res);
-        //         })
-        //         .catch(err => {
-        //             Swal.fire("Error!", err.response.data.message, "error");
-        //         });
-        // }
     }
 
-    setCustomerId(event) {
-        this.setState({ customer_id: event.target.value });
+    handleEmptyOrder() {
+        this.setState({ newOrder: [], orders: [], student_number: '', student: {}, isStudentExist: false, isOrderExist: false });
     }
 
     handleClickSubmit() {
@@ -325,7 +364,7 @@ class Cart extends Component {
     }
 
     render() {
-        const { cart, products, customers, barcode, student_number, orders } = this.state;
+        const { cart, products, barcode, student_number, student, orders, newOrder, total } = this.state;
         return (
             <div className="container-fluid">
                 <div className="row">
@@ -345,107 +384,44 @@ class Cart extends Component {
                         </div>
                         <div className="row mb-2">
                             <div className="col">
-                                <form onSubmit={this.handleScanBarcode}>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        placeholder="Barcode"
-                                        value={barcode}
-                                        onChange={this.handleOnChangeBarcode}
-                                        disabled={(this.state.isOrderExist) ? 'disabled' : ''}
-                                    />
-                                </form>
+                                <input type="text"
+                                    className="form-control"
+                                    placeholder="Student Name"
+                                    value={(student && Object.keys(student).length === 0 && Object.getPrototypeOf(student) === Object.prototype) ? '' : student.first_name + ' ' + student.last_name}
+                                    disabled='disabled'
+                                />
                             </div>
-                            {/*<div className="col">*/}
-                            {/*    <select*/}
-                            {/*        className="form-control"*/}
-                            {/*        onChange={this.setCustomerId}*/}
-                            {/*    >*/}
-                            {/*        <option value="">Walking Customer</option>*/}
-                            {/*        {customers.map(cus => (*/}
-                            {/*            <option*/}
-                            {/*                key={cus.id}*/}
-                            {/*                value={cus.id}*/}
-                            {/*            >{`${cus.first_name} ${cus.last_name}`}</option>*/}
-                            {/*        ))}*/}
-                            {/*    </select>*/}
-                            {/*</div>*/}
                         </div>
                         <div className="user-cart">
                             <div className="card">
                                 <div className="card-body overflow-auto">
-                                    <Orders isOrderExist={orders.length !== 0} products={products} orders={orders} />
+                                    <Orders isOrderExist={this.state.isOrderExist} isStudentExist={this.state.isStudentExist} products={products} orders={orders} newOrder={newOrder} />
                                 </div>
-                                {/*<table className="table table-striped">*/}
-                                {/*    <thead>*/}
-                                {/*    <tr>*/}
-                                {/*        <th>Product Name</th>*/}
-                                {/*        <th>Quantity</th>*/}
-                                {/*        <th className="text-right">Price</th>*/}
-                                {/*    </tr>*/}
-                                {/*    </thead>*/}
-                                {/*    <tbody>*/}
-                                {/*    {cart.map(c => (*/}
-                                {/*        <tr key={c.id}>*/}
-                                {/*            <td>{c.name}</td>*/}
-                                {/*            <td>*/}
-                                {/*                <input*/}
-                                {/*                    type="text"*/}
-                                {/*                    className="form-control form-control-sm qty"*/}
-                                {/*                    value={c.pivot.quantity}*/}
-                                {/*                    onChange={event =>*/}
-                                {/*                        this.handleChangeQty(*/}
-                                {/*                            c.id,*/}
-                                {/*                            event.target.value*/}
-                                {/*                        )*/}
-                                {/*                    }*/}
-                                {/*                />*/}
-                                {/*                <button*/}
-                                {/*                    className="btn btn-danger btn-sm"*/}
-                                {/*                    onClick={() =>*/}
-                                {/*                        this.handleClickDelete(*/}
-                                {/*                            c.id*/}
-                                {/*                        )*/}
-                                {/*                    }*/}
-                                {/*                >*/}
-                                {/*                    <i className="fas fa-trash"></i>*/}
-                                {/*                </button>*/}
-                                {/*            </td>*/}
-                                {/*            <td className="text-right">*/}
-                                {/*                {window.APP.currency_symbol}{" "}*/}
-                                {/*                {(*/}
-                                {/*                    c.price * c.pivot.quantity*/}
-                                {/*                ).toFixed(2)}*/}
-                                {/*            </td>*/}
-                                {/*        </tr>*/}
-                                {/*    ))}*/}
-                                {/*    </tbody>*/}
-                                {/*</table>*/}
                             </div>
                         </div>
 
                         <div className="row">
                             <div className="col">Total:</div>
                             <div className="col text-right">
-                                {window.APP.currency_symbol} {this.getTotal(cart)}
+                                {window.APP.currency_symbol} {total}
                             </div>
                         </div>
-                        <div className="row">
+                        <div className="row mb-4">
                             <div className="col">
                                 <button
                                     type="button"
                                     className="btn btn-danger btn-block"
-                                    onClick={this.handleEmptyCart}
-                                    disabled={!cart.length}
+                                    onClick={this.handleEmptyOrder}
+                                    disabled={(newOrder.length !== 0 || orders.length !== 0 || this.state.isStudentExist) ? '' : 'disabled'}
                                 >
-                                    Cancel
+                                    Reset
                                 </button>
                             </div>
                             <div className="col">
                                 <button
                                     type="button"
                                     className="btn btn-primary btn-block"
-                                    disabled={!cart.length}
+                                    disabled={(newOrder.length !== 0 || orders.length !== 0) ? '' : 'disabled'}
                                     onClick={this.handleClickSubmit}
                                 >
                                     Submit
@@ -453,7 +429,7 @@ class Cart extends Component {
                             </div>
                         </div>
                     </div>
-                    <div className="col-lg-6">
+                    <div className="col-lg-6 mb-4">
                         <div className="mb-2">
                             <input
                                 type="text"
@@ -464,15 +440,25 @@ class Cart extends Component {
                                 disabled={(this.state.isOrderExist ? 'disabled' : '')}
                             />
                         </div>
+                        <div className="mb-2">
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Barcode"
+                                onChange={this.handleOnChangeBarcode}
+                                onKeyDown={this.handleScanBarcode}
+                                disabled={(this.state.isOrderExist) ? 'disabled' : ''}
+                            />
+                        </div>
                         <div className="order-product">
-                            {products.map(p => (
+                            {products.map(product => (
                                 <div
-                                    onClick={() => this.addProductToCart(p.barcode)}
-                                    key={p.id}
+                                    onClick={() => this.handleProductClicked(product.id)}
+                                    key={product.id}
                                     className="item"
                                 >
-                                    <img src={p.media_path !== null ? main_server_url + '/' + p.media_path : main_server_url + '/storage/defaults/product.png'} alt="" />
-                                    <h5>{p.name}</h5>
+                                    <img src={product.media_path !== null ? main_server_url + '/' + product.media_path : main_server_url + '/storage/defaults/product.png'} alt="" />
+                                    <h5>{product.name}</h5>
                                 </div>
                             ))}
                         </div>

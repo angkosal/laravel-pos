@@ -38,31 +38,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders/{order_id}/details', [OrderController::class, 'details'])->name('orders.details');
 
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-    Route::post('/cart', [CartController::class, 'store'])->name('cart.store');
-    Route::post('/cart/change-qty', [CartController::class, 'changeQty']);
-    Route::delete('/cart/delete', [CartController::class, 'delete']);
-    Route::delete('/cart/empty', [CartController::class, 'empty']);
     Route::get('/cart/products', [CartController::class, 'getProducts']);
-
-    Route::get('/cart/products', [CartController::class, 'getProducts'])->withoutMiddleware(['auth']);
-    Route::get('/cart/get_student_orders', [CartController::class, 'getStudentOrders'])->withoutMiddleware(['auth']);
-});
-
-Route::get('/test', function () {
-    $productIds = \App\Models\Store::find(1)->products()->pluck('id')->toArray();
-    $orders = Order::whereHas('student', function ($query) {
-        $query->where('student_number', '65300');
-    })
-        ->whereHas('orderDetails', function ($query) use ($productIds) {
-            $query->whereIn('product_id', $productIds);
-        })
-        ->get();
-
-    foreach ($orders as $order) {
-        $details = \App\Models\OrderDetail::where('order_id', $order->id)->whereIn('product_id', $productIds)->get();
-        $orders->find($order->id)->order_details = $details;
-
-    }
-
-    dd($orders);
+    Route::get('/cart/get_student_orders', [CartController::class, 'getStudentOrders']);
+    Route::get('cart/get_products_barcode', [CartController::class, 'getProductsByBarcode']);
 });
