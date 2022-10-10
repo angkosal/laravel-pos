@@ -83,8 +83,8 @@ class CartController extends Controller
                 $query->whereIn('product_id', $productIds)->where('is_pickup', false);
             })
             ->where('status', '>=', Order::PAYMENT_SUCCESS)
-//            ->whereDate('pick_up_start', '>=', $now)
-//            ->whereDate('pick_up_end', '<=', $now)
+            ->whereDate('pick_up_start', '>=', $now)
+            ->whereDate('pick_up_end', '<=', $now)
             ->get();
 
         foreach ($orders as $order) {
