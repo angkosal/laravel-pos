@@ -10,14 +10,17 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}" defer></script>
+    <!-- <script src="{{ asset('js/app.js') }}" defer></script> -->
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
     <!-- Styles -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <!-- <link href="{{ asset('css/app.css') }}" rel="stylesheet"> -->
+
+    <!-- Scripts -->
+    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
 <body>
     <div id="app">
@@ -77,4 +80,32 @@
         </main>
     </div>
 </body>
+
+@if(Session::get('swal-success'))
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        SwalWithBootstrap.fire({
+            title: 'Success',
+            html: '{{ Session::pull("swal-success") }}',
+            icon: 'success',
+            showConfirmButton: false,
+            timer: 1000,
+        });
+    });
+</script>
+@endif
+
+@if(Session::get('swal-warning'))
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        SwalWithBootstrap.fire({
+            title: 'Warning',
+            html: '{{ Session::pull("swal-warning") }}',
+            icon: 'warning',
+            showConfirmButton: true,
+        });
+    });
+</script>
+@endif
+
 </html>

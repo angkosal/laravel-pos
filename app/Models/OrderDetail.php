@@ -6,11 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Payment extends Model
+class OrderDetail extends Model
 {
     use HasFactory, SoftDeletes;
-
-    const STATUS_PENDING = 1, STATUS_FAILURE = 2, STATUS_ABORT = 3, STATUS_SUCCESS = 4;
 
     /**
      * The attributes that are mass assignable.
@@ -19,19 +17,28 @@ class Payment extends Model
      */
     protected $fillable = [
         'order_id',
-        'payment_type_id',
-        'payment_detail_2c2p_id',
-        'payment_detail_stripe_id',
-        'amount',
-        'status',
-        'is_sandbox_payment',
+        'product_id',
+        'product_options',
+        'price',
+        'notes',
+        'is_pickup',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'product_options' => 'array',
     ];
 
     public function order(){
         return $this->belongsTo(Order::class);
     }
 
-    public function paymentType(){
-        return $this->belongsTo(PaymentType::class);
+    public function product(){
+        return $this->belongsTo(Product::class);
     }
+
 }

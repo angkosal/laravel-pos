@@ -11,11 +11,12 @@
     <div class="sidebar">
         <!-- Sidebar user (optional) -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-            <div class="image">
-                <img src="{{ auth()->user()->getAvatar() }}" class="img-circle elevation-2" alt="User Image">
+            <div class="image align-self-center">
+                <img src="{{ auth()->user()->store->logo_path ? '' : config('app.main_system_url') . '/storage/defaults/store.png' }}" onerror="this.src = '{{ asset('/storage/defaults/error.png') }}'" class="bg-white elevation-2" alt="User Image">
             </div>
             <div class="info">
-                <a href="#" class="d-block">{{ auth()->user()->getFullname() }}</a>
+                <p class="mb-0 text-white">{{ auth()->user()->getFullname() }}</p>
+                <p class="mb-0 text-white">{{ auth()->user()->store->name }}</p>
             </div>
         </div>
 
@@ -29,7 +30,7 @@
                     </a>
                 </li>
                 <li class="nav-item has-treeview">
-                    <a href="{{ route('products.index') }}" class="nav-link {{ activeSegment('products') }}">
+                    <a href="{{ route('products') }}" class="nav-link {{ activeSegment('products') }}">
                         <i class="nav-icon fas fa-th-large"></i>
                         <p>Products</p>
                     </a>
@@ -41,23 +42,23 @@
                     </a>
                 </li>
                 <li class="nav-item has-treeview">
-                    <a href="{{ route('orders.index') }}" class="nav-link {{ activeSegment('orders') }}">
+                    <a href="{{ route('orders') }}" class="nav-link {{ activeSegment('orders') }}">
                         <i class="nav-icon fas fa-cart-plus"></i>
                         <p>Orders</p>
                     </a>
                 </li>
-                <li class="nav-item has-treeview">
+                {{--<li class="nav-item has-treeview">
                     <a href="{{ route('customers.index') }}" class="nav-link {{ activeSegment('customers') }}">
                         <i class="nav-icon fas fa-users"></i>
                         <p>Customers</p>
                     </a>
-                </li>
-                <li class="nav-item has-treeview">
+                </li>--}}
+                {{--<li class="nav-item has-treeview">
                     <a href="{{ route('settings.index') }}" class="nav-link {{ activeSegment('settings') }}">
                         <i class="nav-icon fas fa-cogs"></i>
                         <p>Settings</p>
                     </a>
-                </li>
+                </li>--}}
                 <li class="nav-item">
                     <a href="#" class="nav-link" onclick="document.getElementById('logout-form').submit()">
                         <i class="nav-icon fas fa-sign-out-alt"></i>

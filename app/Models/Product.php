@@ -9,10 +9,23 @@ class Product extends Model
     protected $fillable = [
         'name',
         'description',
-        'image',
+        'media_path',
         'barcode',
         'price',
-        'quantity',
-        'status'
+        'status',
+        'store_id',
+        'category_id',
     ];
+
+    public function Store(){
+        return $this->belongsTo(Store::class);
+    }
+
+    public function productCategory(){
+        return $this->belongsTo(ProductCategory::class, 'category_id');
+    }
+
+    public function productOptions(){
+        return $this->hasMany(ProductOption::class);
+    }
 }
