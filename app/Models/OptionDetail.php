@@ -21,7 +21,14 @@ class OptionDetail extends Model
         'product_option_id',
     ];
 
-    public function productOptions(){
+    /**
+     * Get the product option that owns the option detail.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function productOptions()
+    {
         return $this->belongsTo(ProductOption::class);
     }
+
 }

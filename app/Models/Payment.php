@@ -10,6 +10,11 @@ class Payment extends Model
 {
     use HasFactory, SoftDeletes;
 
+    /**
+     * Constant variables for payment status.
+     *
+     * @var int
+     */
     const STATUS_PENDING = 1, STATUS_FAILURE = 2, STATUS_ABORT = 3, STATUS_SUCCESS = 4;
 
     /**
@@ -27,11 +32,23 @@ class Payment extends Model
         'is_sandbox_payment',
     ];
 
-    public function order(){
+    /**
+     * Get the order that owns the payment.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function order()
+    {
         return $this->belongsTo(Order::class);
     }
 
-    public function paymentType(){
+    /**
+     * Get the payment type that owns the payment.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function paymentType()
+    {
         return $this->belongsTo(PaymentType::class);
     }
 }

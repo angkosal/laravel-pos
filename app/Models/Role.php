@@ -10,6 +10,11 @@ class Role extends Model
 {
     use HasFactory, SoftDeletes;
 
+    /**
+     * Constant variables for user role.
+     *
+     * @var int
+     */
     const ROLE_ADMIN = 1, ROLE_SELLER = 2;
 
     /**
@@ -22,6 +27,11 @@ class Role extends Model
         'description',
     ];
 
+    /**
+     * Get the users for the role.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function users(){
         return $this->hasMany(User::class);
     }

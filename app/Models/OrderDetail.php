@@ -33,11 +33,23 @@ class OrderDetail extends Model
         'product_options' => 'array',
     ];
 
-    public function order(){
+    /**
+     * Get the order that owns the order detail.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function order()
+    {
         return $this->belongsTo(Order::class);
     }
 
-    public function product(){
+    /**
+     * Get the product that owns the order detail.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function product()
+    {
         return $this->belongsTo(Product::class);
     }
 

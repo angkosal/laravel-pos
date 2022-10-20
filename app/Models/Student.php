@@ -48,6 +48,11 @@ class Student extends Model
         'email_verified_at' => 'datetime',
     ];
 
+    /**
+     * Get the orders for the student.
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     *
+     */
     public function orders()
     {
         return $this->hasMany(Order::class);

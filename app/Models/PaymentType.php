@@ -10,6 +10,11 @@ class PaymentType extends Model
 {
     use HasFactory, SoftDeletes;
 
+    /**
+     * Constant variables for payment type.
+     *
+     * @var int
+     */
     const PAYMENT_2C2P = 1, PAYMENT_STRIPE = 2, PAYMENT_CASH = 3;
 
     /**
@@ -22,7 +27,13 @@ class PaymentType extends Model
         'description',
     ];
 
-    public function payments(){
+    /**
+     * Get the payments for the payment type.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function payments()
+    {
         return $this->hasMany(Payment::class);
     }
 }

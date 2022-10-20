@@ -22,10 +22,20 @@ class Store extends Model
         'user_id',
     ];
 
+    /**
+     * Get the user that owns the store.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function user(){
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * Get the products for the store.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function products(){
         return $this->hasMany(Product::class);
     }
