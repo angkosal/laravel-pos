@@ -7,7 +7,6 @@ use App\Models\Customer;
 use App\Models\OrderDetail;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
@@ -29,7 +28,6 @@ class HomeController extends Controller
      */
     public function index()
     {
-
         $user = User::find(Auth::user()->id);
         $productIds = $user->store->products()->pluck('id')->toArray();
         $ordersCount = Order::whereHas('orderDetails', function ($query) use ($productIds) {
@@ -44,6 +42,6 @@ class HomeController extends Controller
         })->where('is_pickup', true)->count();
 
         return view('home', compact('ordersCount', 'productsPickUpCount', 'productsPickedUpCount'));
-
     }
+
 }

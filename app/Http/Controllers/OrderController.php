@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\OrderStoreRequest;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\User;
@@ -11,8 +10,13 @@ use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
-    public function index() {
-
+    /**
+     * Show all the orders.
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function index()
+    {
         $user = User::find(Auth::user()->id);
         $productIds = $user->store->products()->pluck('id')->toArray();
         $orders = Order::whereHas('orderDetails', function ($query) use ($productIds) {
@@ -22,7 +26,14 @@ class OrderController extends Controller
         return view('orders.index', compact('orders'));
     }
 
-    public function details(Request $request){
+    /**
+     * Show the given order's detail.
+     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function details(Request $request)
+    {
         $user = User::find(Auth::user()->id);
         $productIds = $user->store->products()->pluck('id')->toArray();
         $order = Order::find($request->order_id);

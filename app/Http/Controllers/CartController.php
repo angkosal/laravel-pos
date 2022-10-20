@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\ProductResource;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Payment;
@@ -11,12 +10,17 @@ use App\Models\Product;
 use App\Models\Student;
 use App\Models\User;
 use Carbon\Carbon;
-use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
+    /**
+     * Show the POS page.
+     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\Response
+     */
     public function index(Request $request)
     {
         if ($request->wantsJson()) {
@@ -27,7 +31,14 @@ class CartController extends Controller
         return view('cart.index', ['user_id' => Auth::user()->id]);
     }
 
-    public function getProducts(Request $request){
+    /**
+     * Get the given product's detail.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getProducts(Request $request)
+    {
         $user = User::find(Auth::user()->id);
         $products = Product::where('store_id', $user->store->id)
             ->where('status', true)
@@ -43,7 +54,14 @@ class CartController extends Controller
         ]);
     }
 
-    public function getProductsByBarcode(Request $request){
+    /**
+     * Get the products by a barcode.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getProductsByBarcode(Request $request)
+    {
         $user = User::find(Auth::user()->id);
         $products = Product::where('store_id', $user->store->id)
             ->where('barcode', $request->barcode)
@@ -60,7 +78,14 @@ class CartController extends Controller
         ]);
     }
 
-    public function getStudentOrders(Request $request){
+    /**
+     * Get the given student's order.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getStudentOrders(Request $request)
+    {
         $student_number = $request->student_number;
         $user = User::find(Auth::user()->id);
         $productIds = $user->store->products()->pluck('id')->toArray();
@@ -90,7 +115,6 @@ class CartController extends Controller
         foreach ($orders as $order) {
             $details = OrderDetail::where('order_id', $order->id)->whereIn('product_id', $productIds)->get();
             $orders->find($order->id)->order_details = $details;
-
         }
 
         return response()->json([
@@ -99,9 +123,14 @@ class CartController extends Controller
         ]);
     }
 
+    /**
+     * Update the student's existing order or create a new order.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function store(Request $request)
     {
-
         $request->validate([
             'isNewOrder' => 'required|boolean',
             'student_number' => 'required',
@@ -132,8 +161,6 @@ class CartController extends Controller
                 'status' => Payment::STATUS_SUCCESS,
                 'is_sandbox_payment' => $student->is_a_sandbox_student,
             ]);
-
-            //dd($orderDetails);
 
             foreach($orderDetails as $detail){
                 $order->orderDetails()->create([
@@ -171,36 +198,7 @@ class CartController extends Controller
             }
 
             return response()->json(['message' => 'Orders update successful.']);
-
         }
-
-        /*$request->validate([
-            'barcode' => 'required|exists:products,barcode',
-        ]);
-        $barcode = $request->barcode;
-
-        $product = Product::where('barcode', $barcode)->first();
-        $cart = $request->user()->cart()->where('barcode', $barcode)->first();
-        if ($cart) {
-            // check product quantity
-            if($product->quantity <= $cart->pivot->quantity) {
-                return response([
-                    'message' => 'Product available only: '. $product->quantity,
-                ], 400);
-            }
-            // update only quantity
-            $cart->pivot->quantity = $cart->pivot->quantity + 1;
-            $cart->pivot->save();
-        } else {
-            if($product->quantity < 1) {
-                return response([
-                    'message' => 'Product out of stock',
-                ], 400);
-            }
-            $request->user()->cart()->attach($product->id, ['quantity' => 1]);
-        }
-
-        return response('', 204);*/
     }
 
 }
