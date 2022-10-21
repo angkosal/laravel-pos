@@ -17,28 +17,28 @@
                   <div class="col-5">
                         <ul class="list-group">
                               <li class="list-group-item d-flex justify-content-between">
-                                    <p class="mb-0">Product Name</p>
+                                    <p class="mb-0">{{ __('Product Name') }}</p>
                                     <p class="mb-0">{{ $product->name }}</p>
                               </li>
                               <li class="list-group-item d-flex justify-content-between">
-                                    <p class="mb-0">Category</p>
+                                    <p class="mb-0">{{ __('Category') }}</p>
                                     <p class="mb-0">{{ $product->productCategory->name }}</p>
                               </li>
                               <li class="list-group-item d-flex justify-content-between">
-                                    <p class="mb-0">Description</p>
+                                    <p class="mb-0">{{ __('Description') }}</p>
                                     <p class="mb-0">{{ $product->description ?: 'None' }}</p>
                               </li>
                               <li class="list-group-item d-flex justify-content-between">
-                                    <p class="mb-0">Price</p>
-                                    <p class="mb-0">{{ config('settings.currency_symbol') }}{{ $product->price }}</p>
+                                    <p class="mb-0">{{ __('Price') }}</p>
+                                    <p class="mb-0">{{ config('settings.currency_symbol') . $product->price }}</p>
                               </li>
                               <li class="list-group-item d-flex justify-content-between">
-                                    <p class="mb-0">Barcode</p>
+                                    <p class="mb-0">{{ __('Barcode') }}</p>
                                     <p class="mb-0">{{ $product->barcode ?: 'None' }}</p>
                               </li>
                               <li class="list-group-item d-flex justify-content-between">
-                                    <p class="mb-0">Status</p>
-                                  <div class="badge {{ $product->status ? 'badge-success' : 'badge-danger' }}">{{ $product->status ? 'Available' : 'Unavailable' }}</div>
+                                    <p class="mb-0">{{ __('Status') }}</p>
+                                    <div class="badge {{ $product->status ? 'badge-success' : 'badge-danger' }}">{{ $product->status ? 'Available' : 'Unavailable' }}</div>
                               </li>
                         </ul>
                   </div>
@@ -46,11 +46,11 @@
                   <div class="col-5">
                         <ul class="list-group">
                               <li class="list-group-item d-flex justify-content-between">
-                                    <p class="mb-0">Store Name</p>
+                                    <p class="mb-0">{{ __('Store Name') }}</p>
                                     <p class="mb-0">{{ $product->store->name }}</p>
                               </li>
                               <li class="list-group-item d-flex justify-content-between">
-                                    <p class="mb-0">Description</p>
+                                    <p class="mb-0">{{ __('Description') }}</p>
                                     <p class="mb-0">{{ $product->store->description }}</p>
                               </li>
                         </ul>
@@ -62,7 +62,7 @@
 
                         <div class="card">
                               <div class="card-header">
-                                    Product Options
+                                    {{ __('Product Options') }}
                               </div>
 
                               <div class="card-body">
@@ -98,7 +98,7 @@
 
             <div class="row mb-0">
                   <div class="col-md-8 offset-md-3">
-                        <a class="btn btn-primary" href="{{ route('products') }}">Back to Product list</a>
+                        <a class="btn btn-primary" href="{{ route('products') }}">{{ __('Back to Product list') }}</a>
                   </div>
             </div>
       </div>
