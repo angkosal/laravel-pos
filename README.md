@@ -2,6 +2,8 @@
     <h1 align="center">POS System Using Laravel</h1>
 </p>
 
+Notice: This branch is modified to match [E-canteen Management System](https://github.com/weiliang79/fyp-e-canteen-management-system) workflow, if need to view the default POS system with upgraded from Laravel Mix to Vite, please go to [default branch](https://github.com/weiliang79/fyp-laravel-pos/tree/default).
+
 The project was created while recording video "[Create POS System Using Laravel](https://www.youtube.com/watch?v=Y_NRk0lOOJc&list=PL2hV0q47BY-G9f5xG9Vq-wGjSyy1BekOv)"
 
 ## Installation
