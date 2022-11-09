@@ -68,8 +68,8 @@ class LoginController extends Controller
             Auth::logout();
             return redirect()->route('login')->with('swal-warning', 'Please verify the account and create store information at the main system first before login.');
         }
-
-        if ($user->store->count() === 0) {
+        
+        if ($user->store === null) {
             Auth::logout();
             return redirect()->route('login')->with('swal-warning', 'Please create store information at the main system first before login.');
         }
