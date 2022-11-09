@@ -62,8 +62,18 @@ class LoginController extends Controller
         if ($user->isAdmin()) {
             Auth::logout();
             return redirect()->route('login')->with('swal-warning', 'Only Food Seller can be login.');
-            //return redirect()->route('admin.home')->with('swal-success', 'Login Successful.');
         }
+
+        if ($user->email === null || $user->email_verified_at === null) {
+            Auth::logout();
+            return redirect()->route('login')->with('swal-warning', 'Please verify the account and create store information at the main system first before login.');
+        }
+
+        if ($user->store->count() === 0) {
+            Auth::logout();
+            return redirect()->route('login')->with('swal-warning', 'Please create store information at the main system first before login.');
+        }
+
         return redirect()->route('home')->with('swal-success', 'Login Successful.');
     }
 
