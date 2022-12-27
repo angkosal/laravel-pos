@@ -88,6 +88,7 @@ class Cart extends Component {
         });
 
         this.setState({ cart });
+        if (!qty) return;
 
         axios
             .post("/admin/cart/change-qty", { product_id, quantity: qty })

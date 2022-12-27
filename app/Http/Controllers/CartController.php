@@ -55,9 +55,16 @@ class CartController extends Controller
             'quantity' => 'required|integer|min:1',
         ]);
 
+        $product = Product::find($request->product_id);
         $cart = $request->user()->cart()->where('id', $request->product_id)->first();
 
         if ($cart) {
+            // check product quantity
+            if ($product->quantity < $request->quantity) {
+                return response([
+                    'message' => 'Product available only: ' . $product->quantity,
+                ], 400);
+            }
             $cart->pivot->quantity = $request->quantity;
             $cart->pivot->save();
         }
