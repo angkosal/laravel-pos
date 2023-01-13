@@ -18,7 +18,8 @@
                     <th>Name</th>
                     <th>Image</th>
                     <th>Barcode</th>
-                    <th>Price</th>
+                    <th>Purchase Price</th>
+                    <th>Selling Price</th>
                     <th>Quantity</th>
                     <th>Status</th>
                     <th>Created At</th>
@@ -33,7 +34,8 @@
                     <td>{{$product->name}}</td>
                     <td><img class="product-img" src="{{ Storage::url($product->image) }}" alt=""></td>
                     <td>{{$product->barcode}}</td>
-                    <td>{{$product->price}}</td>
+                    <td>{{$product->purchase_price}}</td>
+                    <td>{{$product->selling_price}}</td>
                     <td>{{$product->quantity}}</td>
                     <td>
                         <span

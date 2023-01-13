@@ -11,17 +11,16 @@
 *** Sprint-1 (13/01/2023 - 19/01/2023)
 **** Sprint Goal
 ***** Release MVP
-**** Sprint Backlog [0%] [0/4]
+**** Sprint Backlog [0/3]
 ***** TODO Generate invoice pdf and print
 ***** TODO Total discount in order
 ***** TODO Client computer Setup script
 **** In-progress
-***** IN_PROGRESS Add "purchase_price" and "selling_price"  in product table [0%] [0/4]
-****** IN_PROGRESS create a migration and add two field in product table
-****** TODO insert pruchase_price and selling_price
-****** TODO show on product list
-****** TODO show on cart
 **** Increment
-
+***** DONE Add "purchase_price" and "selling_price"  in product table [100%] [4/4]
+****** DONE create a migration and add two field in product table
+****** DONE insert and update pruchase_price and selling_price
+****** DONE show on product list
+****** DONE show on cart
 * LaraTrade Docs
 **

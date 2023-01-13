@@ -60,11 +60,35 @@
                 @enderror
             </div>
 
+            <!-- <div class="form-group">
+                 <label for="price">Price</label>
+                 <input type="text" name="price" class="form-control @error('price') is-invalid @enderror" id="price"
+                 placeholder="price" value="{{ old('price', $product->price) }}">
+                 @error('price')
+                 <span class="invalid-feedback" role="alert">
+                 <strong>{{ $message }}</strong>
+                 </span>
+                 @enderror
+                 </div> -->
+
+
             <div class="form-group">
-                <label for="price">Price</label>
-                <input type="text" name="price" class="form-control @error('price') is-invalid @enderror" id="price"
-                    placeholder="price" value="{{ old('price', $product->price) }}">
-                @error('price')
+                <label for="purchase_price">Purchase Price</label>
+                <input type="text" name="purchase_price" class="form-control @error('purchase_price') is-invalid @enderror" id="purchase_price"
+                    placeholder="Purchase price..." value="{{ old('purchase_price', $product->purchase_price) }}">
+                @error('purchase_price')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+                @enderror
+            </div>
+
+
+            <div class="form-group">
+                <label for="selling_price">Selling Price</label>
+                <input type="text" name="selling_price" class="form-control @error('selling_price') is-invalid @enderror" id="selling_price"
+                    placeholder="Selling price..." value="{{ old('selling_price',  $product->selling_price) }}">
+                @error('selling_price')
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
                 </span>

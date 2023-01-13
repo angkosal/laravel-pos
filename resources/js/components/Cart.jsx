@@ -99,7 +99,7 @@ class Cart extends Component {
     }
 
     getTotal(cart) {
-        const total = cart.map((c) => c.pivot.quantity * c.price);
+        const total = cart.map((c) => c.pivot.quantity * c.selling_price);
         return sum(total).toFixed(2);
     }
     handleClickDelete(product_id) {
@@ -274,7 +274,7 @@ class Cart extends Component {
                                             <td className="text-right">
                                                 {window.APP.currency_symbol}{" "}
                                                 {(
-                                                    c.price * c.pivot.quantity
+                                                    c.selling_price * c.pivot.quantity
                                                 ).toFixed(2)}
                                             </td>
                                         </tr>
