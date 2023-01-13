@@ -1,0 +1,27 @@
+#+title: Laratrade
+
+* LaraTrade PM
+** Backlog
+*** Auto barcode generation
+*** User authorization (user roles and permission)
+*** Inventory management (Stock)
+*** Income report
+*** Due management
+** Sprints
+*** Sprint-1 (13/01/2023 - 19/01/2023)
+**** Sprint Goal
+***** Release MVP
+**** Sprint Backlog [0%] [0/4]
+***** TODO Generate invoice pdf and print
+***** TODO Total discount in order
+***** TODO Client computer Setup script
+**** In-progress
+***** IN_PROGRESS Add "purchase_price" and "selling_price"  in product table [0%] [0/4]
+****** IN_PROGRESS create a migration and add two field in product table
+****** TODO insert pruchase_price and selling_price
+****** TODO show on product list
+****** TODO show on cart
+**** Increment
+
+* LaraTrade Docs
+**
