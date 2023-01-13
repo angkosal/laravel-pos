@@ -15,13 +15,14 @@
 ***** TODO Generate invoice pdf and print
 ***** TODO Client computer Setup script
 **** In-progress
-***** IN_PROGRESS Total discount in order [0%] [0/5]
-****** TODO create migration to add discount in orders table
-****** TODO Show dicount input field in cart page
-****** TODO Calculate grand total
-****** TODO insert dicount in orders table
-****** TODO Show grand total in order list
 **** Increment
+***** DONE Total discount in order [100%] [6/6]
+****** DONE create migration to add discount in orders table
+****** DONE Show dicount input field in cart page
+****** DONE Calculate grand total
+****** DONE insert discount in orders table
+****** DONE Show grand total in order list
+****** DONE Show discount in order list
 ***** DONE Add "purchase_price" and "selling_price"  in product table [100%] [4/4]
 ****** DONE create a migration and add two field in product table
 ****** DONE insert and update pruchase_price and selling_price

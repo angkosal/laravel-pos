@@ -14,12 +14,14 @@ class Cart extends Component {
             barcode: "",
             search: "",
             customer_id: "",
+            discount: 0
         };
 
         this.loadCart = this.loadCart.bind(this);
         this.handleOnChangeBarcode = this.handleOnChangeBarcode.bind(this);
         this.handleScanBarcode = this.handleScanBarcode.bind(this);
         this.handleChangeQty = this.handleChangeQty.bind(this);
+        this.handleOnChangeDiscount = this.handleOnChangeDiscount.bind(this);
         this.handleEmptyCart = this.handleEmptyCart.bind(this);
 
         this.loadProducts = this.loadProducts.bind(this);
@@ -47,6 +49,7 @@ class Cart extends Component {
         const query = !!search ? `?search=${search}` : "";
         axios.get(`/admin/products${query}`).then((res) => {
             const products = res.data.data;
+            console.log("Products", products);
             this.setState({ products });
         });
     }
@@ -125,6 +128,7 @@ class Cart extends Component {
         }
     }
 
+
     addProductToCart(barcode) {
         let product = this.state.products.find((p) => p.barcode === barcode);
         if (!!product) {
@@ -173,11 +177,18 @@ class Cart extends Component {
     setCustomerId(event) {
         this.setState({ customer_id: event.target.value });
     }
+
+
+    handleOnChangeDiscount(event) {
+        const discount = event.target.value || 0;
+        this.setState({ discount });
+    }
+
     handleClickSubmit() {
         Swal.fire({
             title: "Received Amount",
             input: "text",
-            inputValue: this.getTotal(this.state.cart),
+            inputValue: this.getTotal(this.state.cart) - this.state.discount,
             showCancelButton: true,
             confirmButtonText: "Send",
             showLoaderOnConfirm: true,
@@ -186,9 +197,11 @@ class Cart extends Component {
                     .post("/admin/orders", {
                         customer_id: this.state.customer_id,
                         amount,
+                        discount: this.state.discount
                     })
                     .then((res) => {
                         this.loadCart();
+                        this.setState({ "discount": 0 });
                         return res.data;
                     })
                     .catch((err) => {
@@ -288,6 +301,27 @@ class Cart extends Component {
                         <div className="col">Total:</div>
                         <div className="col text-right">
                             {window.APP.currency_symbol} {this.getTotal(cart)}
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col">Discount:</div>
+                        <div className="col text-right">
+
+                            <input
+                                type="text"
+                                name="discount"
+                                className="form-control form-control-sm qty text-right"
+                                value={this.state.discount}
+                                placeholder={this.state.discount}
+                                onChange={this.handleOnChangeDiscount}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="row">
+                        <div className="col">Grand total:</div>
+                        <div className="col text-right">
+                            {window.APP.currency_symbol} {this.getTotal(cart) - parseFloat(this.state.discount)}
                         </div>
                     </div>
                     <div className="row">

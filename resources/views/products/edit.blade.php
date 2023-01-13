@@ -60,16 +60,6 @@
                 @enderror
             </div>
 
-            <!-- <div class="form-group">
-                 <label for="price">Price</label>
-                 <input type="text" name="price" class="form-control @error('price') is-invalid @enderror" id="price"
-                 placeholder="price" value="{{ old('price', $product->price) }}">
-                 @error('price')
-                 <span class="invalid-feedback" role="alert">
-                 <strong>{{ $message }}</strong>
-                 </span>
-                 @enderror
-                 </div> -->
 
 
             <div class="form-group">

@@ -33,6 +33,7 @@
                     <th>ID</th>
                     <th>Customer Name</th>
                     <th>Total</th>
+                    <th>Discount</th>
                     <th>Received Amount</th>
                     <th>Status</th>
                     <th>To Pay</th>
@@ -45,6 +46,7 @@
                     <td>{{$order->id}}</td>
                     <td>{{$order->getCustomerName()}}</td>
                     <td>{{ config('settings.currency_symbol') }} {{$order->formattedTotal()}}</td>
+                    <td>{{ config('settings.currency_symbol') }} {{$order->discount}}</td>
                     <td>{{ config('settings.currency_symbol') }} {{$order->formattedReceivedAmount()}}</td>
                     <td>
                         @if($order->receivedAmount() == 0)
@@ -67,6 +69,7 @@
                     <th></th>
                     <th></th>
                     <th>{{ config('settings.currency_symbol') }} {{ number_format($total, 2) }}</th>
+                    <th>{{ config('settings.currency_symbol') }} {{ number_format($totalDiscount, 2) }}</th>
                     <th>{{ config('settings.currency_symbol') }} {{ number_format($receivedAmount, 2) }}</th>
                     <th></th>
                     <th></th>
