@@ -70,3 +70,4 @@ Rename or copy `.env.example` file to `.env` 1.`php artisan key:generate` to gen
 ![Customer list](https://raw.githubusercontent.com/angkosal/laravel-pos/master/screenshots/customer_list.png)
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/angkosal)
+# PharmacyPOS
