@@ -13,6 +13,14 @@ return [
     |
     */
 
+    //==========================================
+    // Product module messages
+    //==========================================
+    'title' => 'Products',
+
+    //==========================================
+    // Error handling messages
+    //==========================================
     'error_creating'    => 'Sorry, there a problem while creating product.',
     'success_creating'  => 'Success, you product have been created.',
     'error_updating'    => 'Sorry, there\'re a problem while updating product.',

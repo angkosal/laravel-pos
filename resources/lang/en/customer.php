@@ -13,10 +13,23 @@ return [
     |
     */
 
+    //==========================================
+    // Customers module messages
+    //==========================================
+    'title' => 'Customers',
+
+
+    //==========================================
+    // Error handling messages
+    //==========================================
     'error_creating'    => 'Sorry, there\'re a problem while creating customer.',
     'success_creating'   => 'Success, your customer have been created.',
     'error_updating'    => 'Sorry, there\'re a problem while updating customer.',
     'success_updating'  => 'Success, your customer have been updated.',
+
+    //==========================================
+    // General module messages
+    //==========================================
     'working'           => 'Working Customer',
     'Create_Customer'   => 'Create Customer',
     'First_Name'        => 'First Name',

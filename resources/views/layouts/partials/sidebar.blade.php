@@ -25,43 +25,43 @@
                 <li class="nav-item has-treeview">
                     <a href="{{route('home')}}" class="nav-link">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
-                        <p>Dashboard</p>
+                        <p>{{ __('dashboard.title') }}</p>
                     </a>
                 </li>
                 <li class="nav-item has-treeview">
                     <a href="{{ route('products.index') }}" class="nav-link {{ activeSegment('products') }}">
                         <i class="nav-icon fas fa-th-large"></i>
-                        <p>Products</p>
+                        <p>{{ __('product.title') }}</p>
                     </a>
                 </li>
                 <li class="nav-item has-treeview">
                     <a href="{{ route('cart.index') }}" class="nav-link {{ activeSegment('cart') }}">
                         <i class="nav-icon fas fa-cart-plus"></i>
-                        <p>Open POS</p>
+                        <p>{{ __('cart.title') }}</p>
                     </a>
                 </li>
                 <li class="nav-item has-treeview">
                     <a href="{{ route('orders.index') }}" class="nav-link {{ activeSegment('orders') }}">
                         <i class="nav-icon fas fa-cart-plus"></i>
-                        <p>Orders</p>
+                        <p>{{ __('order.title') }}</p>
                     </a>
                 </li>
                 <li class="nav-item has-treeview">
                     <a href="{{ route('customers.index') }}" class="nav-link {{ activeSegment('customers') }}">
                         <i class="nav-icon fas fa-users"></i>
-                        <p>Customers</p>
+                        <p>{{ __('customer.title') }}</p>
                     </a>
                 </li>
                 <li class="nav-item has-treeview">
                     <a href="{{ route('settings.index') }}" class="nav-link {{ activeSegment('settings') }}">
                         <i class="nav-icon fas fa-cogs"></i>
-                        <p>Settings</p>
+                        <p>{{ __('settings.title') }}</p>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="#" class="nav-link" onclick="document.getElementById('logout-form').submit()">
                         <i class="nav-icon fas fa-sign-out-alt"></i>
-                        <p>Logout</p>
+                        <p>{{ __('common.Logout') }}</p>
                         <form action="{{route('logout')}}" method="POST" id="logout-form">
                             @csrf
                         </form>

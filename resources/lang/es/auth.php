@@ -9,7 +9,7 @@ return [
     |
     | Las siguientes líneas de idioma se utilizan durante la autenticación para varios
     | mensajes que necesitamos mostrar al usuario. Eres libre de modificar
-    | estas líneas de idioma de acuerdo a los requisitos de tu aplicación.
+    | estas líneas de idioma según los requisitos de tu aplicación.
     |
     */
 

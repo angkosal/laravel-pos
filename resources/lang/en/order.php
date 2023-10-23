@@ -4,23 +4,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | OpenPos Cart Language Lines
+    | Orders Language Lines
     |--------------------------------------------------------------------------
     |
-    | The following language lines are used during cart for various
+    | The following language lines are used during Orders for various
     | messages that we need to display to the user. You are free to modify
     | these language lines according to your application's requirements.
     |
     */
 
     //==========================================
-    // Cart module messages
+    // Orders module messages
     //==========================================
-    'title' => 'Point Of Sale',
-
-    //==========================================
-    // Stock messages
-    //==========================================
-    'available' => 'Product available only: :quantity',
-    'outstock'  => 'Product out of stock',
+    'title' => 'Orders',
 ];

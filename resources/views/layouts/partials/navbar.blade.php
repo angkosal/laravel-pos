@@ -32,24 +32,24 @@
           <span class="badge badge-warning navbar-badge">15</span>
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-          <span class="dropdown-item dropdown-header">15 Notifications</span>
+          <span class="dropdown-item dropdown-header">{{ __('common.Notifications', ['total' => 15]) }}</span>
           <div class="dropdown-divider"></div>
           <a href="#" class="dropdown-item">
-            <i class="fas fa-envelope mr-2"></i> 4 new messages
-            <span class="float-right text-muted text-sm">3 mins</span>
+            <i class="fas fa-envelope mr-2"></i> {{ __('common.new_messages', ['total_msg' => 4]) }}
+            <span class="float-right text-muted text-sm">{{ __('common.no_mins', ['mins' => 3]) }}</span>
           </a>
           <div class="dropdown-divider"></div>
           <a href="#" class="dropdown-item">
-            <i class="fas fa-users mr-2"></i> 8 friend requests
-            <span class="float-right text-muted text-sm">12 hours</span>
+            <i class="fas fa-users mr-2"></i> {{ __('common.total_friend_request', ['total' => 8]) }}
+            <span class="float-right text-muted text-sm">{{ __('common.no_hours', ['hours' => 12]) }}</span>
           </a>
           <div class="dropdown-divider"></div>
           <a href="#" class="dropdown-item">
-            <i class="fas fa-file mr-2"></i> 3 new reports
-            <span class="float-right text-muted text-sm">2 days</span>
+            <i class="fas fa-file mr-2"></i> {{ __('common.total_new_reports', ['total' => 3]) }}
+            <span class="float-right text-muted text-sm">{{ __('common.no_days', ['days' => 2]) }}</span>
           </a>
           <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
+          <a href="#" class="dropdown-item dropdown-footer">{{ __('common.see_all') }}</a>
         </div>
       </li>
       <li class="nav-item">
