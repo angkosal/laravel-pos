@@ -22,6 +22,8 @@ return [
     'Update'        => 'Update',
     'Created_At'    => 'Created At',
     'Actions'       => 'Actions',
+    'Active'        => 'Active',
+    'Inactive'      => 'Inactive',
 
     //==========================================
     // Footer messages

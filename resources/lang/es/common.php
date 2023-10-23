@@ -4,12 +4,10 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Líneas de Idioma Comunes
+    | Common Language Lines
     |--------------------------------------------------------------------------
     |
-    | Las siguientes líneas de idioma se utilizan para diversos
-    | mensajes que necesitamos mostrar al usuario. Puedes modificar
-    | estas líneas de idioma según los requisitos de tu aplicación.
+    | Las siguientes líneas de idioma se utilizan para diferentes mensajes que debemos mostrar al usuario. Eres libre de modificar estas líneas de idioma según los requisitos de tu aplicación.
     |
     */
 
@@ -22,6 +20,8 @@ return [
     'Update'        => 'Actualizar',
     'Created_At'    => 'Creado el',
     'Actions'       => 'Acciones',
+    'Active'        => 'Activo',
+    'Inactive'      => 'Inactivo',
 
     //==========================================
     // Mensajes del pie de página

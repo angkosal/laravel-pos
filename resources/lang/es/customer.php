@@ -44,4 +44,5 @@ return [
     'really_delete'     => '¿Realmente desea eliminar a este cliente?',
     'yes_delete'        => 'Sí, eliminarlo',
     'No'                => 'No',
+    'Actions'           => 'Acciones',
 ];
