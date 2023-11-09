@@ -4,12 +4,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Líneas de idioma de OpenPos Cart
+    | OpenPos Cart Language Lines
     |--------------------------------------------------------------------------
     |
-    | Las siguientes líneas de idioma se utilizan durante el carrito para varios
-    | mensajes que debemos mostrar al usuario. Puede modificar
-    | estas líneas de idioma según los requisitos de su aplicación.
+    | The following language lines are used during the cart for various
+    | messages that we need to display to the user. You are free to modify
+    | these language lines according to your application's requirements.
     |
     */
 
@@ -23,4 +23,21 @@ return [
     //==========================================
     'available' => 'Producto disponible solo: :quantity',
     'outstock'  => 'Producto agotado',
+
+    //==========================================
+    // Mensajes generales
+    //==========================================
+    'Scan_Barcode'      => 'Escanear código de barras...',
+    'Received_Amount'   => 'Monto recibido',
+    'confirm_pay'       => 'Recibir',
+    'cancel_pay'        => 'Cancelar',
+    'General_Customer'  => 'Cliente General',
+    'Product_Name'      => 'Nombre del Producto',
+    'Quantity'          => 'Cantidad',
+    'Price'             => 'Precio',
+    'Total'             => 'Total',
+    'Cancel'            => 'Cancelar',
+    'Checkout'          => 'Pagar',
+    'Search_Product'    => 'Buscar Producto',
+
 ];

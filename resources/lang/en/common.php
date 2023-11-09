@@ -24,6 +24,7 @@ return [
     'Actions'       => 'Actions',
     'Active'        => 'Active',
     'Inactive'      => 'Inactive',
+    'More_info'     => 'More info',
 
     //==========================================
     // Footer messages

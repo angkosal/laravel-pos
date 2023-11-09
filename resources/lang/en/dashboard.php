@@ -17,4 +17,12 @@ return [
     // Settings module messages
     //==========================================
     'title' => 'Dashboard',
+
+    //==========================================
+    // General module messages
+    //==========================================
+    'Income'            => 'Income',
+    'Income_Today'      => 'Income Today',
+    'Customers_Count'   => 'Customers Count',
+    'Orders_Count'      => 'Orders Count',
 ];

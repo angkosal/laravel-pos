@@ -23,4 +23,21 @@ return [
     //==========================================
     'available' => 'Product available only: :quantity',
     'outstock'  => 'Product out of stock',
+
+    //==========================================
+    // General messages
+    //==========================================
+    'Scan_Barcode'      => 'Scan Barcode...',
+    'Received_Amount'   => 'Received Amount',
+    'confirm_pay'       => 'Receive',
+    'cancel_pay'        => 'Cancel',
+    'General_Customer'  => 'General Customer',
+    'Product_Name'      => 'Product Name',
+    'Quantity'          => 'Quantity',
+    'Price'             => 'Price',
+    'Total'             => 'Total',
+    'Cancel'            => 'Cancel',
+    'Checkout'          => 'Checkout',
+    'Search_Product'    => 'Search Product',
+
 ];

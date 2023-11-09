@@ -28,4 +28,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::post('/cart/change-qty', [CartController::class, 'changeQty']);
     Route::delete('/cart/delete', [CartController::class, 'delete']);
     Route::delete('/cart/empty', [CartController::class, 'empty']);
+
+    // Transaltions route for React component
+    Route::get('/locale/{type}', function ($type) {
+        $translations = trans($type);
+        return response()->json($translations);
+    });
 });

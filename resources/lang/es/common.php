@@ -4,10 +4,11 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Common Language Lines
+    | Líneas de idioma comunes
     |--------------------------------------------------------------------------
     |
-    | Las siguientes líneas de idioma se utilizan para diferentes mensajes que debemos mostrar al usuario. Eres libre de modificar estas líneas de idioma según los requisitos de tu aplicación.
+    | Las siguientes líneas de idioma se utilizan para varios mensajes que debemos mostrar al usuario. Puedes modificar libremente
+    | estas líneas de idioma de acuerdo a los requisitos de tu aplicación.
     |
     */
 
@@ -22,13 +23,14 @@ return [
     'Actions'       => 'Acciones',
     'Active'        => 'Activo',
     'Inactive'      => 'Inactivo',
+    'More_info'     => 'Más información',
 
     //==========================================
     // Mensajes del pie de página
     //==========================================
     'Version'       => 'Versión',
     'Copyright'     => 'Derechos de autor',
-    'all_reserved'  => 'Todos los derechos reservados',
+    'all_reserved'  => 'Todos los derechos reservados.',
 
     //==========================================
     // Mensajes de la barra de navegación
@@ -36,7 +38,7 @@ return [
     'Notifications'         => ':total Notificaciones',
     'new_messages'          => ':total mensajes nuevos',
     'total_friend_request'  => ':total solicitudes de amistad',
-    'total_new_reports'     => ':total nuevos informes',
+    'total_new_reports'     => ':total informes nuevos',
     'see_all'               => 'Ver todas las notificaciones',
     'no_mins'               => ':mins minutos',
     'no_hours'              => ':hours horas',

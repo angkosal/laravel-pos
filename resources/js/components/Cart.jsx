@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import ReactDOM from "react-dom";
+import React, { Component } from 'react';
+import { createRoot } from 'react-dom';
 import axios from "axios";
 import Swal from "sweetalert2";
 import { sum } from "lodash";
@@ -14,6 +14,7 @@ class Cart extends Component {
             barcode: "",
             search: "",
             customer_id: "",
+            translations: {}, 
         };
 
         this.loadCart = this.loadCart.bind(this);
@@ -27,13 +28,25 @@ class Cart extends Component {
         this.handleSeach = this.handleSeach.bind(this);
         this.setCustomerId = this.setCustomerId.bind(this);
         this.handleClickSubmit = this.handleClickSubmit.bind(this);
+        this.loadTranslations = this.loadTranslations.bind(this);
     }
 
     componentDidMount() {
         // load user cart
+        this.loadTranslations();
         this.loadCart();
         this.loadProducts();
         this.loadCustomers();
+    }
+
+    // load the transaltions for the react component
+    loadTranslations() {
+        axios.get("/admin/locale/cart").then((res) => {
+            const translations = res.data;
+            this.setState({ translations });
+        }).catch((error) => {
+            console.error("Error loading translations:", error);
+        });
     }
 
     loadCustomers() {
@@ -175,11 +188,12 @@ class Cart extends Component {
     }
     handleClickSubmit() {
         Swal.fire({
-            title: "Received Amount",
+            title: this.state.translations["Received_Amount"],
             input: "text",
             inputValue: this.getTotal(this.state.cart),
+            cancelButtonText: this.state.translations['cancel_pay'],
             showCancelButton: true,
-            confirmButtonText: "Send",
+            confirmButtonText: this.state.translations["confirm_pay"],
             showLoaderOnConfirm: true,
             preConfirm: (amount) => {
                 return axios
@@ -203,7 +217,7 @@ class Cart extends Component {
         });
     }
     render() {
-        const { cart, products, customers, barcode } = this.state;
+        const { cart, products, customers, barcode, translations} = this.state;
         return (
             <div className="row">
                 <div className="col-md-6 col-lg-4">
@@ -213,7 +227,7 @@ class Cart extends Component {
                                 <input
                                     type="text"
                                     className="form-control"
-                                    placeholder="Scan Barcode..."
+                                    placeholder={translations["Scan_Barcode"]}
                                     value={barcode}
                                     onChange={this.handleOnChangeBarcode}
                                 />
@@ -224,7 +238,7 @@ class Cart extends Component {
                                 className="form-control"
                                 onChange={this.setCustomerId}
                             >
-                                <option value="">Walking Customer</option>
+                                <option value="">{translations["General_Customer"]}</option>
                                 {customers.map((cus) => (
                                     <option
                                         key={cus.id}
@@ -239,9 +253,9 @@ class Cart extends Component {
                             <table className="table table-striped">
                                 <thead>
                                     <tr>
-                                        <th>Product Name</th>
-                                        <th>Quantity</th>
-                                        <th className="text-right">Price</th>
+                                        <th>{translations["Product_Name"]}</th>
+                                        <th>{translations["Quantity"]}</th>
+                                        <th className="text-right">{translations["Price"]}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -285,7 +299,7 @@ class Cart extends Component {
                     </div>
 
                     <div className="row">
-                        <div className="col">Total:</div>
+                        <div className="col">{translations["Total"]}:</div>
                         <div className="col text-right">
                             {window.APP.currency_symbol} {this.getTotal(cart)}
                         </div>
@@ -298,7 +312,7 @@ class Cart extends Component {
                                 onClick={this.handleEmptyCart}
                                 disabled={!cart.length}
                             >
-                                Cancel
+                                {translations["Cancel"]}
                             </button>
                         </div>
                         <div className="col">
@@ -308,7 +322,7 @@ class Cart extends Component {
                                 disabled={!cart.length}
                                 onClick={this.handleClickSubmit}
                             >
-                                Submit
+                                {translations["Checkout"]}
                             </button>
                         </div>
                     </div>
@@ -318,7 +332,7 @@ class Cart extends Component {
                         <input
                             type="text"
                             className="form-control"
-                            placeholder="Search Product..."
+                            placeholder={translations["Search_Product"] + "..."}
                             onChange={this.handleChangeSearch}
                             onKeyDown={this.handleSeach}
                         />
@@ -351,6 +365,8 @@ class Cart extends Component {
 
 export default Cart;
 
-if (document.getElementById("cart")) {
-    ReactDOM.render(<Cart />, document.getElementById("cart"));
+const root = document.getElementById('cart');
+if (root) {
+    const rootInstance = createRoot(root);
+    rootInstance.render(<Cart />);
 }

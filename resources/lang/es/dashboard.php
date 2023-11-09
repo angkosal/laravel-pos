@@ -4,17 +4,25 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Líneas de Idioma para Configuraciones
+    | Líneas de idioma de Configuración
     |--------------------------------------------------------------------------
     |
     | Las siguientes líneas de idioma se utilizan en la configuración para varios
     | mensajes que necesitamos mostrar al usuario. Puedes modificar
-    | estas líneas de idioma de acuerdo a las necesidades de tu aplicación.
+    | estas líneas de idioma según los requisitos de tu aplicación.
     |
     */
 
     //==========================================
-    // Mensajes del módulo de Configuraciones
+    // Mensajes del módulo de Configuración
     //==========================================
-    'title' => 'Panel de control',
+    'title' => 'Tablero',
+
+    //==========================================
+    // Mensajes del módulo general
+    //==========================================
+    'Income'            => 'Ingresos',
+    'Income_Today'      => 'Ingresos Hoy',
+    'Customers_Count'   => 'Cantidad de Clientes',
+    'Orders_Count'      => 'Cantidad de Pedidos',
 ];
