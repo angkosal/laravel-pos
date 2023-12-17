@@ -31,7 +31,7 @@ class Order extends Model
         if($this->customer) {
             return $this->customer->first_name . ' ' . $this->customer->last_name;
         }
-        return 'Working Customer';
+        return __('customer.working');
     }
 
     public function total()

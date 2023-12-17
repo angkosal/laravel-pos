@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'Create Customer')
-@section('content-header', 'Create Customer')
+@section('title', __('customer.Create_Customer') )
+@section('content-header', __('customer.Create_Customer') )
 
 @section('content')
 
@@ -12,10 +12,10 @@
                 @csrf
 
                 <div class="form-group">
-                    <label for="first_name">First Name</label>
+                    <label for="first_name">{{ __('customer.First_Name') }}</label>
                     <input type="text" name="first_name" class="form-control @error('first_name') is-invalid @enderror"
                            id="first_name"
-                           placeholder="First Name" value="{{ old('first_name') }}">
+                           placeholder="{{ __('customer.First_Name') }}" value="{{ old('first_name') }}">
                     @error('first_name')
                     <span class="invalid-feedback" role="alert">
                         <strong>{{ $message }}</strong>
@@ -24,10 +24,10 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="last_name">Last Name</label>
+                    <label for="last_name">{{ __('customer.Last_Name') }}</label>
                     <input type="text" name="last_name" class="form-control @error('last_name') is-invalid @enderror"
                            id="last_name"
-                           placeholder="Last Name" value="{{ old('last_name') }}">
+                           placeholder="{{ __('customer.Last_Name') }}" value="{{ old('last_name') }}">
                     @error('last_name')
                     <span class="invalid-feedback" role="alert">
                         <strong>{{ $message }}</strong>
@@ -36,9 +36,9 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="email">Email</label>
+                    <label for="email">{{ __('customer.Email') }}</label>
                     <input type="text" name="email" class="form-control @error('email') is-invalid @enderror" id="email"
-                           placeholder="Email" value="{{ old('email') }}">
+                           placeholder="{{ __('customer.Email') }}" value="{{ old('email') }}">
                     @error('email')
                     <span class="invalid-feedback" role="alert">
                         <strong>{{ $message }}</strong>
@@ -47,9 +47,9 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="phone">Phone</label>
+                    <label for="phone">{{ __('customer.Phone') }}</label>
                     <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" id="phone"
-                           placeholder="Phone" value="{{ old('phone') }}">
+                           placeholder="{{ __('customer.Phone') }}" value="{{ old('phone') }}">
                     @error('phone')
                     <span class="invalid-feedback" role="alert">
                         <strong>{{ $message }}</strong>
@@ -58,10 +58,10 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="address">Address</label>
+                    <label for="address">{{ __('customer.Address') }}</label>
                     <input type="text" name="address" class="form-control @error('address') is-invalid @enderror"
                            id="address"
-                           placeholder="Address" value="{{ old('address') }}">
+                           placeholder="{{ __('customer.Address') }}" value="{{ old('address') }}">
                     @error('address')
                     <span class="invalid-feedback" role="alert">
                         <strong>{{ $message }}</strong>
@@ -70,10 +70,10 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="avatar">Avatar</label>
+                    <label for="avatar">{{ __('customer.Avatar') }}</label>
                     <div class="custom-file">
                         <input type="file" class="custom-file-input" name="avatar" id="avatar">
-                        <label class="custom-file-label" for="avatar">Choose file</label>
+                        <label class="custom-file-label" for="avatar">{{ __('customer.Choose_file') }}</label>
                     </div>
                     @error('avatar')
                     <span class="invalid-feedback" role="alert">
@@ -83,7 +83,7 @@
                 </div>
 
 
-                <button class="btn btn-primary" type="submit">Create</button>
+                <button class="btn btn-primary" type="submit">{{ __('common.Create') }}</button>
             </form>
         </div>
     </div>

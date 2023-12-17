@@ -1,9 +1,9 @@
 @extends('layouts.admin')
 
-@section('title', 'Orders List')
-@section('content-header', 'Order List')
+@section('title', __('order.Orders_List'))
+@section('content-header', __('order.Orders_List'))
 @section('content-actions')
-    <a href="{{route('cart.index')}}" class="btn btn-primary">Open POS</a>
+    <a href="{{route('cart.index')}}" class="btn btn-primary">{{ __('cart.title') }}</a>
 @endsection
 
 @section('content')
@@ -21,7 +21,7 @@
                             <input type="date" name="end_date" class="form-control" value="{{request('end_date')}}" />
                         </div>
                         <div class="col-md-2">
-                            <button class="btn btn-outline-primary" type="submit">Submit</button>
+                            <button class="btn btn-outline-primary" type="submit">{{ __('order.submit') }}</button>
                         </div>
                     </div>
                 </form>
@@ -30,13 +30,13 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Customer Name</th>
-                    <th>Total</th>
-                    <th>Received Amount</th>
-                    <th>Status</th>
-                    <th>To Pay</th>
-                    <th>Created At</th>
+                    <th>{{ __('order.ID') }}</th>
+                    <th>{{ __('order.Customer_Name') }}</th>
+                    <th>{{ __('order.Total') }}</th>
+                    <th>{{ __('order.Received_Amount') }}</th>
+                    <th>{{ __('order.Status') }}</th>
+                    <th>{{ __('order.To_Pay') }}</th>
+                    <th>{{ __('order.Created_At') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -48,13 +48,13 @@
                     <td>{{ config('settings.currency_symbol') }} {{$order->formattedReceivedAmount()}}</td>
                     <td>
                         @if($order->receivedAmount() == 0)
-                            <span class="badge badge-danger">Not Paid</span>
+                            <span class="badge badge-danger">{{ __('order.Not_Paid') }}</span>
                         @elseif($order->receivedAmount() < $order->total())
-                            <span class="badge badge-warning">Partial</span>
+                            <span class="badge badge-warning">{{ __('order.Partial') }}</span>
                         @elseif($order->receivedAmount() == $order->total())
-                            <span class="badge badge-success">Paid</span>
+                            <span class="badge badge-success">{{ __('order.Paid') }}</span>
                         @elseif($order->receivedAmount() > $order->total())
-                            <span class="badge badge-info">Change</span>
+                            <span class="badge badge-info">{{ __('order.Change') }}</span>
                         @endif
                     </td>
                     <td>{{config('settings.currency_symbol')}} {{number_format($order->total() - $order->receivedAmount(), 2)}}</td>

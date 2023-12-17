@@ -1,9 +1,9 @@
 @extends('layouts.admin')
 
-@section('title', 'Product List')
-@section('content-header', 'Product List')
+@section('title', __('product.Product_List'))
+@section('content-header', __('product.Product_List'))
 @section('content-actions')
-<a href="{{route('products.create')}}" class="btn btn-primary">Create Product</a>
+<a href="{{route('products.create')}}" class="btn btn-primary">{{ __('product.Create_Product') }}</a>
 @endsection
 @section('css')
 <link rel="stylesheet" href="{{ asset('plugins/sweetalert2/sweetalert2.min.css') }}">
@@ -14,16 +14,16 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Image</th>
-                    <th>Barcode</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
-                    <th>Status</th>
-                    <th>Created At</th>
-                    <th>Updated At</th>
-                    <th>Actions</th>
+                    <th>{{ __('product.ID') }}</th>
+                    <th>{{ __('product.Name') }}</th>
+                    <th>{{ __('product.Image') }}</th>
+                    <th>{{ __('product.Barcode') }}</th>
+                    <th>{{ __('product.Price') }}</th>
+                    <th>{{ __('product.Quantity') }}</th>
+                    <th>{{ __('product.Status') }}</th>
+                    <th>{{ __('product.Created_At') }}</th>
+                    <th>{{ __('product.Updated_At') }}</th>
+                    <th>{{ __('product.Actions') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -36,7 +36,7 @@
                     <td>{{$product->price}}</td>
                     <td>{{$product->quantity}}</td>
                     <td>
-                        <span class="right badge badge-{{ $product->status ? 'success' : 'danger' }}">{{$product->status ? 'Active' : 'Inactive'}}</span>
+                        <span class="right badge badge-{{ $product->status ? 'success' : 'danger' }}">{{$product->status ? __('common.Active') : __('common.Inactive') }}</span>
                     </td>
                     <td>{{$product->created_at}}</td>
                     <td>{{$product->updated_at}}</td>
@@ -68,12 +68,12 @@
             })
 
             swalWithBootstrapButtons.fire({
-                title: 'Are you sure?',
-                text: "Do you really want to delete this product?",
-                icon: 'warning',
+                title: {{ __('product.sure') }},
+                text: {{ __('product.really_delete') }},
+                icon: {{ __('product.Create_Product') }}'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'No',
+                confirmButtonText: {{ __('product.yes_delete') }},
+                cancelButtonText: {{ __('product.No') }},
                 reverseButtons: true
             }).then((result) => {
                 if (result.value) {
