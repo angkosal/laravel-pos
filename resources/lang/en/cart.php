@@ -27,17 +27,17 @@ return [
     //==========================================
     // General messages
     //==========================================
-    'Scan_Barcode'      => 'Scan Barcode...',
-    'Received_Amount'   => 'Received Amount',
+    'scan_barcode'      => 'Scan Barcode...',
+    'received_amount'   => 'Received Amount',
     'confirm_pay'       => 'Receive',
     'cancel_pay'        => 'Cancel',
-    'General_Customer'  => 'General Customer',
-    'Product_Name'      => 'Product Name',
-    'Quantity'          => 'Quantity',
-    'Price'             => 'Price',
-    'Total'             => 'Total',
-    'Cancel'            => 'Cancel',
-    'Checkout'          => 'Checkout',
-    'Search_Product'    => 'Search Product',
+    'general_customer'  => 'General Customer',
+    'product_name'      => 'Product Name',
+    'quantity'          => 'Quantity',
+    'price'             => 'Price',
+    'total'             => 'Total',
+    'cancel'            => 'Cancel',
+    'checkout'          => 'Checkout',
+    'search_product'    => 'Search Product',
 
 ];

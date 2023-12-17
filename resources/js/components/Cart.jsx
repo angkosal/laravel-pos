@@ -188,7 +188,7 @@ class Cart extends Component {
     }
     handleClickSubmit() {
         Swal.fire({
-            title: this.state.translations["Received_Amount"],
+            title: this.state.translations["received_amount"],
             input: "text",
             inputValue: this.getTotal(this.state.cart),
             cancelButtonText: this.state.translations['cancel_pay'],
@@ -227,7 +227,7 @@ class Cart extends Component {
                                 <input
                                     type="text"
                                     className="form-control"
-                                    placeholder={translations["Scan_Barcode"]}
+                                    placeholder={translations["scan_barcode"]}
                                     value={barcode}
                                     onChange={this.handleOnChangeBarcode}
                                 />
@@ -238,7 +238,7 @@ class Cart extends Component {
                                 className="form-control"
                                 onChange={this.setCustomerId}
                             >
-                                <option value="">{translations["General_Customer"]}</option>
+                                <option value="">{translations["general_customer"]}</option>
                                 {customers.map((cus) => (
                                     <option
                                         key={cus.id}
@@ -253,9 +253,9 @@ class Cart extends Component {
                             <table className="table table-striped">
                                 <thead>
                                     <tr>
-                                        <th>{translations["Product_Name"]}</th>
-                                        <th>{translations["Quantity"]}</th>
-                                        <th className="text-right">{translations["Price"]}</th>
+                                        <th>{translations["product_name"]}</th>
+                                        <th>{translations["quantity"]}</th>
+                                        <th className="text-right">{translations["price"]}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -299,7 +299,7 @@ class Cart extends Component {
                     </div>
 
                     <div className="row">
-                        <div className="col">{translations["Total"]}:</div>
+                        <div className="col">{translations["total"]}:</div>
                         <div className="col text-right">
                             {window.APP.currency_symbol} {this.getTotal(cart)}
                         </div>
@@ -312,7 +312,7 @@ class Cart extends Component {
                                 onClick={this.handleEmptyCart}
                                 disabled={!cart.length}
                             >
-                                {translations["Cancel"]}
+                                {translations["cancel"]}
                             </button>
                         </div>
                         <div className="col">
@@ -322,7 +322,7 @@ class Cart extends Component {
                                 disabled={!cart.length}
                                 onClick={this.handleClickSubmit}
                             >
-                                {translations["Checkout"]}
+                                {translations["checkout"]}
                             </button>
                         </div>
                     </div>
@@ -332,7 +332,7 @@ class Cart extends Component {
                         <input
                             type="text"
                             className="form-control"
-                            placeholder={translations["Search_Product"] + "..."}
+                            placeholder={translations["search_product"] + "..."}
                             onChange={this.handleChangeSearch}
                             onKeyDown={this.handleSeach}
                         />
