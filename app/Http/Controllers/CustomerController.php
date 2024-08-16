@@ -121,6 +121,8 @@ class CustomerController extends Controller
 
     public function destroy(Customer $customer)
     {
+        dd($customer);
+
         if ($customer->avatar) {
             Storage::delete($customer->avatar);
         }
