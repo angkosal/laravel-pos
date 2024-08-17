@@ -15,4 +15,8 @@ class Product extends Model
         'quantity',
         'status'
     ];
+
+    protected $casts = [
+        'status' => 'boolean'
+    ];
 }

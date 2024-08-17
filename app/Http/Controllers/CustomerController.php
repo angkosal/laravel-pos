@@ -108,7 +108,7 @@ class CustomerController extends Controller
                 Storage::delete($customer->avatar);
             }
             // Store avatar
-            $avatar_path = $request->file('avatar')->store('customers', 'public');
+            $avatar_path = $request->file('avatar')->store('customers');
             // Save to Database
             $customer->avatar = $avatar_path;
         }
