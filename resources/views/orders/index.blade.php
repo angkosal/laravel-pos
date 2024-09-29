@@ -3,9 +3,8 @@
 @section('title', __('order.Orders_List'))
 @section('content-header', __('order.Orders_List'))
 @section('content-actions')
-    <a href="{{route('cart.index')}}" class="btn btn-primary">{{ __('cart.title') }}</a>
+<a href="{{route('cart.index')}}" class="btn btn-primary">{{ __('cart.title') }}</a>
 @endsection
-
 @section('content')
 <div class="card">
     <div class="card-body">
@@ -37,6 +36,7 @@
                     <th>{{ __('order.Status') }}</th>
                     <th>{{ __('order.To_Pay') }}</th>
                     <th>{{ __('order.Created_At') }}</th>
+                    <th>{{ __('order.Actions') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -48,17 +48,30 @@
                     <td>{{ config('settings.currency_symbol') }} {{$order->formattedReceivedAmount()}}</td>
                     <td>
                         @if($order->receivedAmount() == 0)
-                            <span class="badge badge-danger">{{ __('order.Not_Paid') }}</span>
+                        <span class="badge badge-danger">{{ __('order.Not_Paid') }}</span>
                         @elseif($order->receivedAmount() < $order->total())
                             <span class="badge badge-warning">{{ __('order.Partial') }}</span>
-                        @elseif($order->receivedAmount() == $order->total())
+                            @elseif($order->receivedAmount() == $order->total())
                             <span class="badge badge-success">{{ __('order.Paid') }}</span>
-                        @elseif($order->receivedAmount() > $order->total())
+                            @elseif($order->receivedAmount() > $order->total())
                             <span class="badge badge-info">{{ __('order.Change') }}</span>
-                        @endif
+                            @endif
                     </td>
                     <td>{{config('settings.currency_symbol')}} {{number_format($order->total() - $order->receivedAmount(), 2)}}</td>
                     <td>{{$order->created_at}}</td>
+                    <td> <button
+                            class="btn btn-sm btn-secondary"
+                            data-toggle="modal"
+                            data-target="#exampleModal"
+                            data-order-id="{{ $order->id }}"
+                            data-customer-name="{{ $order->getCustomerName() }}"
+                            data-total="{{ $order->total() }}"
+                            data-received="{{ $order->receivedAmount() }}"
+                            data-items="{{ json_encode($order->items) }}"
+                            data-created-at="{{ $order->created_at }}"
+                            data-payment="{{ isset($order->payments) && count($order->payments) > 0 ? $order->payments[0]->amount : 0 }}">
+                            <ion-icon size="samll" name="eye"></ion-icon>
+                        </button></td>
                 </tr>
                 @endforeach
             </tbody>
@@ -78,4 +91,133 @@
     </div>
 </div>
 @endsection
+@section('model')
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Next Gen POS</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Placeholder for dynamic content -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
 
+@section('js')
+<script src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // Use event delegation to bind to the document for dynamically generated elements
+    $(document).on('click', '.btn-secondary', function(event) {
+        console.log("Modal show event triggered!");
+
+        // Fetch data from the clicked button
+        var button = $(this); // Button that triggered the modal
+        var orderId = button.data('order-id');
+        var customerName = button.data('customer-name');
+        var totalAmount = button.data('total');
+        var receivedAmount = button.data('received');
+        var payment = button.data('payment');
+        var createdAt = button.data('created-at');
+        var items = button.data('items'); // Ensure this is correctly passed as a JSON
+
+        // Log the data to ensure it's being captured correctly
+        console.log({
+            orderId,
+            customerName,
+            totalAmount,
+            receivedAmount,
+            createdAt,
+            items
+        });
+
+        // Open the modal
+        $('#exampleModal').modal('show');
+
+        // Populate the modal body with dynamic data (you can extend this part)
+        var modalBody = $('#exampleModal').find('.modal-body');
+
+        // Construct items HTML if items exist
+        var itemsHTML = '';
+        if (items) {
+            items.forEach(function(item, index) {
+                itemsHTML += `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${item.product.name}</td>
+                <td>${item.description || 'N/A'}</td>
+                <td>${parseFloat(item.product.price).toFixed(2)}</td>
+                <td>${item.quantity}</td>
+                <td>${(parseFloat(item.product.price) * item.quantity).toFixed(2)}</td>
+            </tr>
+        `;
+            });
+        }
+
+        // Update the modal body content
+        modalBody.html(`
+    <div class="card">
+        <div class="card-header">
+            Invoice <strong>${createdAt.split('T')[0]}</strong>
+            <span class="float-right"> <strong>Status:</strong> ${receivedAmount < totalAmount ? 'Partial' : 'Paid'}</span>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-sm-6">
+                    <h6 class="mb-3">To:</h6>
+                    <div><strong>${customerName || 'N/A'}</strong></div>
+                </div>
+            </div>
+            <div class="table-responsive-sm">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Item</th>
+                            <th>Description</th>
+                            <th>Unit Cost</th>
+                            <th>Qty</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${itemsHTML}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-4 col-sm-5"></div>
+        <div class="col-lg-4 col-sm-5 ml-auto">
+          <table class="table table-clear">
+            <tbody>
+              <tr>
+                <td class="left">
+                  <strong>Total</strong>
+                </td>
+                <td class="right">
+                  <strong>PKR ${payment}</strong>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`);
+    });
+</script>
+@endsection

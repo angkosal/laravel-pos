@@ -4,7 +4,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { sum } from "lodash";
 
-class Cart extends Component {
+class Purchase extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -370,10 +370,10 @@ class Cart extends Component {
     }
 }
 
-export default Cart;
+export default Purchase;
 
-const root = document.getElementById("cart");
+const root = document.getElementById("purchase");
 if (root) {
     const rootInstance = createRoot(root);
-    rootInstance.render(<Cart />);
+    rootInstance.render(<Purchase />);
 }

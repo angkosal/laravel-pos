@@ -8,22 +8,25 @@ use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    public function index(Request $request) {
+    public function index(Request $request)
+    {
         $orders = new Order();
-        if($request->start_date) {
+        if ($request->start_date) {
             $orders = $orders->where('created_at', '>=', $request->start_date);
         }
-        if($request->end_date) {
+        if ($request->end_date) {
             $orders = $orders->where('created_at', '<=', $request->end_date . ' 23:59:59');
         }
-        $orders = $orders->with(['items', 'payments', 'customer'])->latest()->paginate(10);
+        $orders = $orders->with(['items.product', 'payments', 'customer'])->latest()->paginate(10);
 
-        $total = $orders->map(function($i) {
+        $total = $orders->map(function ($i) {
             return $i->total();
         })->sum();
-        $receivedAmount = $orders->map(function($i) {
+        $receivedAmount = $orders->map(function ($i) {
             return $i->receivedAmount();
         })->sum();
+
+        // return response()->json($orders);
 
         return view('orders.index', compact('orders', 'total', 'receivedAmount'));
     }

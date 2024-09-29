@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -41,6 +42,13 @@ class User extends Authenticatable
     public function cart()
     {
         return $this->belongsToMany(Product::class, 'user_cart')->withPivot('quantity');
+    }
+
+    public function purchaseCart(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class, 'purchase_cart')
+                    ->withPivot('quantity')
+                    ->withTimestamps();
     }
 
     public function getFullname()

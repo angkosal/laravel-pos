@@ -1,9 +1,9 @@
 @extends('layouts.admin')
 
-@section('title', __('customer.Customer_List'))
-@section('content-header', __('customer.Customer_List'))
+@section('title', __('Supplier List'))
+@section('content-header', __('Supplier List'))
 @section('content-actions')
-<a href="{{route('customers.create')}}" class="btn btn-primary">{{ __('customer.Add_Customer') }}</a>
+<a href="{{route('suppliers.create')}}" class="btn btn-primary">{{ __('Add Supplier') }}</a>
 @endsection
 @section('css')
 <link rel="stylesheet" href="{{ asset('plugins/sweetalert2/sweetalert2.min.css') }}">
@@ -14,39 +14,39 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>{{ __('customer.ID') }}</th>
-                    <th>{{ __('customer.Avatar') }}</th>
-                    <th>{{ __('customer.First_Name') }}</th>
-                    <th>{{ __('customer.Last_Name') }}</th>
-                    <th>{{ __('customer.Email') }}</th>
-                    <th>{{ __('customer.Phone') }}</th>
-                    <th>{{ __('customer.Address') }}</th>
-                    <th>{{ __('common.Created_At') }}</th>
-                    <th>{{ __('customer.Actions') }}</th>
+                    <th>{{ __('ID') }}</th>
+                    <!-- <th>{{ __('supplier.Avatar') }}</th> -->
+                    <th>{{ __('First Name') }}</th>
+                    <th>{{ __('Last Name') }}</th>
+                    <th>{{ __('Email') }}</th>
+                    <th>{{ __('Phone') }}</th>
+                    <th>{{ __('Address') }}</th>
+                    <th>{{ __('Created At') }}</th>
+                    <th>{{ __('Actions') }}</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($customers as $customer)
+                @foreach ($suppliers as $supplier)
                 <tr>
-                    <td>{{$customer->id}}</td>
+                    <td>{{$supplier->id}}</td>
+                    {{-- <td>
+                       <img width="50" src="{{$supplier->getAvatarUrl()}}" alt=""> 
+                    </td> --}}
+                    <td>{{$supplier->first_name}}</td>
+                    <td>{{$supplier->last_name}}</td>
+                    <td>{{$supplier->email}}</td>
+                    <td>{{$supplier->phone}}</td>
+                    <td>{{$supplier->address}}</td>
+                    <td>{{$supplier->created_at}}</td>
                     <td>
-                        <img width="50" src="{{$customer->getAvatarUrl()}}" alt="">
-                    </td>
-                    <td>{{$customer->first_name}}</td>
-                    <td>{{$customer->last_name}}</td>
-                    <td>{{$customer->email}}</td>
-                    <td>{{$customer->phone}}</td>
-                    <td>{{$customer->address}}</td>
-                    <td>{{$customer->created_at}}</td>
-                    <td>
-                        <a href="{{ route('customers.edit', $customer) }}" class="btn btn-primary"><i class="fas fa-edit"></i></a>
-                        <button class="btn btn-danger btn-delete" data-url="{{route('customers.destroy', $customer)}}"><i class="fas fa-trash"></i></button>
+                        <!-- <a href="{{ route('suppliers.edit', $supplier) }}" class="btn btn-primary"><i class="fas fa-edit"></i></a> -->
+                        <button class="btn btn-danger btn-delete" data-url="{{route('suppliers.destroy', $supplier)}}"><i class="fas fa-trash"></i></button>
                     </td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
-        {{ $customers->render() }}
+        {{ $suppliers->render() }}
     </div>
 </div>
 @endsection

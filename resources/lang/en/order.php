@@ -34,5 +34,6 @@ return [
     'Partial'           => 'Partial',
     'Paid'              => 'Paid',
     'Change'            => 'Change',
+    'Actions'           => 'Actions'
 
 ];
