@@ -68,26 +68,26 @@
             })
 
             swalWithBootstrapButtons.fire({
-                title: {{ __('product.sure') }},
-                text: {{ __('product.really_delete') }},
-                icon: {{ __('product.Create_Product') }}'warning',
+                title: '{{ __('product.sure ') }}', // Wrap in quotes
+                text: '{{ __('product.really_delete ') }}', // Wrap in quotes
+                icon: 'warning', // Fix the icon string
                 showCancelButton: true,
-                confirmButtonText: {{ __('product.yes_delete') }},
-                cancelButtonText: {{ __('product.No') }},
+                confirmButtonText: '{{ __('product.yes_delete ') }}', // Wrap in quotes
+                cancelButtonText: '{{ __('product.No ') }}', // Wrap in quotes
                 reverseButtons: true
             }).then((result) => {
                 if (result.value) {
                     $.post($this.data('url'), {
                         _method: 'DELETE',
-                        _token: '{{csrf_token()}}'
+                        _token: '{{ csrf_token() }}' // Wrap in quotes
                     }, function(res) {
                         $this.closest('tr').fadeOut(500, function() {
                             $(this).remove();
-                        })
-                    })
+                        });
+                    });
                 }
-            })
-        })
-    })
+            });
+        });
+    });
 </script>
 @endsection

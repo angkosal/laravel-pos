@@ -63,29 +63,29 @@
                     cancelButton: 'btn btn-danger'
                 },
                 buttonsStyling: false
-            })
+            });
 
             swalWithBootstrapButtons.fire({
-                title: {{ __('customer.sure') }},
-                text: {{ __('customer.really_delete') }},
+                title: '{{ __('customer.sure ') }}', // Wrap in quotes
+                text: '{{ __('customer.really_delete ') }}', // Wrap in quotes
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: {{ __('customer.yes_delete') }},
-                cancelButtonText: {{ __('customer.No') }},
+                confirmButtonText: '{{ __('customer.yes_delete ') }}', // Wrap in quotes
+                cancelButtonText: '{{ __('customer.No ') }}', // Wrap in quotes
                 reverseButtons: true
             }).then((result) => {
                 if (result.value) {
                     $.post($this.data('url'), {
                         _method: 'DELETE',
-                        _token: '{{csrf_token()}}'
+                        _token: '{{ csrf_token() }}' // Wrap in quotes
                     }, function(res) {
                         $this.closest('tr').fadeOut(500, function() {
                             $(this).remove();
-                        })
-                    })
+                        });
+                    });
                 }
-            })
-        })
-    })
+            });
+        });
+    });
 </script>
 @endsection

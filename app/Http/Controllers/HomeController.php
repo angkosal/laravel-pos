@@ -29,34 +29,34 @@ class HomeController extends Controller
         $orders = Order::with(['items', 'payments'])->get();
         $customers_count = Customer::count();
 
-    $low_stock_products = Product::where('quantity', '<', 10)->get();
+        $low_stock_products = Product::where('quantity', '<', 10)->get();
 
-    $bestSellingProducts = DB::table('products')
-    ->select('products.*', DB::raw('SUM(order_items.quantity) AS total_sold'))
-    ->join('order_items', 'order_items.product_id', '=', 'products.id')
-    ->join('orders', 'orders.id', '=', 'order_items.order_id')
-    ->groupBy('products.id')
-    ->havingRaw('SUM(order_items.quantity) > 10')
-    ->get();
+        $bestSellingProducts = DB::table('products')
+            ->select('products.*', DB::raw('SUM(order_items.quantity) AS total_sold'))
+            ->join('order_items', 'order_items.product_id', '=', 'products.id')
+            ->join('orders', 'orders.id', '=', 'order_items.order_id')
+            ->groupBy('products.id')
+            ->havingRaw('SUM(order_items.quantity) > 10')
+            ->get();
 
-    $currentMonthBestSelling = DB::table('products')
-    ->select('products.*', DB::raw('SUM(order_items.quantity) AS total_sold'))
-    ->join('order_items', 'order_items.product_id', '=', 'products.id')
-    ->join('orders', 'orders.id', '=', 'order_items.order_id')
-    ->whereYear('orders.created_at', date('Y'))
-    ->whereMonth('orders.created_at', date('m'))
-    ->groupBy('products.id')
-    ->havingRaw('SUM(order_items.quantity) > 500')  // Best-selling threshold for the current month
-    ->get();
+        $currentMonthBestSelling = DB::table('products')
+            ->select('products.*', DB::raw('SUM(order_items.quantity) AS total_sold'))
+            ->join('order_items', 'order_items.product_id', '=', 'products.id')
+            ->join('orders', 'orders.id', '=', 'order_items.order_id')
+            ->whereYear('orders.created_at', date('Y'))
+            ->whereMonth('orders.created_at', date('m'))
+            ->groupBy('products.id')
+            ->havingRaw('SUM(order_items.quantity) > 500')  // Best-selling threshold for the current month
+            ->get();
 
-    $pastSixMonthsHotProducts = DB::table('products')
-    ->select('products.*', DB::raw('SUM(order_items.quantity) AS total_sold'))
-    ->join('order_items', 'order_items.product_id', '=', 'products.id')
-    ->join('orders', 'orders.id', '=', 'order_items.order_id')
-    ->where('orders.created_at', '>=', now()->subMonths(6))  // Filter for the past 6 months
-    ->groupBy('products.id')
-    ->havingRaw('SUM(order_items.quantity) > 1000')  // Hot product threshold for past 6 months
-    ->get();
+        $pastSixMonthsHotProducts = DB::table('products')
+            ->select('products.*', DB::raw('SUM(order_items.quantity) AS total_sold'))
+            ->join('order_items', 'order_items.product_id', '=', 'products.id')
+            ->join('orders', 'orders.id', '=', 'order_items.order_id')
+            ->where('orders.created_at', '>=', now()->subMonths(6))  // Filter for the past 6 months
+            ->groupBy('products.id')
+            ->havingRaw('SUM(order_items.quantity) > 1000')  // Hot product threshold for past 6 months
+            ->get();
 
 
 
@@ -64,10 +64,10 @@ class HomeController extends Controller
 
         return view('home', [
             'orders_count' => $orders->count(),
-            'income' => $orders->map(function($i) {
+            'income' => $orders->map(function ($i) {
                 return $i->receivedAmount() > $i->total() ? $i->total() : $i->receivedAmount();
             })->sum(),
-            'income_today' => $orders->where('created_at', '>=', date('Y-m-d').' 00:00:00')->map(function($i) {
+            'income_today' => $orders->where('created_at', '>=', date('Y-m-d') . ' 00:00:00')->map(function ($i) {
                 return $i->receivedAmount() > $i->total() ? $i->total() : $i->receivedAmount();
             })->sum(),
             'customers_count' => $customers_count,
@@ -77,5 +77,4 @@ class HomeController extends Controller
             'past_months_products' => $pastSixMonthsHotProducts,
         ]);
     }
-
 }
