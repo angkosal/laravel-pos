@@ -33,6 +33,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::delete('/cart/empty', [CartController::class, 'empty']);
 
     Route::get('/purchase', [PurchaseController::class, 'index'])->name('purchase.cart.index');
+    Route::post('/orders/partial-payment', [OrderController::class, 'partialPayment'])->name('orders.partial-payment');
 
     // Transaltions route for React component
     Route::get('/locale/{type}', function ($type) {

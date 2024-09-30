@@ -72,6 +72,36 @@
                             data-payment="{{ isset($order->payments) && count($order->payments) > 0 ? $order->payments[0]->amount : 0 }}">
                             <ion-icon size="samll" name="eye"></ion-icon>
                         </button></td>
+                    <td>
+                        <!-- Button for Partial Payment -->
+                        <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#partialPaymentModal" data-orders-id="{{ $order->id }}" data-remaining-amount="{{ $order->total() - $order->receivedAmount() }}">
+                            Pay Partial Amount
+                        </button>
+                        <!-- Partial Payment Modal -->
+<div class="modal fade" id="partialPaymentModal" tabindex="-1" role="dialog" aria-labelledby="partialPaymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="partialPaymentModalLabel">Pay Partial Amount</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="partialPaymentForm" method="POST" action="{{ route('orders.partial-payment') }}">
+                    @csrf
+                    <input type="hidden" name="order_id" id="modalOrderId" value="">
+                    <div class="form-group">
+                        <label for="partialAmount">Enter Amount to Pay</label>
+                        <input type="number" class="form-control" id="partialAmount" name="amount" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Payment</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
@@ -111,6 +141,7 @@
         </div>
     </div>
 </div>
+
 @endsection
 
 @section('js')
@@ -219,5 +250,25 @@
 </div>
 `);
     });
+    $(document).ready(function() {
+    // Event handler when the partial payment modal is triggered
+    $('#partialPaymentModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); // Button that triggered the modal
+
+        // Get the order ID from data-attributes
+        var orderId = button.data('orders-id');
+        var remainingAmount = button.data('remaining-amount');
+
+        // Log values to ensure they're being correctly captured
+        console.log("Order ID: " + orderId);
+        console.log("Remaining Amount: " + remainingAmount);
+
+        // Find modal and set the order ID in the hidden field
+        var modal = $(this);
+        modal.find('#modalOrderId').val(orderId);
+        modal.find('#partialAmount').attr('max', remainingAmount); // Set max value for partial payment
+    });
+});
+
 </script>
 @endsection
