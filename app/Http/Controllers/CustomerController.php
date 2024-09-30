@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CustomerStoreRequest;
 use App\Models\Customer;
-use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -72,9 +71,7 @@ class CustomerController extends Controller
      * @param  \App\Models\Customer  $customer
      * @return \Illuminate\Http\Response
      */
-    public function show(Customer $customer)
-    {
-    }
+    public function show(Customer $customer) {}
 
     /**
      * Show the form for editing the specified resource.
@@ -108,7 +105,7 @@ class CustomerController extends Controller
                 Storage::delete($customer->avatar);
             }
             // Store avatar
-            $avatar_path = $request->file('avatar')->store('customers');
+            $avatar_path = $request->file('avatar')->store('customers', 'public');
             // Save to Database
             $customer->avatar = $avatar_path;
         }
@@ -127,8 +124,8 @@ class CustomerController extends Controller
 
         $customer->delete();
 
-       return response()->json([
-           'success' => true
-       ]);
+        return response()->json([
+            'success' => true
+        ]);
     }
 }

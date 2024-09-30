@@ -41,6 +41,12 @@
                     </a>
                 </li>
                 <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link {{ activeSegment('Purchase') }}">
+                        <i class="nav-icon fas fa-cart-plus"></i>
+                        <p>{{ __('Purchase') }}</p>
+                    </a>
+                </li>
+                <li class="nav-item has-treeview">
                     <a href="{{ route('orders.index') }}" class="nav-link {{ activeSegment('orders') }}">
                         <i class="nav-icon fas fa-cart-plus"></i>
                         <p>{{ __('order.title') }}</p>
@@ -50,6 +56,12 @@
                     <a href="{{ route('customers.index') }}" class="nav-link {{ activeSegment('customers') }}">
                         <i class="nav-icon fas fa-users"></i>
                         <p>{{ __('customer.title') }}</p>
+                    </a>
+                </li>
+                <li class="nav-item has-treeview">
+                    <a href="{{ route('suppliers.index') }}" class="nav-link {{ activeSegment('supplier') }}">
+                        <i class="nav-icon fas fa-users"></i>
+                        <p>{{ __('Supplier') }}</p>
                     </a>
                 </li>
                 <li class="nav-item has-treeview">
