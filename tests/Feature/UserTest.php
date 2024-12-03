@@ -69,8 +69,20 @@ class UserTest extends TestCase
         ]);
 
         // Try logging in with an incorrect password
-        $this->assertFalse($user->login('')); // Should return false
+        $this->assertFalse($user->login('   ')); // Should return false
     }
+
+    // public function test_email_must_be_unique(){
+    //     $user = User::create([
+    //         'first_name' => 'aze',
+    //         'last_name' => 'aze',
+    //         'email' => 'aze@email.com',
+    //         'password' => Hash::make('123'),
+    //     ]);
+
+    //     $this->assertFalse($user->login('')); // Should return false
+
+    // }
 
   
 }

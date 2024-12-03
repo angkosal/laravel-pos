@@ -58,4 +58,7 @@ class User extends Authenticatable
     {
         return Hash::check($password, $this->password);
     }
+
+
+   
 }
