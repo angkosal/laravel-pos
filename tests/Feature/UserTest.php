@@ -35,14 +35,14 @@ class UserTest extends TestCase
     {
         // Create a user instance
         $user = User::create([
-            'first_name' => 'aze',
-            'last_name' => 'aze',
-            'email' => 'aze@email.com',
-            'password' => Hash::make('123'),
+            'first_name' => 'admin',
+            'last_name' => 'admin',
+            'email' => 'admin@email.com',
+            'password' => Hash::make('admin123'),
         ]);
 
         // Try logging in with an empty password
-        $this->assertTrue($user->login('123')); // Should return false
+        $this->assertTrue($user->login('admin123')); // Should return false
     }
 
 
