@@ -94,7 +94,7 @@ class CustomerController extends Controller
      * @param  \App\Models\Customer  $customer
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Customer $customer)
+    public function update(CustomerStoreRequest  $request, Customer $customer)
     {
         $customer->first_name = $request->first_name;
         $customer->last_name = $request->last_name;
