@@ -40,12 +40,13 @@
                         <p>{{ __('cart.title') }}</p>
                     </a>
                 </li>
+                {{--
                 <li class="nav-item has-treeview">
                     <a href="#" class="nav-link {{ activeSegment('Purchase') }}">
                         <i class="nav-icon fas fa-cart-plus"></i>
                         <p>{{ __('Purchase') }}</p>
                     </a>
-                </li>
+                </li>--}}
                 <li class="nav-item has-treeview">
                     <a href="{{ route('orders.index') }}" class="nav-link {{ activeSegment('orders') }}">
                         <i class="nav-icon fas fa-cart-plus"></i>
