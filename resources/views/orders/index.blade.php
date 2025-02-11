@@ -48,21 +48,22 @@
                     <td>{{ config('settings.currency_symbol') }} {{$order->formattedReceivedAmount()}}</td>
                     <td>
                         @if($order->receivedAmount() == 0)
-                        <span class="badge badge-danger">{{ __('order.Not_Paid') }}</span>
+                            <span class="badge badge-danger">{{ __('order.Not_Paid') }}</span>
                         @elseif($order->receivedAmount() < $order->total())
                             <span class="badge badge-warning">{{ __('order.Partial') }}</span>
-                            @elseif($order->receivedAmount() == $order->total())
+                        @elseif($order->receivedAmount() == $order->total())
                             <span class="badge badge-success">{{ __('order.Paid') }}</span>
-                            @elseif($order->receivedAmount() > $order->total())
+                        @elseif($order->receivedAmount() > $order->total())
                             <span class="badge badge-info">{{ __('order.Change') }}</span>
-                            @endif
+                        @endif
                     </td>
                     <td>{{config('settings.currency_symbol')}} {{number_format($order->total() - $order->receivedAmount(), 2)}}</td>
                     <td>{{$order->created_at}}</td>
-                    <td> <button
-                            class="btn btn-sm btn-secondary"
+                    <td>
+                        <button
+                            class="btn btn-sm btn-secondary btnShowInvoice"
                             data-toggle="modal"
-                            data-target="#exampleModal"
+                            data-target="#modalInvoice"
                             data-order-id="{{ $order->id }}"
                             data-customer-name="{{ $order->getCustomerName() }}"
                             data-total="{{ $order->total() }}"
@@ -71,36 +72,38 @@
                             data-created-at="{{ $order->created_at }}"
                             data-payment="{{ isset($order->payments) && count($order->payments) > 0 ? $order->payments[0]->amount : 0 }}">
                             <ion-icon size="samll" name="eye"></ion-icon>
-                        </button></td>
-                    <td>
-                        <!-- Button for Partial Payment -->
-                        <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#partialPaymentModal" data-orders-id="{{ $order->id }}" data-remaining-amount="{{ $order->total() - $order->receivedAmount() }}">
-                            Pay Partial Amount
                         </button>
-                        <!-- Partial Payment Modal -->
-<div class="modal fade" id="partialPaymentModal" tabindex="-1" role="dialog" aria-labelledby="partialPaymentModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="partialPaymentModalLabel">Pay Partial Amount</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="partialPaymentForm" method="POST" action="{{ route('orders.partial-payment') }}">
-                    @csrf
-                    <input type="hidden" name="order_id" id="modalOrderId" value="">
-                    <div class="form-group">
-                        <label for="partialAmount">Enter Amount to Pay</label>
-                        <input type="number" class="form-control" id="partialAmount" name="amount" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit Payment</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+
+                        @if($order->total() > $order->receivedAmount())
+                            <!-- Button for Partial Payment -->
+                            <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#partialPaymentModal" data-orders-id="{{ $order->id }}" data-remaining-amount="{{ $order->total() - $order->receivedAmount() }}">
+                                Pay Partial Amount
+                            </button>
+                            <!-- Partial Payment Modal -->
+                            <div class="modal fade" id="partialPaymentModal" tabindex="-1" role="dialog" aria-labelledby="partialPaymentModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="partialPaymentModalLabel">Pay Partial Amount</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form id="partialPaymentForm" method="POST" action="{{ route('orders.partial-payment') }}">
+                                                @csrf
+                                                <input type="hidden" name="order_id" id="modalOrderId" value="">
+                                                <div class="form-group">
+                                                    <label for="partialAmount">Enter Amount to Pay</label>
+                                                    <input type="number" class="form-control" step="0.01" id="partialAmount" name="amount" value="{{ $order->total() - $order->receivedAmount() }}">
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">Submit Payment</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     </td>
                 </tr>
                 @endforeach
@@ -123,11 +126,11 @@
 @endsection
 @section('model')
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalInvoice" tabindex="-1" role="dialog" aria-labelledby="modalInvoiceLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Next Gen POS</h5>
+                <h5 class="modal-title" id="modalInvoiceLabel">Next Gen POS</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -149,7 +152,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     // Use event delegation to bind to the document for dynamically generated elements
-    $(document).on('click', '.btn-secondary', function(event) {
+    $(document).on('click', '.btnShowInvoice', function(event) {
         console.log("Modal show event triggered!");
 
         // Fetch data from the clicked button
@@ -173,10 +176,10 @@
         });
 
         // Open the modal
-        $('#exampleModal').modal('show');
+        $('#modalInvoice').modal('show');
 
         // Populate the modal body with dynamic data (you can extend this part)
-        var modalBody = $('#exampleModal').find('.modal-body');
+        var modalBody = $('#modalInvoice').find('.modal-body');
 
         // Construct items HTML if items exist
         var itemsHTML = '';
@@ -200,13 +203,24 @@
     <div class="card">
         <div class="card-header">
             Invoice <strong>${createdAt.split('T')[0]}</strong>
-            <span class="float-right"> <strong>Status:</strong> ${receivedAmount < totalAmount ? 'Partial' : 'Paid'}</span>
+            <span class="float-right"> <strong>Status:</strong> ${
+
+                        receivedAmount == 0?
+                            '<span class="badge badge-danger">{{ __('order.Not_Paid') }}</span>':
+                        receivedAmount < totalAmount ?
+                            '<span class="badge badge-warning">{{ __('order.Partial') }}</span>':
+                        receivedAmount == totalAmount?
+                            '<span class="badge badge-success">{{ __('order.Paid') }}</span>':
+                        receivedAmount > totalAmount?
+                            '<span class="badge badge-info">{{ __('order.Change') }}</span>':''
+            }</span>
+
+
         </div>
         <div class="card-body">
             <div class="row mb-4">
                 <div class="col-sm-6">
-                    <h6 class="mb-3">To:</h6>
-                    <div><strong>${customerName || 'N/A'}</strong></div>
+                    <h6 class="mb-3">To: <strong>${customerName || 'N/A'}</strong></h6>
                 </div>
             </div>
             <div class="table-responsive-sm">
@@ -224,27 +238,28 @@
                     <tbody>
                         ${itemsHTML}
                     </tbody>
+                    <tfoot>
+                      <tr>
+                        <th class="text-right" colspan="5">
+                          Total
+                        </th>
+                        <th class="right">
+                          <strong>{{config('settings.currency_symbol')}} ${totalAmount}</strong>
+                        </th>
+                      </tr>
+
+                      <tr>
+                        <th class="text-right" colspan="5">
+                          Paid
+                        </th>
+                        <th class="right">
+                          <strong>{{config('settings.currency_symbol')}} ${receivedAmount}</strong>
+                        </th>
+                      </tr>
+                    </tfood>
                 </table>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-4 col-sm-5"></div>
-        <div class="col-lg-4 col-sm-5 ml-auto">
-          <table class="table table-clear">
-            <tbody>
-              <tr>
-                <td class="left">
-                  <strong>Total</strong>
-                </td>
-                <td class="right">
-                  <strong>PKR ${payment}</strong>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
     </div>
   </div>
 </div>
@@ -258,10 +273,6 @@
         // Get the order ID from data-attributes
         var orderId = button.data('orders-id');
         var remainingAmount = button.data('remaining-amount');
-
-        // Log values to ensure they're being correctly captured
-        console.log("Order ID: " + orderId);
-        console.log("Remaining Amount: " + remainingAmount);
 
         // Find modal and set the order ID in the hidden field
         var modal = $(this);
