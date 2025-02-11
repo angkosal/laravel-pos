@@ -1502,10 +1502,10 @@ es6-symbol@3.1.1:
     d "1"
     es5-ext "~0.10.14"
 
-esbuild-linux-64@0.15.10:
+esbuild-windows-64@0.15.10:
   version "0.15.10"
-  resolved "https://registry.npmjs.org/esbuild-linux-64/-/esbuild-linux-64-0.15.10.tgz"
-  integrity sha512-jd8XfaSJeucMpD63YNMO1JCrdJhckHWcMv6O233bL4l6ogQKQOxBYSRP/XLWP+6kVTu0obXovuckJDcA0DKtQA==
+  resolved "https://registry.npmjs.org/esbuild-windows-64/-/esbuild-windows-64-0.15.10.tgz"
+  integrity sha512-2H0gdsyHi5x+8lbng3hLbxDWR7mKHWh5BXZGKVG830KUmXOOWFE2YKJ4tHRkejRduOGDrBvHBriYsGtmTv3ntA==
 
 esbuild@^0.15.9:
   version "0.15.10"
