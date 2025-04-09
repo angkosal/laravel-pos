@@ -80,36 +80,42 @@ Rename or copy `.env.example` file to `.env` 1.`php artisan key:generate` to gen
 
 ## 🖥️ POS Screen
 ![POS Screen](https://raw.githubusercontent.com/angkosal/laravel-pos/master/screenshots/khmernokor-pos/pos.png)
+
 The POS interface is clean, responsive, and optimized for quick ordering. Cashiers and servers can easily select items, apply discounts, manage tables, and process various payment methods efficiently.
 
 ---
 
 ## 🖨️ Kitchen Printer
 ![Kitchen Printer](https://raw.githubusercontent.com/angkosal/laravel-pos/master/screenshots/khmernokor-pos/kitchen-printer.jpg)
+
 Orders placed via the POS are instantly sent to the kitchen printer. This ensures accurate, printed tickets that help kitchen staff prepare dishes quickly and with minimal error.
 
 ---
 
 ## 🍽️ Kitchen Display System (KDS)
 ![Kitchen Display](https://raw.githubusercontent.com/angkosal/laravel-pos/master/screenshots/khmernokor-pos/kitchen-display.png)
+
 Replace traditional printed tickets with a digital kitchen display. Staff can view and manage incoming orders in real time, mark items as complete, and streamline food preparation.
 
 ---
 
 ## 🧾 Receipt Preview
 ![Receipt Preview](https://raw.githubusercontent.com/angkosal/laravel-pos/master/screenshots/khmernokor-pos/receipt-preview.png)
+
 Preview and print receipts with detailed breakdowns of items, quantities, discounts, taxes, and total amounts—customizable to suit your business branding.
 
 ---
 
 ## 🖨️ Cashier Printer
 ![Cashier Printer](https://raw.githubusercontent.com/angkosal/laravel-pos/master/screenshots/khmernokor-pos/cashier-printer.jpg)
+
 Print high-quality receipts at the cashier station for customers upon checkout. Reliable and fast printing supports smooth and professional transactions.
 
 ---
 
 ## 📱 QR Menu for Customers
 ![QR Menu](https://raw.githubusercontent.com/angkosal/laravel-pos/master/screenshots/khmernokor-pos/qr-menu.png)
+
 Let customers scan a QR code to view the digital menu on their phones. This contactless feature enhances the dining experience while reducing the need for physical menus.
 
 ---
