@@ -113,8 +113,8 @@ Print high-quality receipts at the cashier station for customers upon checkout. 
 
 ---
 
-## 📱 QR Menu for Customers
-![QR Menu](https://raw.githubusercontent.com/angkosal/laravel-pos/master/screenshots/khmernokor-pos/qr-menu.png)
+## 📱 QR Menu for Customers ordering
+<!-- ![QR Menu](https://raw.githubusercontent.com/angkosal/laravel-pos/master/screenshots/khmernokor-pos/qr-menu.png) -->
 
 Let customers scan a QR code to view the digital menu on their phones. This contactless feature enhances the dining experience while reducing the need for physical menus.
 
