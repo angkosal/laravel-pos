@@ -10,7 +10,7 @@
             @csrf
 
             <div class="form-group">
-                <label for="app_name">{{ __('settings.App_name') }}</label>
+                <label for="app_name">{{ __('settings.app_name') }}</label>
                 <input type="text" name="app_name" class="form-control @error('app_name') is-invalid @enderror" id="app_name" placeholder="{{ __('settings.App_name') }}" value="{{ old('app_name', config('settings.app_name')) }}">
                 @error('app_name')
                 <span class="invalid-feedback" role="alert">
@@ -20,8 +20,8 @@
             </div>
 
             <div class="form-group">
-                <label for="app_description">{{ __('settings.App_name') }}</label>
-                <textarea name="app_description" class="form-control @error('app_description') is-invalid @enderror" id="app_description" placeholder="{{ __('settings.App_name') }}">{{ old('app_description', config('settings.app_description')) }}</textarea>
+                <label for="app_description">{{ __('settings.app_description') }}</label>
+                <textarea name="app_description" class="form-control @error('app_description') is-invalid @enderror" id="app_description" placeholder="{{ __('settings.app_description') }}">{{ old('app_description', config('settings.app_description')) }}</textarea>
                 @error('app_description')
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
