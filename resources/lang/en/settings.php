@@ -25,6 +25,6 @@ return [
     'app_name'          => 'App name',
     'app_description'   => 'App description',
     'Currency_symbol'   => 'Currency symbol',
-    'Warning_quantity'  => 'Warning quantity',
+    'warning_quantity'  => 'Warning quantity',
     'Change_Setting'    => 'Change Setting'
 ];

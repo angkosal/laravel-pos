@@ -39,8 +39,8 @@
                 @enderror
             </div>
             <div class="form-group">
-                <label for="warning_quantity">{{ __('settings.Currency_symbol') }}</label>
-                <input type="text" name="warning_quantity" class="form-control @error('warning_quantity') is-invalid @enderror" id="warning_quantity" placeholder="{{ __('settings.Currency_symbol') }}" value="{{ old('warning_quantity', config('settings.warning_quantity')) }}">
+                <label for="warning_quantity">{{ __('settings.warning_quantity') }}</label>
+                <input type="text" name="warning_quantity" class="form-control @error('warning_quantity') is-invalid @enderror" id="warning_quantity" placeholder="{{ __('settings.warning_quantity') }}" value="{{ old('warning_quantity', config('settings.warning_quantity')) }}">
                 @error('warning_quantity')
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
