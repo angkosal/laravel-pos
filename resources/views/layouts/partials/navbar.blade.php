@@ -1,62 +1,62 @@
 <!-- Navbar -->
-  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+<nav class="main-header navbar navbar-expand navbar-white navbar-light">
     <!-- Left navbar links -->
     <ul class="navbar-nav">
-      <li class="nav-item">
-        <a class="nav-link" data-widget="pushmenu" href="{{route('home')}}" role="button"><i class="fas fa-bars"></i></a>
-      </li>
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="{{ route('home') }}" role="button">
+                <i class="fas fa-bars"></i>
+            </a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="{{ route('home') }}" class="nav-link">{{ __('dashboard.title') }}</a>
+        </li>
     </ul>
-
-    <!-- SEARCH FORM -->
-    {{--
-    <form class="form-inline ml-3">
-      <div class="input-group input-group-sm">
-        <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
-        <div class="input-group-append">
-          <button class="btn btn-navbar" type="submit">
-            <i class="fas fa-search"></i>
-          </button>
-        </div>
-      </div>
-    </form>
-    --}}
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
-      <!-- Messages Dropdown Menu -->
 
-      <!-- Notifications Dropdown Menu -->
-      <!-- <li class="nav-item dropdown">
-        <a class="nav-link" data-toggle="dropdown" href="#">
-          <i class="far fa-bell"></i>
-          <span class="badge badge-warning navbar-badge">15</span>
-        </a>
-        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-          <span class="dropdown-item dropdown-header">{{ __('common.Notifications', ['total' => 15]) }}</span>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-envelope mr-2"></i> {{ __('common.new_messages', ['total_msg' => 4]) }}
-            <span class="float-right text-muted text-sm">{{ __('common.no_mins', ['mins' => 3]) }}</span>
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-users mr-2"></i> {{ __('common.total_friend_request', ['total' => 8]) }}
-            <span class="float-right text-muted text-sm">{{ __('common.no_hours', ['hours' => 12]) }}</span>
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-file mr-2"></i> {{ __('common.total_new_reports', ['total' => 3]) }}
-            <span class="float-right text-muted text-sm">{{ __('common.no_days', ['days' => 2]) }}</span>
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item dropdown-footer">{{ __('common.see_all') }}</a>
-        </div>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
-          <i class="fas fa-th-large"></i>
-        </a>
-      </li> -->
+        <!-- Language Switcher -->
+        <li class="nav-item dropdown">
+            <a class="nav-link" data-toggle="dropdown" href="#">
+                <i class="fas fa-globe"></i> {{ strtoupper(app()->getLocale()) }}
+            </a>
+            <div class="dropdown-menu dropdown-menu-right">
+                <a href="{{ route('lang.switch', ['lang' => 'en']) }}" class="dropdown-item">English</a>
+                <a href="{{ route('lang.switch', ['lang' => 'es']) }}" class="dropdown-item">Español</a>
+            </div>
+        </li>
+
+        <!-- User Account Dropdown -->
+        <li class="nav-item dropdown">
+            <a class="nav-link" data-toggle="dropdown" href="#">
+                <i class="fas fa-user-circle"></i> {{ auth()->user()->name }}
+            </a>
+            <div class="dropdown-menu dropdown-menu-right">
+                <div class="dropdown-divider"></div>
+                <a href="{{ route('logout') }}" class="dropdown-item"
+                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    <i class="fas fa-sign-out-alt mr-2"></i> {{ __('common.Logout') }}
+                </a>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                    @csrf
+                </form>
+            </div>
+        </li>
     </ul>
-  </nav>
-  <!-- /.navbar -->
+</nav>
+<!-- /.navbar -->
+
+<script>
+    function switchLang(lang) {
+        fetch(`/locale/${lang}`)
+            .then(res => res.json())
+            .then(translations => {
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    let key = el.getAttribute('data-i18n')
+                    if (translations[key]) {
+                        el.innerText = translations[key]
+                    }
+                })
+            })
+    }
+</script>

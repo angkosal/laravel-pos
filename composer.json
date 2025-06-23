@@ -16,6 +16,7 @@
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.6.7",
         "fakerphp/faker": "^1.23",
+        "kkomelin/laravel-translatable-string-exporter": "^1.23",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.13",
         "laravel/sail": "^1.41",

@@ -17,7 +17,7 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::prefix('admin')->middleware('auth')->group(function () {
+Route::prefix('admin')->middleware(['auth', 'locale'])->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingController::class, 'store'])->name('settings.store');
@@ -35,9 +35,15 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/purchase', [PurchaseController::class, 'index'])->name('purchase.cart.index');
     Route::post('/orders/partial-payment', [OrderController::class, 'partialPayment'])->name('orders.partial-payment');
 
-    // Transaltions route for React component
-    Route::get('/locale/{type}', function ($type) {
-        $translations = trans($type);
-        return response()->json($translations);
-    });
+
+    Route::get('/locale/{lang}', function ($lang) {
+        $supportedLocales = ['en', 'es'];
+
+        if (in_array($lang, $supportedLocales)) {
+            session(['locale' => $lang]);
+            app()->setLocale($lang);
+        }
+
+        return redirect()->back();
+    })->name('lang.switch');
 });
