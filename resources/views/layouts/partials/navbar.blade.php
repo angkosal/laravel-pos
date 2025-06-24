@@ -48,18 +48,3 @@
     </ul>
 </nav>
 <!-- /.navbar -->
-
-<script>
-    function switchLang(lang) {
-        fetch(`/locale/${lang}`)
-            .then(res => res.json())
-            .then(translations => {
-                document.querySelectorAll('[data-i18n]').forEach(el => {
-                    let key = el.getAttribute('data-i18n')
-                    if (translations[key]) {
-                        el.innerText = translations[key]
-                    }
-                })
-            })
-    }
-</script>
