@@ -27,17 +27,17 @@ return [
     //==========================================
     // Mensajes generales
     //==========================================
-    'Scan_Barcode'      => 'Escanear código de barras...',
-    'Received_Amount'   => 'Monto recibido',
+    'scan_barcode'      => 'Escanear código de barras...',
+    'received_amount'   => 'Monto recibido',
     'confirm_pay'       => 'Recibir',
     'cancel_pay'        => 'Cancelar',
-    'General_Customer'  => 'Cliente General',
-    'Product_Name'      => 'Nombre del Producto',
-    'Quantity'          => 'Cantidad',
-    'Price'             => 'Precio',
-    'Total'             => 'Total',
-    'Cancel'            => 'Cancelar',
-    'Checkout'          => 'Pagar',
-    'Search_Product'    => 'Buscar Producto',
+    'general_customer'  => 'Cliente General',
+    'product_name'      => 'Nombre del Producto',
+    'quantity'          => 'Cantidad',
+    'price'             => 'Precio',
+    'total'             => 'Total',
+    'cancel'            => 'Cancelar',
+    'checkout'          => 'Pagar',
+    'search_product'    => 'Buscar Producto',
 
 ];
