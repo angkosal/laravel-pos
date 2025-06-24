@@ -20,7 +20,7 @@
             <a class="nav-link" data-toggle="dropdown" href="#">
                 <i class="fas fa-globe"></i> {{ strtoupper(app()->getLocale()) }}
             </a>
-            <div class="dropdown-menu dropdown-menu-right">
+            <div id="switchLang" class="dropdown-menu dropdown-menu-right">
                 <a href="{{ route('lang.switch', ['lang' => 'en']) }}" class="dropdown-item">English</a>
                 <a href="{{ route('lang.switch', ['lang' => 'es']) }}" class="dropdown-item">Español</a>
             </div>
@@ -29,7 +29,7 @@
         <!-- User Account Dropdown -->
         <li class="nav-item dropdown">
             <a class="nav-link" data-toggle="dropdown" href="#">
-                <i class="fas fa-user-circle"></i> {{ auth()->user()->name }}
+                <i class="fas fa-user-circle"></i> {{ auth()->user()->getFullname() }}
             </a>
             <div class="dropdown-menu dropdown-menu-right">
                 <div class="dropdown-divider"></div>
