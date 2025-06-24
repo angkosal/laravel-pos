@@ -35,8 +35,12 @@ Route::prefix('admin')->middleware(['auth', 'locale'])->group(function () {
     Route::get('/purchase', [PurchaseController::class, 'index'])->name('purchase.cart.index');
     Route::post('/orders/partial-payment', [OrderController::class, 'partialPayment'])->name('orders.partial-payment');
 
+    Route::get('/locale/{type}', function ($type) {
+        $translations = trans($type);
+        return response()->json($translations);
+    });
 
-    Route::get('/locale/{lang}', function ($lang) {
+    Route::get('/lang-switch/{lang}', function ($lang) {
         $supportedLocales = ['en', 'es'];
 
         if (in_array($lang, $supportedLocales)) {
