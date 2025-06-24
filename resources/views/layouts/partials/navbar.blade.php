@@ -32,6 +32,9 @@
                 <i class="fas fa-user-circle"></i> {{ auth()->user()->getFullname() }}
             </a>
             <div class="dropdown-menu dropdown-menu-right">
+                <a href="{{ route('settings.index') }}" class="dropdown-item">
+                    <i class="nav-icon fas fa-cogs mr-2"></i> {{ __('settings.title') }}
+                </a>
                 <div class="dropdown-divider"></div>
                 <a href="{{ route('logout') }}" class="dropdown-item"
                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
