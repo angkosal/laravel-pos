@@ -4,38 +4,79 @@ namespace App\Http\Controllers;
 
 use App\Models\Laporan;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class LaporanController extends Controller
 {
     /**
-     * Tampilkan daftar laporan.
+     * Menampilkan daftar laporan (default dan dengan pencarian).
      */
     public function index(Request $request)
     {
-        // Ambil kata kunci pencarian dari input
-        $search = $request->input('search');
-
-        // Query dasar
         $query = Laporan::query();
 
-        // Jika ada pencarian, hanya filter berdasarkan id_laporan
-        if (!empty($search)) {
-            $query->where('id_laporan', 'like', "%{$search}%");
+        // Fitur pencarian berdasarkan kode laporan
+        if ($request->has('search') && $request->search != '') {
+            $query->where('kode', 'like', '%' . $request->search . '%');
         }
 
-        // Urutkan terbaru dan paginasi
-        $laporans = $query->latest()->paginate(10);
+        // Urutkan dari yang terbaru
+        $laporans = $query->orderBy('created_at', 'desc')->paginate(10);
 
-        // Kirim ke view
-        return view('laporan.index', compact('laporans', 'search'));
+        // Hitung total
+        $income = $laporans->sum('total_pendapatan');
+        $outcome = $laporans->sum('total_pengeluaran');
+        $transactions = $laporans->count();
+
+        return view('laporan.index', compact('laporans', 'income', 'outcome', 'transactions'));
     }
 
+    public function destroy($id)
+{
+    $laporan = Laporan::findOrFail($id);
+    $laporan->delete();
+
+    return redirect()->route('laporan.index')->with('success', 'Laporan berhasil dihapus.');
+}
+
+    public function show($id)
+{
+    $laporan = Laporan::findOrFail($id);
+    return view('laporan.show', compact('laporan'));
+}
+
     /**
-     * Tampilkan form tambah laporan.
+     * Menampilkan laporan berdasarkan filter waktu.
      */
-    public function create()
+    public function filter($periode)
     {
-        return view('laporan.create');
+        $today = Carbon::today();
+
+        switch ($periode) {
+            case 'today':
+                $laporans = Laporan::whereDate('created_at', $today)->get();
+                break;
+            case 'week':
+                $laporans = Laporan::whereBetween('created_at', [
+                    $today->copy()->startOfWeek(),
+                    $today->copy()->endOfWeek()
+                ])->get();
+                break;
+            case 'month':
+                $laporans = Laporan::whereMonth('created_at', $today->month)
+                    ->whereYear('created_at', $today->year)
+                    ->get();
+                break;
+            default:
+                $laporans = Laporan::orderBy('created_at', 'desc')->get();
+                break;
+        }
+
+        $income = $laporans->sum('total_pendapatan');
+        $outcome = $laporans->sum('total_pengeluaran');
+        $transactions = $laporans->count();
+
+        return view('laporan.index', compact('laporans', 'income', 'outcome', 'transactions'));
     }
 
     /**
@@ -44,72 +85,66 @@ class LaporanController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'id_laporan' => 'nullable|string|max:20',
-            'id_gaji' => 'nullable|string|max:15',
-            'periode' => 'required|string|max:20',
-            'tanggal_cetak' => 'required|date',
-            'total_gaji' => 'required|numeric',
+            'kode' => 'required|string|max:20|unique:laporans,kode',
         ]);
-
-        // Generate id laporan otomatis jika kosong
-        $idLaporan = $request->id_laporan;
-        if (empty($idLaporan)) {
-            $last = Laporan::latest('id_laporan')->first();
-            $lastNumber = $last ? (int) filter_var($last->id_laporan, FILTER_SANITIZE_NUMBER_INT) : 0;
-            $idLaporan = 'LAP' . str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
-        }
 
         Laporan::create([
-            'id_laporan' => $idLaporan,
-            'id_gaji' => $request->id_gaji,
-            'periode' => $request->periode,
-            'tanggal_cetak' => $request->tanggal_cetak,
-            'total_gaji' => $request->total_gaji,
+            'kode' => $request->kode,
+            'pegawai' => auth()->user()->name ?? 'Unknown',
+            'total_pendapatan' => 0,
+            'total_pengeluaran' => 0,
         ]);
 
-        return redirect()->route('laporan.index')->with('success', 'Laporan berhasil ditambahkan.');
+        return redirect()->back()->with('success', 'Laporan baru berhasil ditambahkan.');
     }
 
     /**
-     * Tampilkan form edit laporan.
+     * Import data laporan dari file CSV.
      */
-    public function edit($id)
-    {
-        $laporan = Laporan::findOrFail($id);
-        return view('laporan.edit', compact('laporan'));
-    }
-
-    /**
-     * Perbarui data laporan.
-     */
-    public function update(Request $request, $id)
+    public function import(Request $request)
     {
         $request->validate([
-            'id_gaji' => 'nullable|string|max:15',
-            'periode' => 'required|string|max:20',
-            'tanggal_cetak' => 'required|date',
-            'total_gaji' => 'required|numeric',
+            'csv_file' => 'required|mimes:csv,txt|max:2048',
         ]);
 
-        $laporan = Laporan::findOrFail($id);
-        $laporan->update([
-            'id_gaji' => $request->id_gaji,
-            'periode' => $request->periode,
-            'tanggal_cetak' => $request->tanggal_cetak,
-            'total_gaji' => $request->total_gaji,
-        ]);
+        $file = $request->file('csv_file');
+        $path = $file->getRealPath();
+        $data = array_map('str_getcsv', file($path));
+        $header = array_shift($data);
 
-        return redirect()->route('laporan.index')->with('success', 'Laporan berhasil diperbarui.');
+        foreach ($data as $row) {
+            $rowData = array_combine($header, $row);
+
+            Laporan::updateOrCreate(
+                ['kode' => $rowData['kode']],
+                [
+                    'pegawai' => $rowData['pegawai'] ?? 'Unknown',
+                    'total_pendapatan' => $rowData['total_pendapatan'] ?? 0,
+                    'total_pengeluaran' => $rowData['total_pengeluaran'] ?? 0,
+                ]
+            );
+        }
+
+        return redirect()->back()->with('success', 'Data laporan berhasil diimport.');
     }
 
-    /**
-     * Hapus laporan.
-     */
-    public function destroy($id)
-    {
-        $laporan = Laporan::findOrFail($id);
-        $laporan->delete();
+    public function edit($id)
+{
+    $laporan = Laporan::findOrFail($id);
+    return view('laporan.edit', compact('laporan'));
+}
 
-        return redirect()->route('laporan.index')->with('success', 'Laporan berhasil dihapus.');
-    }
+public function update(Request $request, $id)
+{
+    $laporan = Laporan::findOrFail($id);
+    $laporan->id_gaji = $request->id_gaji;
+    $laporan->periode = $request->periode;
+    $laporan->tanggal_cetak = $request->tanggal_cetak;
+    $laporan->total_gaji = $request->total_gaji;
+    $laporan->save();
+
+    return redirect()->route('laporan.index')->with('success', 'Laporan berhasil diperbarui.');
+}
+
+
 }

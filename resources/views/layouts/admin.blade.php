@@ -7,21 +7,19 @@
     <title>@yield('title', config('app.name'))</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Ionicons -->
-    <!-- <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css"> -->
-    <!-- overlayScrollbars -->
-    <!-- <link rel="stylesheet" href="{{ asset('css/app.css') }}"> -->
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     @yield('css')
     <script>
         window.APP = <?php echo json_encode([
-                            'currency_symbol' => config('settings.currency_symbol'),
-                            'warning_quantity' => config('settings.warning_quantity')
-                        ]) ?>
+            'currency_symbol' => config('settings.currency_symbol'),
+            'warning_quantity' => config('settings.warning_quantity')
+        ]) ?>
     </script>
 </head>
 
@@ -31,6 +29,7 @@
 
         @include('layouts.partials.navbar')
         @include('layouts.partials.sidebar')
+
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
             <!-- Content Header (Page header) -->
@@ -53,7 +52,6 @@
                 @include('layouts.partials.alert.error')
                 @yield('content')
             </section>
-
         </div>
         <!-- /.content-wrapper -->
 
@@ -66,8 +64,9 @@
         <!-- /.control-sidebar -->
     </div>
     <!-- ./wrapper -->
-    <!-- <script src="{{ asset('js/app.js') }}"></script> -->
 
+    <!-- Bootstrap JS Bundle (wajib agar modal berfungsi) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     @yield('js')
     @yield('model')

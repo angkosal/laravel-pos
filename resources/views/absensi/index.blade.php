@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('content')
 <div class="container">
@@ -38,7 +38,7 @@
         <tbody>
             @forelse ($absensis as $absensi)
                 <tr>
-                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $loop->iteration + ($absensis->currentPage() - 1) * $absensis->perPage() }}</td>
                     <td>{{ $absensi->id_absensi }}</td>
                     <td>{{ $absensi->pegawai_id }}</td>
                     <td>{{ $absensi->tanggal }}</td>
@@ -64,9 +64,37 @@
         </tbody>
     </table>
 
-    <!-- Pagination -->
-    <div class="mt-3">
-        {{ $absensis->links() }}
+    <!-- Pagination Section -->
+    <div class="d-flex justify-content-between align-items-center mt-3">
+        <div>
+            Menampilkan {{ $absensis->firstItem() ?? 0 }} - {{ $absensis->lastItem() ?? 0 }} dari total {{ $absensis->total() }} data
+        </div>
+
+        <nav>
+            <ul class="pagination mb-0">
+                {{-- Tombol Previous --}}
+                <li class="page-item {{ $absensis->onFirstPage() ? 'disabled' : '' }}">
+                    <a class="page-link" href="{{ $absensis->previousPageUrl() ?? '#' }}" tabindex="-1">Previous</a>
+                </li>
+
+                {{-- Nomor Halaman Dinamis (3 halaman di sekitar posisi aktif) --}}
+                @php
+                    $start = max($absensis->currentPage() - 1, 1);
+                    $end = min($absensis->currentPage() + 1, $absensis->lastPage());
+                @endphp
+
+                @for ($page = $start; $page <= $end; $page++)
+                    <li class="page-item {{ $page == $absensis->currentPage() ? 'active' : '' }}">
+                        <a class="page-link" href="{{ $absensis->url($page) }}">{{ $page }}</a>
+                    </li>
+                @endfor
+
+                {{-- Tombol Next --}}
+                <li class="page-item {{ !$absensis->hasMorePages() ? 'disabled' : '' }}">
+                    <a class="page-link" href="{{ $absensis->nextPageUrl() ?? '#' }}">Next</a>
+                </li>
+            </ul>
+        </nav>
     </div>
 </div>
 @endsection

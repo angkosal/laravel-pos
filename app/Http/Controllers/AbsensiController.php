@@ -24,8 +24,12 @@ class AbsensiController extends Controller
         }
 
         // Urutkan berdasarkan tanggal terbaru dan paginasi
-        $absensis = $query->orderBy('tanggal', 'desc')->paginate(10);
+        // Tambahkan withQueryString() agar pagination tetap membawa parameter pencarian
+        $absensis = $query->orderBy('tanggal', 'desc')
+                          ->paginate(10)
+                          ->withQueryString();
 
+        // Kirim data ke view
         return view('absensi.index', compact('absensis', 'search'));
     }
 
@@ -42,7 +46,7 @@ class AbsensiController extends Controller
      */
     public function store(Request $request)
     {
-        // validasi input
+        // Validasi input
         $validated = $request->validate([
             'id_absensi'  => 'required|string|unique:absensis,id_absensi',
             'pegawai_id'  => 'required|integer',
@@ -53,7 +57,7 @@ class AbsensiController extends Controller
             'status'      => 'required|string',
         ]);
 
-        // simpan data yang tervalidasi
+        // Simpan data yang tervalidasi
         Absensi::create($validated);
 
         return redirect()->route('absensi.index')

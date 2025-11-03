@@ -11,9 +11,10 @@ class Laporan extends Model
 
     protected $primaryKey = 'id_laporan';
     protected $fillable = [
-        'id_gaji',
-        'periode',
-        'tanggal_cetak',
-        'total_gaji',
+    'id_gaji',
+    'periode',
+    'tanggal_cetak',
+    'total_gaji',
     ];
+
 }

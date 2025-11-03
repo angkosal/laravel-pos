@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('content')
 <h1>Edit Laporan</h1>
@@ -7,7 +7,7 @@
     @method('PUT')
     <label>ID Gaji</label>
     <input type="text" name="id_gaji" value="{{ $laporan->id_gaji }}" class="form-control">
-
+    
     <label>Periode</label>
     <input type="text" name="periode" value="{{ $laporan->periode }}" class="form-control" required>
 

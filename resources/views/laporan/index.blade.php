@@ -1,74 +1,117 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('content')
-<div class="container-fluid">
-    <h1 class="mb-4 fw-semibold">Daftar Laporan Absensi</h1>
+<div class="container mt-4">
+    <h2 class="fw-bold mb-4">List Laporan</h2>
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <!-- Tombol Tambah -->
-        <a href="{{ route('laporan.create') }}" class="btn btn-primary">Tambah Laporan</a>
+    <!-- Search Bar -->
+    <div class="card p-4 shadow-sm border-0">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <form action="{{ route('laporan.index') }}" method="GET" class="w-100 d-flex align-items-center" role="search">
+                <label for="search" class="me-2 fw-semibold">Search:</label>
+                <input type="text" 
+                       id="search"
+                       name="search" 
+                       class="form-control"
+                       placeholder="Cari berdasarkan ID Laporan..."
+                       value="{{ request('search') }}"
+                       oninput="this.form.submit()"
+                       style="max-width: 300px;">
+            </form>
+        </div>
 
-        <!-- Input Pencarian (otomatis jalan tanpa tombol) -->
-        <form action="{{ route('laporan.index') }}" method="GET">
-            <input 
-                type="text" 
-                name="search" 
-                class="form-control" 
-                placeholder="Cari berdasarkan ID Laporan..." 
-                value="{{ request('search') }}"
-                oninput="this.form.submit()"
-                style="width: 250px;"
-            >
-        </form>
-    </div>
-
-    <!-- Tabel Data -->
-    <div class="table-responsive">
-        <table class="table table-bordered table-striped align-middle">
-            <thead class="table-light">
-                <tr>
-                    <th>ID Laporan</th>
+        <!-- Tabel Laporan -->
+        <table class="table align-middle mb-0">
+            <thead>
+                <tr class="text-muted border-bottom">
+                    <th>No</th>
                     <th>ID Gaji</th>
-                    <th>Periode</th>
                     <th>Tanggal Cetak</th>
+                    <th>Pegawai</th>
                     <th>Total Gaji</th>
-                    <th class="text-center" style="width: 150px;">Aksi</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
-                @forelse($laporans as $laporan)
-                <tr>
-                    <td>{{ $laporan->id_laporan }}</td>
-                    <td>{{ $laporan->id_gaji }}</td>
-                    <td>{{ $laporan->periode }}</td>
-                    <td>{{ $laporan->tanggal_cetak }}</td>
-                    <td>{{ number_format($laporan->total_gaji, 0, ',', '.') }}</td>
-                    <td class="text-center">
-                        <a href="{{ route('laporan.edit', $laporan->id_laporan) }}" class="btn btn-warning btn-sm">Edit</a>
-                        <form action="{{ route('laporan.destroy', $laporan->id_laporan) }}" method="POST" class="d-inline">
-                            @csrf
-                            @method('DELETE')
-                            <button 
-                                type="submit" 
-                                class="btn btn-danger btn-sm" 
-                                onclick="return confirm('Yakin ingin menghapus laporan ini?')">
-                                Hapus
-                            </button>
-                        </form>
-                    </td>
-                </tr>
+                @forelse ($laporans as $laporan)
+                    <tr class="border-bottom">
+                        <td>{{ ($laporans->currentPage() - 1) * $laporans->perPage() + $loop->iteration }}</td>
+                        <td>{{ $laporan->id_gaji }}</td>
+                        <td>
+                            @if($laporan->tanggal_cetak)
+                                {{ \Carbon\Carbon::parse($laporan->tanggal_cetak)->format('d/m/Y') }}
+                            @else
+                                -
+                            @endif
+                        </td>
+                        <td>{{ $laporan->pegawai->nama ?? '-' }}</td>
+                        <td>Rp {{ number_format($laporan->total_gaji ?? 0, 0, ',', '.') }}</td>
+                        <td>
+                            <a href="{{ route('laporan.edit', $laporan->id_laporan) }}" 
+                               class="btn btn-sm text-white" 
+                               style="background-color: #f9b72d;">
+                               <i class="bi bi-pencil-square"></i> Ubah
+                            </a>
+
+                            <form action="{{ route('laporan.destroy', $laporan->id_laporan) }}" 
+                                  method="POST" 
+                                  style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" 
+                                        class="btn btn-sm text-white" 
+                                        style="background-color: #f93c3c;"
+                                        onclick="return confirm('Yakin ingin menghapus laporan ini?')">
+                                        <i class="bi bi-trash"></i> Hapus
+                                </button>
+                            </form>
+
+                            <a href="{{ route('laporan.show', $laporan->id_laporan) }}" 
+                               class="btn btn-sm text-white" 
+                               style="background-color: #c4c4c4;">
+                               <i class="bi bi-eye"></i> Detail
+                            </a>
+                        </td>
+                    </tr>
                 @empty
-                <tr>
-                    <td colspan="6" class="text-center text-muted">Tidak ada data laporan.</td>
-                </tr>
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4">
+                            Data laporan tidak ditemukan.
+                        </td>
+                    </tr>
                 @endforelse
             </tbody>
         </table>
-    </div>
 
-    <!-- Pagination -->
-    <div class="d-flex justify-content-center mt-3">
-        {{ $laporans->links() }}
+        <!-- Pagination -->
+        <div class="d-flex justify-content-between align-items-center mt-3">
+            <div>
+                Menampilkan {{ $laporans->firstItem() ?? 0 }} - {{ $laporans->lastItem() ?? 0 }} dari total {{ $laporans->total() }} data
+            </div>
+
+            <nav>
+                <ul class="pagination mb-0">
+                    <li class="page-item {{ $laporans->onFirstPage() ? 'disabled' : '' }}">
+                        <a class="page-link" href="{{ $laporans->previousPageUrl() ?? '#' }}">Previous</a>
+                    </li>
+
+                    @php
+                        $start = max($laporans->currentPage() - 1, 1);
+                        $end = min($laporans->currentPage() + 1, $laporans->lastPage());
+                    @endphp
+
+                    @for ($page = $start; $page <= $end; $page++)
+                        <li class="page-item {{ $page == $laporans->currentPage() ? 'active' : '' }}">
+                            <a class="page-link" href="{{ $laporans->url($page) }}">{{ $page }}</a>
+                        </li>
+                    @endfor
+
+                    <li class="page-item {{ !$laporans->hasMorePages() ? 'disabled' : '' }}">
+                        <a class="page-link" href="{{ $laporans->nextPageUrl() ?? '#' }}">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
     </div>
 </div>
 @endsection
