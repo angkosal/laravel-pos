@@ -3,7 +3,19 @@
 @section('content')
 <div class="container">
     <h2>Data Absensi</h2>
-    <a href="{{ route('absensi.create') }}" class="btn btn-primary mb-3">Tambah Absensi</a>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <a href="{{ route('absensi.create') }}" class="btn btn-primary">Tambah Absensi</a>
+
+        <!-- Input pencarian tanpa tombol -->
+        <form action="{{ route('absensi.index') }}" method="GET" class="d-flex" role="search">
+            <input type="text" name="search" class="form-control"
+                   placeholder="Cari berdasarkan ID Absensi, Pegawai ID, atau Status..."
+                   value="{{ request('search') }}"
+                   oninput="this.form.submit()"
+                   style="max-width: 300px;">
+        </form>
+    </div>
 
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
@@ -24,7 +36,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($absensis as $absensi)
+            @forelse ($absensis as $absensi)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $absensi->id_absensi }}</td>
@@ -44,7 +56,11 @@
                         </form>
                     </td>
                 </tr>
-            @endforeach
+            @empty
+                <tr>
+                    <td colspan="9" class="text-center text-muted">Data tidak ditemukan.</td>
+                </tr>
+            @endforelse
         </tbody>
     </table>
 

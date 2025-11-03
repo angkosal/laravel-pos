@@ -12,19 +12,21 @@ class AbsensiController extends Controller
      */
     public function index(Request $request)
     {
+        // Ambil kata kunci pencarian
+        $search = $request->input('search');
+
+        // Query dasar
         $query = Absensi::query();
 
-        // fitur pencarian
-        if ($request->has('search')) {
-            $query->where('status', 'like', "%{$request->search}%")
-                  ->orWhereDate('tanggal', $request->search)
-                  ->orWhere('id_absensi', 'like', "%{$request->search}%")
-                  ->orWhere('shift', 'like', "%{$request->search}%");
+        // Jika ada pencarian, filter hanya berdasarkan id_absensi
+        if (!empty($search)) {
+            $query->where('id_absensi', 'like', "%{$search}%");
         }
 
+        // Urutkan berdasarkan tanggal terbaru dan paginasi
         $absensis = $query->orderBy('tanggal', 'desc')->paginate(10);
 
-        return view('absensi.index', compact('absensis'));
+        return view('absensi.index', compact('absensis', 'search'));
     }
 
     /**

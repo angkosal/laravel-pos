@@ -40,12 +40,6 @@
                         <p>{{ __('cart.title') }}</p>
                     </a>
                 </li>
-                {{-- <li class="nav-item has-treeview">
-                    <a href="#" class="nav-link {{ activeSegment('Purchase') }}">
-                        <i class="nav-icon fas fa-cart-plus"></i>
-                        <p>{{ __('Purchase') }}</p>
-                    </a>
-                </li> --}}
                 <li class="nav-item has-treeview">
                     <a href="{{ route('orders.index') }}" class="nav-link {{ activeSegment('orders') }}">
                         <i class="nav-icon fas fa-cart-plus"></i>
@@ -71,11 +65,19 @@
                     </a>
                 </li>
                 
-                <!-- Menu Absensi / Attendance Baru -->
+                <!-- Menu Absensi -->
                 <li class="nav-item has-treeview">
                     <a href="{{ route('absensi.index') }}" class="nav-link {{ activeSegment('absensi') }}">
                         <i class="nav-icon fas fa-calendar-check"></i>
                         <p>{{ __('Absensi') }}</p>
+                    </a>
+                </li>
+
+                <!-- Menu Laporan (Baru Ditambahkan) -->
+                <li class="nav-item has-treeview">
+                    <a href="{{ route('laporan.index') }}" class="nav-link {{ activeSegment('laporan') }}">
+                        <i class="nav-icon fas fa-file-alt"></i>
+                        <p>{{ __('Laporan') }}</p>
                     </a>
                 </li>
 
