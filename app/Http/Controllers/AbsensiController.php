@@ -1,0 +1,111 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Absensi;
+use Illuminate\Http\Request;
+
+class AbsensiController extends Controller
+{
+    /**
+     * Tampilkan semua data absensi
+     */
+    public function index(Request $request)
+    {
+        $query = Absensi::query();
+
+        // fitur pencarian
+        if ($request->has('search')) {
+            $query->where('status', 'like', "%{$request->search}%")
+                  ->orWhereDate('tanggal', $request->search)
+                  ->orWhere('id_absensi', 'like', "%{$request->search}%")
+                  ->orWhere('shift', 'like', "%{$request->search}%");
+        }
+
+        $absensis = $query->orderBy('tanggal', 'desc')->paginate(10);
+
+        return view('absensi.index', compact('absensis'));
+    }
+
+    /**
+     * Form tambah data absensi
+     */
+    public function create()
+    {
+        return view('absensi.create');
+    }
+
+    /**
+     * Simpan data absensi baru
+     */
+    public function store(Request $request)
+    {
+        // validasi input
+        $validated = $request->validate([
+            'id_absensi'  => 'required|string|unique:absensis,id_absensi',
+            'pegawai_id'  => 'required|integer',
+            'tanggal'     => 'required|date',
+            'jam_masuk'   => 'nullable|date_format:H:i',
+            'jam_keluar'  => 'nullable|date_format:H:i',
+            'shift'       => 'nullable|string',
+            'status'      => 'required|string',
+        ]);
+
+        // simpan data yang tervalidasi
+        Absensi::create($validated);
+
+        return redirect()->route('absensi.index')
+                         ->with('success', 'Data absensi berhasil ditambahkan.');
+    }
+
+    /**
+     * Tampilkan detail data absensi
+     */
+    public function show($id)
+    {
+        $absensi = Absensi::findOrFail($id);
+        return view('absensi.show', compact('absensi'));
+    }
+
+    /**
+     * Form ubah data absensi
+     */
+    public function edit($id)
+    {
+        $absensi = Absensi::findOrFail($id);
+        return view('absensi.edit', compact('absensi'));
+    }
+
+    /**
+     * Update data absensi
+     */
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'id_absensi'  => "required|string|unique:absensis,id_absensi,{$id}",
+            'pegawai_id'  => 'required|integer',
+            'tanggal'     => 'required|date',
+            'jam_masuk'   => 'nullable|date_format:H:i',
+            'jam_keluar'  => 'nullable|date_format:H:i',
+            'shift'       => 'nullable|string',
+            'status'      => 'required|string',
+        ]);
+
+        $absensi = Absensi::findOrFail($id);
+        $absensi->update($validated);
+
+        return redirect()->route('absensi.index')
+                         ->with('success', 'Data absensi berhasil diperbarui.');
+    }
+
+    /**
+     * Hapus data absensi
+     */
+    public function destroy($id)
+    {
+        Absensi::destroy($id);
+
+        return redirect()->route('absensi.index')
+                         ->with('success', 'Data absensi berhasil dihapus.');
+    }
+}

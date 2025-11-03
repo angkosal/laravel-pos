@@ -40,13 +40,12 @@
                         <p>{{ __('cart.title') }}</p>
                     </a>
                 </li>
-                {{--
-                <li class="nav-item has-treeview">
+                {{-- <li class="nav-item has-treeview">
                     <a href="#" class="nav-link {{ activeSegment('Purchase') }}">
                         <i class="nav-icon fas fa-cart-plus"></i>
                         <p>{{ __('Purchase') }}</p>
                     </a>
-                </li>--}}
+                </li> --}}
                 <li class="nav-item has-treeview">
                     <a href="{{ route('orders.index') }}" class="nav-link {{ activeSegment('orders') }}">
                         <i class="nav-icon fas fa-cart-plus"></i>
@@ -71,6 +70,15 @@
                         <p>{{ __('settings.title') }}</p>
                     </a>
                 </li>
+                
+                <!-- Menu Absensi / Attendance Baru -->
+                <li class="nav-item has-treeview">
+                    <a href="{{ route('absensi.index') }}" class="nav-link {{ activeSegment('absensi') }}">
+                        <i class="nav-icon fas fa-calendar-check"></i>
+                        <p>{{ __('Absensi') }}</p>
+                    </a>
+                </li>
+
                 <li class="nav-item">
                     <a href="#" class="nav-link" onclick="document.getElementById('logout-form').submit()">
                         <i class="nav-icon fas fa-sign-out-alt"></i>
