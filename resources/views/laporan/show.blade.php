@@ -25,7 +25,7 @@
             <!-- Tambahkan field lain jika ada -->
         </table>
 
-        <a href="{{ route('laporan.index') }}" class="btn btn-secondary mt-3">Kembali</a>
+        <a href="{{ route('laporan.index') }}" class="btn btn-secondary mt-3">Cetak Laporan</a>
     </div>
 </div>
 @endsection

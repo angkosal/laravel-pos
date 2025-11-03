@@ -40,13 +40,14 @@
         <option value="today" {{ request('periode') == 'today' ? 'selected' : '' }}>Hari Ini</option>
         <option value="week" {{ request('periode') == 'week' ? 'selected' : '' }}>Minggu Ini</option>
         <option value="month" {{ request('periode') == 'month' ? 'selected' : '' }}>Bulan Ini</option>
+        <option value="year" {{ request('periode') == 'year' ? 'selected' : '' }}>Tahun Ini</option>
       </select>
     </div>
 
     <div class="d-flex gap-2">
       <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalTambah">Tambah Laporan</button>
       <button class="btn btn-warning btn-sm text-white" data-bs-toggle="modal" data-bs-target="#modalImport">Import Data CSV</button>
-      <a href="{{ route('home') }}" class="btn btn-secondary btn-sm">Tampil Semua</a>
+      <a href="{{ route('laporan.index') }}" class="btn btn-secondary btn-sm">Tampil Semua</a>
     </div>
   </div>
 

@@ -17,7 +17,7 @@ class LaporanController extends Controller
 
         // Fitur pencarian berdasarkan kode laporan
         if ($request->has('search') && $request->search != '') {
-            $query->where('kode', 'like', '%' . $request->search . '%');
+            $query->where('id_gaji', 'like', '%' . $request->search . '%');
         }
 
         // Urutkan dari yang terbaru
