@@ -51,6 +51,14 @@
     </div>
   </div>
 
+  {{-- ======== Success Message ======== --}}
+  @if(session('success'))
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{ session('success') }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  @endif
+
   {{-- ======== Chart Section ======== --}}
   <div class="card border-0 shadow-sm rounded-3 mb-4">
     <div class="card-body">
@@ -71,7 +79,7 @@
           <thead>
             <tr>
               <th>No</th>
-              <th>Kode</th>
+              <th>ID Gaji</th>
               <th>Tanggal</th>
               <th>Pegawai</th>
               <th>Total Pendapatan</th>
@@ -82,7 +90,7 @@
             @foreach($laporans as $i => $laporan)
             <tr>
               <td>{{ $i+1 }}</td>
-              <td>{{ $laporan->kode }}</td>
+              <td>{{ $laporan->id_gaji }}</td>
               <td>{{ $laporan->tanggal }}</td>
               <td>{{ $laporan->pegawai }}</td>
               <td>Rp. {{ number_format($laporan->total_pendapatan, 0, ',', '.') }}</td>
@@ -98,6 +106,10 @@
       </div>
     </div>
   </div>
+  @else
+  <div class="text-center text-muted mt-4">
+    <p>Belum ada laporan yang tersedia.</p>
+  </div>
   @endif
 
 </div>
@@ -107,10 +119,13 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content rounded-4 border-0 shadow-sm">
       <div class="modal-body">
-        <h6 class="mb-3">Kode Laporan</h6>
+        <h6 class="mb-3">Tambah Laporan</h6>
         <form action="{{ route('laporan.store') }}" method="POST">
           @csrf
-          <input type="text" name="kode" class="form-control mb-3" placeholder="Masukkan Kode Laporan" required>
+          <div class="mb-3">
+            <label for="id_gaji" class="form-label">Kode Laporan</label>
+            <input type="text" name="id_gaji" id="id_gaji" class="form-control" placeholder="Masukkan Kode Laporan" required>
+          </div>
           <div class="text-end">
             <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
             <button type="submit" class="btn btn-primary">Simpan</button>

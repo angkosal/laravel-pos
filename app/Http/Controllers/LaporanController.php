@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Laporan;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use App\Models\Gaji;
 
 class LaporanController extends Controller
 {
@@ -83,20 +84,25 @@ class LaporanController extends Controller
      * Simpan laporan baru.
      */
     public function store(Request $request)
-    {
-        $request->validate([
-            'kode' => 'required|string|max:20|unique:laporans,kode',
-        ]);
+{
+    $validated = $request->validate([
+        'id_gaji' => 'required|exists:gajis,id_gaji',
+    ]);
 
-        Laporan::create([
-            'kode' => $request->kode,
-            'pegawai' => auth()->user()->name ?? 'Unknown',
-            'total_pendapatan' => 0,
-            'total_pengeluaran' => 0,
-        ]);
+    $gaji = Gaji::find($validated['id_gaji']);
 
-        return redirect()->back()->with('success', 'Laporan baru berhasil ditambahkan.');
-    }
+    $laporan = Laporan::create([
+        'id_gaji' => $gaji->id_gaji,
+        'tanggal_cetak' => now(),
+        'total_gaji' => $gaji->total_gaji ?? 0,
+        'periode' => $gaji->periode ?? now()->format('F Y'),
+    ]);
+
+    return redirect()->route('laporan.index')->with('success', 'Laporan berhasil ditambahkan!');
+}
+
+
+
 
     /**
      * Import data laporan dari file CSV.
