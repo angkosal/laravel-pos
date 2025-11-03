@@ -118,7 +118,14 @@
             <!-- Navbar -->
             <nav class="navbar navbar-expand-md navbar-light shadow-sm">
                 <div class="container-fluid d-flex justify-content-between align-items-center">
-                    <span class="navbar-brand fw-semibold">{{ Auth::user()->getFullname() ?? 'Admin' }}</span>
+
+                    <span class="navbar-brand fw-semibold">
+                        @auth
+                            {{ Auth::user()->getFullname() }}
+                        @else
+                            Admin
+                        @endauth
+                    </span>
 
                     <ul class="navbar-nav ms-auto">
                         @guest
