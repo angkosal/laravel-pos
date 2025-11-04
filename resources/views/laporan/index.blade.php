@@ -25,8 +25,8 @@
             <thead>
                 <tr class="text-muted border-bottom">
                     <th>No</th>
-                    <th>ID Laporan</th> <!-- ✅ Kolom baru -->
-                    <th>ID Gaji</th>
+                    <!-- <th>ID Laporan</th> ❌ Dihapus -->
+                    <th>ID Laporan</th>
                     <th>Tanggal Cetak</th>
                     <th>Pegawai</th>
                     <th>Total Gaji</th>
@@ -37,7 +37,7 @@
                 @forelse ($laporans as $laporan)
                     <tr class="border-bottom">
                         <td>{{ ($laporans->currentPage() - 1) * $laporans->perPage() + $loop->iteration }}</td>
-                        <td>{{ $laporan->id_laporan }}</td> <!-- ✅ Tambahkan data ID Laporan -->
+                        <!-- <td>{{ $laporan->id_laporan }}</td> ❌ Dihapus -->
                         <td>{{ $laporan->id_gaji }}</td>
                         <td>
                             @if($laporan->tanggal_cetak)
@@ -77,7 +77,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="text-center text-muted py-4">
+                        <td colspan="6" class="text-center text-muted py-4">
                             Data laporan tidak ditemukan.
                         </td>
                     </tr>

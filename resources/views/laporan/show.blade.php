@@ -7,8 +7,8 @@
     <div class="card p-4 shadow-sm border-0">
         <table class="table">
             <tr>
-                <th>Kode Laporan</th>
-                <td>{{ $laporan->id_laporan }}</td>
+                <th>ID Laporan</th>
+                <td>{{ $laporan->id_gaji }}</td>
             </tr>
             <tr>
                 <th>Tanggal Cetak</th>
