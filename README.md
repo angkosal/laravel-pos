@@ -168,7 +168,7 @@ Let customers scan a QR code to view the digital menu on their phones. This cont
 ---
 
 ## Video Demo on Windows
-[![Watch the video](https://img.youtube.com/vi/Vo4Xn5o1bzg/hqdefault.jpg)](https://www.youtube.com/watch?v=Vo4Xn5o1bzg)
+[![Watch the video](https://img.youtube.com/vi/4ARl-Ww71Gc/hqdefault.jpg)](https://www.youtube.com/shorts/4ARl-Ww71Gc)
 
 ## Video Demo on Mobile
 [![Watch the video](https://img.youtube.com/vi/qqUSv7ab3dk/hqdefault.jpg)](https://www.youtube.com/watch?v=qqUSv7ab3dk)
