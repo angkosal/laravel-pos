@@ -96,32 +96,23 @@ class ProductController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(ProductUpdateRequest $request, Product $product)
     {
-        $product->name = $request->name;
-        $product->description = $request->description;
-        $product->barcode = $request->barcode;
-        $product->price = $request->price;
-        $product->quantity = $request->quantity;
-        $product->status = $request->status;
+        $data = $request->only(['name', 'description', 'barcode', 'price', 'quantity', 'status']);
 
         if ($request->hasFile('image')) {
-            // Delete old image
             if ($product->image) {
-                Storage::delete($product->image);
+                Storage::disk('public')->delete($product->image);
             }
-            // Store image
-            $image_path = $request->file('image')->store('products', 'public');
-            // Save to Database
-            $product->image = $image_path;
+            $data['image'] = $request->file('image')->store('products', 'public');
         }
 
-        if (!$product->save()) {
-            return redirect()->back()->with('error', __('product.error_updating'));
-        }
-        return redirect()->route('products.index')->with('success', __('product.success_updating'));
+        $product->update($data);
+
+        return redirect()->route('products.index')
+            ->with('success', __('product.success_updating'));
     }
 
     /**
@@ -133,7 +124,7 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         if ($product->image) {
-            Storage::delete($product->image);
+            Storage::disk('public')->delete($product->image);
         }
         $product->delete();
 
