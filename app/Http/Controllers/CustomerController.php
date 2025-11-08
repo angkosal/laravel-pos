@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CustomerStoreRequest;
+use App\Http\Requests\Customer\CustomerStoreRequest;
+use App\Http\Requests\Customer\CustomerUpdateRequest;
 use App\Models\Customer;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class CustomerController extends Controller
@@ -39,30 +39,21 @@ class CustomerController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(CustomerStoreRequest $request)
     {
-        $avatar_path = '';
+        $customerData = $request->validated();
+        $customerData['user_id'] = $request->user()->id;
 
         if ($request->hasFile('avatar')) {
-            $avatar_path = $request->file('avatar')->store('customers', 'public');
+            $customerData['avatar'] = $request->file('avatar')->store('customers', 'public');
         }
 
-        $customer = Customer::create([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'address' => $request->address,
-            'avatar' => $avatar_path,
-            'user_id' => $request->user()->id,
-        ]);
+        Customer::create($customerData);
 
-        if (!$customer) {
-            return redirect()->back()->with('error', __('customer.error_creating'));
-        }
-        return redirect()->route('customers.index')->with('success', __('customer.succes_creating'));
+        return redirect()->route('customers.index')
+            ->with('success', __('customer.success_creating'));
     }
 
     /**
@@ -77,7 +68,7 @@ class CustomerController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  \App\Models\Customer  $customer
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\View\View
      */
     public function edit(Customer $customer)
     {
@@ -89,31 +80,23 @@ class CustomerController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Customer  $customer
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, Customer $customer)
+    public function update(CustomerUpdateRequest $request, Customer $customer)
     {
-        $customer->first_name = $request->first_name;
-        $customer->last_name = $request->last_name;
-        $customer->email = $request->email;
-        $customer->phone = $request->phone;
-        $customer->address = $request->address;
+        $customerData = $request->validated();
 
         if ($request->hasFile('avatar')) {
-            // Delete old avatar
             if ($customer->avatar) {
                 Storage::disk('public')->delete($customer->avatar);
             }
-            // Store avatar
-            $avatar_path = $request->file('avatar')->store('customers', 'public');
-            // Save to Database
-            $customer->avatar = $avatar_path;
+            $customerData['avatar'] = $request->file('avatar')->store('customers', 'public');
         }
 
-        if (!$customer->save()) {
-            return redirect()->back()->with('error', __('customer.error_updating'));
-        }
-        return redirect()->route('customers.index')->with('success', __('customer.success_updating'));
+        $customer->update($customerData);
+
+        return redirect()->route('customers.index')
+            ->with('success', __('customer.success_updating'));
     }
 
     public function destroy(Customer $customer)
