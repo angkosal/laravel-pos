@@ -102,7 +102,7 @@ class CustomerController extends Controller
         if ($request->hasFile('avatar')) {
             // Delete old avatar
             if ($customer->avatar) {
-                Storage::delete($customer->avatar);
+                Storage::disk('public')->delete($customer->avatar);
             }
             // Store avatar
             $avatar_path = $request->file('avatar')->store('customers', 'public');
@@ -119,7 +119,7 @@ class CustomerController extends Controller
     public function destroy(Customer $customer)
     {
         if ($customer->avatar) {
-            Storage::delete($customer->avatar);
+            Storage::disk('public')->delete($customer->avatar);
         }
 
         $customer->delete();
