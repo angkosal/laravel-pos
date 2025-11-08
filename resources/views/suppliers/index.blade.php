@@ -30,7 +30,7 @@
                 <tr>
                     <td>{{$supplier->id}}</td>
                     {{-- <td>
-                       <img width="50" src="{{$supplier->getAvatarUrl()}}" alt=""> 
+                       <img width="50" src="{{$supplier->getAvatarUrl()}}" alt="">
                     </td> --}}
                     <td>{{$supplier->first_name}}</td>
                     <td>{{$supplier->last_name}}</td>
@@ -66,12 +66,12 @@
             })
 
             swalWithBootstrapButtons.fire({
-                title: {{ __('customer.sure') }},
-                text: {{ __('customer.really_delete') }},
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: {{ __('customer.yes_delete') }},
-                cancelButtonText: {{ __('customer.No') }},
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'No, cancel!',
                 reverseButtons: true
             }).then((result) => {
                 if (result.value) {
