@@ -6,6 +6,7 @@ use App\Http\Requests\ProductStoreRequest;
 use App\Http\Requests\ProductUpdateRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -14,19 +15,18 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\View\View
      */
     public function index(Request $request)
     {
-        $products = new Product();
-        if ($request->search) {
-            $products = $products->where('name', 'LIKE', "%{$request->search}%");
-        }
-        $products = $products->latest()->paginate(10);
-        if (request()->wantsJson()) {
-            return ProductResource::collection($products);
-        }
-        return view('products.index')->with('products', $products);
+        $products = Product::query()
+            ->when($request->search, function (Builder $query, string $search) {
+                $query->where('name', 'LIKE', "%{$search}%");
+            })
+            ->latest()
+            ->paginate(10);
+
+        return view('products.index', compact('products'));
     }
 
     /**
@@ -42,37 +42,27 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(ProductStoreRequest $request)
     {
-        $image_path = '';
+        $productData = $request->validated();
 
         if ($request->hasFile('image')) {
-            $image_path = $request->file('image')->store('products', 'public');
+            $productData['image'] = $request->file('image')->store('products', 'public');
         }
 
-        $product = Product::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'image' => $image_path,
-            'barcode' => $request->barcode,
-            'price' => $request->price,
-            'quantity' => $request->quantity,
-            'status' => $request->status
-        ]);
+        Product::create($productData);
 
-        if (!$product) {
-            return redirect()->back()->with('error', __('product.error_creating'));
-        }
-        return redirect()->route('products.index')->with('success', __('product.success_creating'));
+        return redirect()->route('products.index')
+            ->with('success', __('product.success_creating'));
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Product  $product
+     * @param \App\Models\Product $product
      * @return \Illuminate\Http\Response
      */
     public function show(Product $product)
@@ -83,8 +73,8 @@ class ProductController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
+     * @param \App\Models\Product $product
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\View\View
      */
     public function edit(Product $product)
     {
@@ -94,22 +84,22 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Product  $product
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Product $product
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(ProductUpdateRequest $request, Product $product)
     {
-        $data = $request->only(['name', 'description', 'barcode', 'price', 'quantity', 'status']);
+        $productData = $request->validated();
 
         if ($request->hasFile('image')) {
             if ($product->image) {
                 Storage::disk('public')->delete($product->image);
             }
-            $data['image'] = $request->file('image')->store('products', 'public');
+            $productData['image'] = $request->file('image')->store('products', 'public');
         }
 
-        $product->update($data);
+        $product->update($productData);
 
         return redirect()->route('products.index')
             ->with('success', __('product.success_updating'));
@@ -118,8 +108,8 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
+     * @param \App\Models\Product $product
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(Product $product)
     {
@@ -128,8 +118,6 @@ class ProductController extends Controller
         }
         $product->delete();
 
-        return response()->json([
-            'success' => true
-        ]);
+        return response()->json(['success' => true]);
     }
 }

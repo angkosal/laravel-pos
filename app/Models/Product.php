@@ -19,6 +19,12 @@ class Product extends Model
         'status'
     ];
 
+    protected $casts = [
+        'price' => 'decimal:2',
+        'quantity' => 'integer',
+        'status' => 'boolean',
+    ];
+
     public function getImageUrl()
     {
         if ($this->image) {

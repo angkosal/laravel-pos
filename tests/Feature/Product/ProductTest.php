@@ -126,7 +126,7 @@ describe('Product Store', function () {
         $this->assertDatabaseHas('products', [
             'name' => 'Minimal Product',
             'description' => null,
-            'image' => '',
+            'image' => null,
         ]);
     });
 
