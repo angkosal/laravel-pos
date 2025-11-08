@@ -12,7 +12,7 @@ class SupplierController extends Controller
     {
         if (request()->wantsJson()) {
             return response(
-                Supplier::all()
+                Supplier::paginate()
             );
         }
         $suppliers = Supplier::latest()->paginate(10);
