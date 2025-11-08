@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Supplier\SupplierStoreRequest;
+use App\Http\Requests\Supplier\SupplierUpdateRequest;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -24,27 +26,18 @@ class SupplierController extends Controller
         return view('suppliers.create');
     }
 
-    public function store(Request $request)
+    public function store(SupplierStoreRequest $request)
     {
-        $avatar_path = '';
+        $supplierData = $request->validated();
 
         if ($request->hasFile('avatar')) {
-            $avatar_path = $request->file('avatar')->store('suppliers', 'public');
+            $supplierData['avatar'] = $request->file('avatar')->store('suppliers', 'public');
         }
 
-        $supplier = Supplier::create([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'address' => $request->address,
-            'avatar' => $avatar_path,
-        ]);
+        Supplier::create($supplierData);
 
-        if (!$supplier) {
-            return redirect()->back()->with('error', __('supplier.error_creating'));
-        }
-        return redirect()->route('suppliers.index')->with('success', __('supplier.success_creating'));
+        return redirect()->route('suppliers.index')
+            ->with('success', __('supplier.success_creating'));
     }
 
     public function show(Supplier $supplier)
@@ -57,29 +50,21 @@ class SupplierController extends Controller
         return view('suppliers.edit', compact('supplier'));
     }
 
-    public function update(Request $request, Supplier $supplier)
+    public function update(SupplierUpdateRequest $request, Supplier $supplier)
     {
-        $supplier->first_name = $request->first_name;
-        $supplier->last_name = $request->last_name;
-        $supplier->email = $request->email;
-        $supplier->phone = $request->phone;
-        $supplier->address = $request->address;
-
+        $supplierData = $request->validated();
         if ($request->hasFile('avatar')) {
-            // Delete old avatar
+
             if ($supplier->avatar) {
                 Storage::disk('public')->delete($supplier->avatar);
             }
-            // Store new avatar
-            $avatar_path = $request->file('avatar')->store('suppliers', 'public');
-            // Save to Database
-            $supplier->avatar = $avatar_path;
+            $supplierData['avatar'] = $request->file('avatar')->store('suppliers', 'public');
         }
 
-        if (!$supplier->save()) {
-            return redirect()->back()->with('error', __('supplier.error_updating'));
-        }
-        return redirect()->route('suppliers.index')->with('success', __('supplier.success_updating'));
+        $supplier->update($supplierData);
+
+        return redirect()->route('suppliers.index')
+            ->with('success', __('supplier.success_updating'));
     }
 
     public function destroy(Supplier $supplier)

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use App\Models\Supplier;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
@@ -121,13 +120,13 @@ describe('Supplier Store', function () {
             'avatar' => $logo
         ]);
 
-        $response = $this->post(route('suppliers.store', $supplierData))
+        $response = $this->post(route('suppliers.store'), $supplierData)
             ->assertRedirect(route('suppliers.index'));
 
         $response->assertRedirect(route('suppliers.index'));
 
         $supplier = Supplier::firstWhere('email', 'supplier@example.com');
-        expect($supplier->avatar ?? $supplier->logo ?? null)->not->toBeNull();
+        expect($supplier->avatar)->not->toBeNull();
     });
 
     test('supplier can be created with only required fields', function () {
