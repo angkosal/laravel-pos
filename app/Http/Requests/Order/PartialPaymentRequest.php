@@ -6,7 +6,7 @@ namespace App\Http\Requests\Order;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class OrderStoreRequest extends FormRequest
+class PartialPaymentRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -16,15 +16,16 @@ class OrderStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'customer_id' => ['nullable', 'integer', 'exists:customers,id'],
-            'amount' => ['required', 'numeric', 'min:0', 'decimal:0,2'],
+            'order_id' => ['required', 'integer', 'exists:orders,id'],
+            'amount' => ['required', 'numeric', 'min:0.01', 'decimal:0,2'],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'customer_id.exists' => __('order.validation.customer_not_found'),
+            'order_id.required' => __('order.validation.order_id_required'),
+            'order_id.exists' => __('order.validation.order_not_found'),
             'amount.required' => __('order.validation.amount_required'),
             'amount.min' => __('order.validation.amount_min'),
             'amount.decimal' => __('order.validation.amount_decimal'),

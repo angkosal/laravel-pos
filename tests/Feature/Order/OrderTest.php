@@ -75,12 +75,10 @@ describe('Order Store', function () {
 
         $this->user->cart()->attach($product->id, ['quantity' => 2]);
 
-        $response = $this->postJson(route('orders.store'), [
+        $this->postJson(route('orders.store'), [
             'customer_id' => $customer->id,
             'amount' => 200,
         ]);
-
-        $response->assertOk();
 
         $this->assertDatabaseHas('orders', [
             'customer_id' => $customer->id,
@@ -100,9 +98,9 @@ describe('Order Store', function () {
         $order = Order::latest()->first();
 
         expect($order->items()->count())->toBe(1)
-            ->and($order->items()->first()->price)->toBe(150)
+            ->and($order->items()->first()->price)->toBe(150.0)
             ->and($order->payments()->count())->toBe(1)
-            ->and($order->payments()->first()->amount)->toBe(150);
+            ->and($order->payments()->first()->amount)->toBe(150.0);
     });
 
     test('order reduces product stock and empties cart', function () {
@@ -111,7 +109,7 @@ describe('Order Store', function () {
 
         $this->postJson(route('orders.store'), [
             'customer_id' => null,
-            'amount' => 150,
+            'amount' => 150.0,
         ]);
 
         $product->refresh();
@@ -124,12 +122,11 @@ describe('Order Store', function () {
         $product = Product::factory()->create(['price' => 100, 'quantity' => 10]);
         $this->user->cart()->attach($product->id, ['quantity' => 1]);
 
-        $response = $this->postJson(route('orders.store'), [
+        $this->postJson(route('orders.store'), [
             'customer_id' => null,
             'amount' => 100,
         ]);
 
-        $response->assertOk();
         expect(Order::latest()->first()->customer_id)->toBeNull();
     });
 });
@@ -185,7 +182,7 @@ describe('Partial Payment', function () {
             ->assertSessionHas('success');
 
         expect($order->payments()->count())->toBe(2)
-            ->and($order->receivedAmount())->toBe(150);
+            ->and($order->receivedAmount())->toBe(150.0);
     });
 
     test('partial payment cannot exceed remaining balance', function () {

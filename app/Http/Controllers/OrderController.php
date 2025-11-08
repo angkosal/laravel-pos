@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Order\OrderStoreRequest;
 use App\Models\Order;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -11,74 +12,114 @@ class OrderController extends Controller
 {
     public function index(Request $request)
     {
-        $orders = new Order();
-        if ($request->start_date) {
-            $orders = $orders->where('created_at', '>=', $request->start_date);
-        }
-        if ($request->end_date) {
-            $orders = $orders->where('created_at', '<=', $request->end_date . ' 23:59:59');
-        }
-        $orders = $orders->with(['items.product', 'payments', 'customer'])->latest()->paginate(10);
+        $orders = Order::query()
+            ->with(['items.product', 'payments', 'customer'])
+            ->when($request->input('start_date'), function ($query, $startDate) {
+                $query->where('created_at', '>=', $startDate);
+            })
+            ->when($request->input('end_date'), function ($query, $endDate) {
+                $query->where('created_at', '<=', $endDate . ' 23:59:59');
+            })
+            ->latest()
+            ->paginate(10);
 
-        $total = $orders->map(function ($i) {
-            return $i->total();
-        })->sum();
-        $receivedAmount = $orders->map(function ($i) {
-            return $i->receivedAmount();
-        })->sum();
-
-        // return response()->json($orders);
+        $total = $orders->sum(fn($order) => $order->total());
+        $receivedAmount = $orders->sum(fn($order) => $order->receivedAmount());
 
         return view('orders.index', compact('orders', 'total', 'receivedAmount'));
+
     }
 
-    public function store(OrderStoreRequest $request)
+
+    public function store(OrderStoreRequest $request): \Illuminate\Http\JsonResponse
     {
-        $order = Order::create([
-            'customer_id' => $request->customer_id,
-            'user_id' => $request->user()->id,
-        ]);
+        try {
+            $order = DB::transaction(function () use ($request) {
+                // Create order
+                $order = Order::create([
+                    'customer_id' => $request->customer_id,
+                    'user_id' => $request->user()->id,
+                ]);
 
-        $cart = $request->user()->cart()->get();
-        foreach ($cart as $item) {
-            $order->items()->create([
-                'price' => $item->price * $item->pivot->quantity,
-                'quantity' => $item->pivot->quantity,
-                'product_id' => $item->id,
-            ]);
-            $item->quantity = $item->quantity - $item->pivot->quantity;
-            $item->save();
+                // Get cart items
+                $cartItems = $request->user()->cart()->get();
+
+                if ($cartItems->isEmpty()) {
+                    throw new \Exception(__('cart.empty'));
+                }
+
+                // Create order items and update product quantities
+                foreach ($cartItems as $item) {
+                    $this->createOrderItem($order, $item);
+                    $this->reduceProductStock($item);
+                }
+
+                // Clear cart
+                $request->user()->cart()->detach();
+
+                // Create payment
+                $order->payments()->create([
+                    'amount' => $request->amount,
+                    'user_id' => $request->user()->id,
+                ]);
+
+                return $order;
+            });
+
+            return response()->json([
+                'success' => true,
+                'message' => __('order.created_successfully'),
+                'order_id' => $order->id,
+            ], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 400);
         }
-        $request->user()->cart()->detach();
-        $order->payments()->create([
-            'amount' => $request->amount,
-            'user_id' => $request->user()->id,
-        ]);
-        return 'success';
     }
+
     public function partialPayment(Request $request)
     {
-        // return $request;
-        $orderId = $request->order_id;
-        $amount = $request->amount;
-
-        // Find the order
-        $order = Order::findOrFail($orderId);
-
-        // Check if the amount exceeds the remaining balance
+        $order = Order::findOrFail($request->input('order_id'));
         $remainingAmount = $order->total() - $order->receivedAmount();
-        if ($amount > $remainingAmount) {
-            return redirect()->route('orders.index')->withErrors('Amount exceeds remaining balance');
+
+        if ($request->input('amount') > $remainingAmount) {
+            return redirect()->route('orders.index')
+                ->withErrors(__('order.amount_exceeds_balance'));
         }
 
-        // Save the payment
-        DB::transaction(function () use ($order, $amount) {
+        DB::transaction(function () use ($order, $request) {
             $order->payments()->create([
-                'amount' => $amount,
-                'user_id' => auth()->user()->id,
+                'amount' => $request->amount,
+                'user_id' => auth()->id(),
             ]);
         });
 
-        return redirect()->route('orders.index')->with('success', 'Partial payment of ' . config('settings.currency_symbol') . number_format($amount, 2) . ' made successfully.');
+        return redirect()->route('orders.index')
+            ->with('success', __('order.partial_payment_success', [
+                'amount' => config('settings.currency_symbol') . number_format($request->amount, 2)
+            ]));
+    }
+
+    /**
+     * Create an order item from cart item.
+     */
+    private function createOrderItem(Order $order, $item): void
+    {
+        $order->items()->create([
+            'price' => $item->price * $item->pivot->quantity,
+            'quantity' => $item->pivot->quantity,
+            'product_id' => $item->id,
+        ]);
+    }
+
+    /**
+     * Reduce product stock based on cart quantity.
+     */
+    private function reduceProductStock($item): void
+    {
+        $item->decrement('quantity', $item->pivot->quantity);
     }
 }

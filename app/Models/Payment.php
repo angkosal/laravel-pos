@@ -13,13 +13,36 @@ class Payment extends Model
         'user_id',
     ];
 
+    protected $casts = [
+        'amount' => 'decimal:2',
+    ];
+
+    public function getAmountAttribute($value): float
+    {
+        return (float) $value;
+    }
+
+    /**
+     * Get the order.
+     */
     public function order(): BelongsTo
     {
         return $this->belongsTo(related: Order::class, foreignKey: 'order_id');
     }
 
+    /**
+     * Get the user who made the payment.
+     */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(related: User::class, foreignKey: 'user_id');
+        return $this->belongsTo(related: User::class, foreignKey: 'order_id');
+    }
+
+    /**
+     * Get formatted amount.
+     */
+    public function formattedAmount(): string
+    {
+        return number_format($this->amount, 2);
     }
 }
