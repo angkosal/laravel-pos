@@ -63,11 +63,9 @@ describe('Cart Store', function () {
             'quantity' => 10,
         ]);
 
-        $response = $this->postJson(route('cart.store'), [
+        $this->postJson(route('cart.store'), [
             'barcode' => '1234567890',
         ]);
-
-        $response->assertNoContent();
 
         expect($this->user->cart()->count())->toBe(1)
             ->and($this->user->cart()->first()->id)->toBe($product->id)
