@@ -179,7 +179,7 @@ describe('Supplier Update',function (){
 
         $newLogo = UploadedFile::fake()->image('new-logo.jpg');
 
-        $updateData = array_merge($this->validSupplierData, ['logo' => $newLogo]);
+        $updateData = array_merge($this->validSupplierData, ['avatar' => $newLogo]);
 
         $this->put(route('suppliers.update', $supplier), $updateData);
 
