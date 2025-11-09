@@ -8,7 +8,6 @@ use App\Http\Requests\Cart\RemoveFromCartRequest;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\View\View;
 
 class CartController extends Controller
@@ -28,7 +27,7 @@ class CartController extends Controller
     /**
      * Add product to cart by barcode.
      */
-    public function store(AddToCartRequest $request): Response|JsonResponse
+    public function store(AddToCartRequest $request): JsonResponse
     {
         $product = Product::where('barcode', $request->barcode)->first();
 
@@ -77,21 +76,21 @@ class CartController extends Controller
     /**
      * Remove product from cart.
      */
-    public function delete(RemoveFromCartRequest $request): Response
+    public function delete(RemoveFromCartRequest $request): JsonResponse
     {
         $request->user()->cart()->detach($request->product_id);
 
-        return response()->noContent();
+        return response()->json(['success' => true]);
     }
 
     /**
      * Empty the entire cart.
      */
-    public function empty(Request $request): Response
+    public function empty(Request $request): JsonResponse
     {
         $request->user()->cart()->detach();
 
-        return response()->noContent();
+        return response()->json(['success' => true]);
     }
 
     /**
@@ -108,7 +107,7 @@ class CartController extends Controller
 
         $cartItem->pivot->increment('quantity');
 
-        return response()->json(['success' => true], 200);
+        return response()->json(['success' => true]);
     }
 
     /**
@@ -125,6 +124,6 @@ class CartController extends Controller
 
         $request->user()->cart()->attach($product->id, ['quantity' => 1]);
 
-        return response()->json(['success' => true], 201);
+        return response()->json(['success' => true]);
     }
 }

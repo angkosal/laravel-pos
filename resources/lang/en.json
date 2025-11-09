@@ -137,5 +137,6 @@
     "common.More_info": "More Info",
     "dashboard.Income": "Total Income",
     "dashboard.Income_Today": "Today's Income",
-    "dashboard.Customers_Count": "Total Customers"
+    "dashboard.Customers_Count": "Total Customers",
+    "walk_in": "Anonymous Customer"
 }

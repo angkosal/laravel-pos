@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Product\ProductStoreRequest;
 use App\Http\Requests\Product\ProductUpdateRequest;
+use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -19,14 +20,15 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $products = Product::query()
-            ->when($request->search, function (Builder $query, string $search) {
-                $query->where('name', 'LIKE', "%{$search}%");
-            })
+            ->search($request->search)
             ->latest()
             ->paginate(10);
 
-        return view('products.index', compact('products'));
+        return $request->wantsJson()
+            ? response()->json($products)
+            : view('products.index', compact('products'));
     }
+
 
     /**
      * Show the form for creating a new resource.

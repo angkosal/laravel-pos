@@ -123,4 +123,11 @@ class Product extends Model
             ->orderByDesc('total_sold')
             ->limit(10);
     }
+
+    public function scopeSearch($query, $term)
+    {
+        return $query->when($term, function ($query, $term) {
+            $query->where('name', 'LIKE', "%{$term}%");
+        });
+    }
 }

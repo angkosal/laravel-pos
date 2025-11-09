@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { createRoot } from "react-dom";
+import { createRoot } from "react-dom/client";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { sum } from "lodash";
@@ -34,9 +34,9 @@ class Cart extends Component {
     componentDidMount() {
         // load user cart
         this.loadTranslations();
-        this.loadCart();
-        this.loadProducts();
         this.loadCustomers();
+        this.loadProducts();
+        this.loadCart();
     }
 
     // load the transaltions for the react component
@@ -49,37 +49,60 @@ class Cart extends Component {
             })
             .catch((error) => {
                 console.error("Error loading translations:", error);
+                this.setState({ translations: {} });
             });
     }
 
     loadCustomers() {
-        axios.get(`/admin/customers`).then((res) => {
+        axios.get(`/admin/customers`, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then((res) => {
             const customers = res.data;
             this.setState({ customers });
+        }).catch((error) => {
+            console.error("Error loading customers:", error);
+            this.setState({ customers: [] });
         });
     }
 
     loadProducts(search = "") {
         const query = !!search ? `?search=${search}` : "";
-        axios.get(`/admin/products${query}`).then((res) => {
-            const products = res.data.data;
+        axios.get(`/admin/products${query}`, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then((res) => {
+            const products = res.data.data || [];
             this.setState({ products });
+        }).catch((error) => {
+            console.error("Error loading products:", error);
+            this.setState({ products: [] });
         });
     }
 
     handleOnChangeBarcode(event) {
         const barcode = event.target.value;
-        console.log(barcode);
         this.setState({ barcode });
     }
 
     loadCart() {
-        axios.get("/admin/cart").then((res) => {
-            const cart = res.data;
+        axios.get("/admin/cart", {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then((res) => {
+            const cart = Array.isArray(res.data) ? res.data : [];
             this.setState({ cart });
+        }).catch((error) => {
+            console.error("Error loading cart:", error);
+            this.setState({ cart: [] });
         });
     }
-
     handleScanBarcode(event) {
         event.preventDefault();
         const { barcode } = this.state;
@@ -178,7 +201,6 @@ class Cart extends Component {
                 .post("/admin/cart", { barcode })
                 .then((res) => {
                     // this.loadCart();
-                    console.log(res);
                 })
                 .catch((err) => {
                     Swal.fire("Error!", err.response.data.message, "error");
@@ -220,7 +242,7 @@ class Cart extends Component {
         });
     }
     render() {
-        const { cart, products, customers, barcode, translations } = this.state;
+        const { cart = [], products = [], customers = [], barcode = "", translations = {} } = this.state;
         return (
             <div className="row">
                 <div className="col-md-6 col-lg-4">
@@ -230,7 +252,7 @@ class Cart extends Component {
                                 <input
                                     type="text"
                                     className="form-control"
-                                    placeholder={translations["scan_barcode"]}
+                                    placeholder={translations["scan_barcode"] || "Scan Barcode"}
                                     value={barcode}
                                     onChange={this.handleOnChangeBarcode}
                                 />
@@ -242,7 +264,7 @@ class Cart extends Component {
                                 onChange={this.setCustomerId}
                             >
                                 <option value="">
-                                    {translations["general_customer"]}
+                                    {translations["general_customer"] || "General Customer"}
                                 </option>
                                 {customers.map((cus) => (
                                     <option
@@ -257,56 +279,56 @@ class Cart extends Component {
                         <div className="card">
                             <table className="table table-striped">
                                 <thead>
-                                    <tr>
-                                        <th>{translations["product_name"]}</th>
-                                        <th>{translations["quantity"]}</th>
-                                        <th className="text-right">
-                                            {translations["price"]}
-                                        </th>
-                                    </tr>
+                                <tr>
+                                    <th>{translations["product_name"] || "Product"}</th>
+                                    <th>{translations["quantity"] || "Qty"}</th>
+                                    <th className="text-right">
+                                        {translations["price"] || "Price"}
+                                    </th>
+                                </tr>
                                 </thead>
                                 <tbody>
-                                    {cart.map((c) => (
-                                        <tr key={c.id}>
-                                            <td>{c.name}</td>
-                                            <td>
-                                                <input
-                                                    type="text"
-                                                    className="form-control form-control-sm qty"
-                                                    value={c.pivot.quantity}
-                                                    onChange={(event) =>
-                                                        this.handleChangeQty(
-                                                            c.id,
-                                                            event.target.value
-                                                        )
-                                                    }
-                                                />
-                                                <button
-                                                    className="btn btn-danger btn-sm"
-                                                    onClick={() =>
-                                                        this.handleClickDelete(
-                                                            c.id
-                                                        )
-                                                    }
-                                                >
-                                                    <i className="fas fa-trash"></i>
-                                                </button>
-                                            </td>
-                                            <td className="text-right">
-                                                {window.APP.currency_symbol}{" "}
-                                                {(
-                                                    c.price * c.pivot.quantity
-                                                ).toFixed(2)}
-                                            </td>
-                                        </tr>
-                                    ))}
+                                {cart.map((c) => (
+                                    <tr key={c.id}>
+                                        <td>{c.name}</td>
+                                        <td>
+                                            <input
+                                                type="text"
+                                                className="form-control form-control-sm qty"
+                                                value={c.pivot.quantity}
+                                                onChange={(event) =>
+                                                    this.handleChangeQty(
+                                                        c.id,
+                                                        event.target.value
+                                                    )
+                                                }
+                                            />
+                                            <button
+                                                className="btn btn-danger btn-sm"
+                                                onClick={() =>
+                                                    this.handleClickDelete(
+                                                        c.id
+                                                    )
+                                                }
+                                            >
+                                                <i className="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                        <td className="text-right">
+                                            {window.APP.currency_symbol}{" "}
+                                            {(
+                                                c.price * c.pivot.quantity
+                                            ).toFixed(2)}
+                                        </td>
+                                    </tr>
+                                ))}
                                 </tbody>
                             </table>
                         </div>
                     </div>
 
                     <div className="row">
-                        <div className="col">{translations["total"]}:</div>
+                        <div className="col">{translations["total"] || "Total"}:</div>
                         <div className="col text-right">
                             {window.APP.currency_symbol} {this.getTotal(cart)}
                         </div>
@@ -319,7 +341,7 @@ class Cart extends Component {
                                 onClick={this.handleEmptyCart}
                                 disabled={!cart.length}
                             >
-                                {translations["cancel"]}
+                                {translations["cancel"] || "Cancel"}
                             </button>
                         </div>
                         <div className="col">
@@ -329,7 +351,7 @@ class Cart extends Component {
                                 disabled={!cart.length}
                                 onClick={this.handleClickSubmit}
                             >
-                                {translations["checkout"]}
+                                {translations["checkout"] || "Checkout"}
                             </button>
                         </div>
                     </div>
@@ -339,7 +361,7 @@ class Cart extends Component {
                         <input
                             type="text"
                             className="form-control"
-                            placeholder={translations["search_product"] + "..."}
+                            placeholder={(translations["search_product"] || "Search Product") + "..."}
                             onChange={this.handleChangeSearch}
                             onKeyDown={this.handleSeach}
                         />

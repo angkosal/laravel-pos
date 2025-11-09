@@ -16,18 +16,12 @@ class Order extends Model
         'user_id'
     ];
 
-    protected $appends = [
-        'items_count',
-        'payments_count',
-        'customer_name'
-    ];
-
     /**
      * Get the order items.
      */
     public function items(): HasMany
     {
-        return $this->hasMany(OrderItem::class);
+        return $this->hasMany(OrderItem::class, 'order_id', 'id');
     }
 
     /**
@@ -35,7 +29,7 @@ class Order extends Model
      */
     public function payments(): HasMany
     {
-        return $this->hasMany(Payment::class);
+        return $this->hasMany(Payment::class, 'order_id', 'id');
     }
 
     /**
@@ -43,7 +37,7 @@ class Order extends Model
      */
     public function customer(): BelongsTo
     {
-        return $this->belongsTo(Customer::class);
+        return $this->belongsTo(Customer::class, 'customer_id', 'id');
     }
 
     /**
@@ -51,7 +45,7 @@ class Order extends Model
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     /**
@@ -60,8 +54,8 @@ class Order extends Model
     public function getCustomerName(): string
     {
         return $this->customer
-            ? $this->customer->full_name
-            : __('customer.walk_in');
+            ? "{$this->customer->first_name} {$this->customer->last_name}"
+            : __('walk_in');
     }
 
     /**
@@ -69,7 +63,10 @@ class Order extends Model
      */
     public function total(): float
     {
-        return (float) $this->items->sum('price');
+        if ($this->relationLoaded('items')) {
+            return (float) $this->items->sum('price');
+        }
+        return (float) $this->items()->sum('price');
     }
 
     /**
@@ -85,7 +82,12 @@ class Order extends Model
      */
     public function receivedAmount(): float
     {
-        return (float) $this->payments->sum('amount');
+        if ($this->relationLoaded('payments')) {
+            return (float) $this->payments->sum(function($payment) {
+                return (float) $payment->amount;
+            });
+        }
+        return (float) $this->payments()->sum('amount');
     }
 
     /**

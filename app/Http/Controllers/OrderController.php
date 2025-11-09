@@ -30,7 +30,6 @@ class OrderController extends Controller
 
     }
 
-
     public function store(OrderStoreRequest $request): \Illuminate\Http\JsonResponse
     {
         try {
