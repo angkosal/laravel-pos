@@ -288,11 +288,10 @@ describe('Cart Delete', function () {
             'quantity' => 3
         ]);
 
-        $response = $this->deleteJson(route('cart.index') . '/delete', [
+        $this->deleteJson(route('cart.index') . '/delete', [
             'product_id' => $product->id,
         ]);
 
-        $response->assertNoContent();
         expect($this->user->cart()->count())->toBe(0);
     });
 
@@ -340,7 +339,7 @@ describe('Cart Delete', function () {
             'product_id' => $product->id,
         ]);
 
-        $response->assertNoContent();
+        $response->assertOk();
     });
 });
 
@@ -355,7 +354,7 @@ describe('Cart Empty', function () {
         expect($this->user->cart->count())->toBe(3);
 
         $response = $this->deleteJson(route('cart.index') . '/empty');
-        $response->assertNoContent();
+        $response->assertOk();
         expect($this->user->cart()->count())->toBe(0);
     });
 

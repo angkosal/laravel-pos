@@ -98,9 +98,9 @@ describe('Order Store', function () {
         $order = Order::latest()->first();
 
         expect($order->items()->count())->toBe(1)
-            ->and($order->items()->first()->price)->toBe(150.0)
+            ->and((float) $order->items()->first()->price)->toBe(150.0)
             ->and($order->payments()->count())->toBe(1)
-            ->and($order->payments()->first()->amount)->toBe(150.0);
+            ->and((float) $order->payments()->first()->amount)->toBe(150.0);
     });
 
     test('order reduces product stock and empties cart', function () {
