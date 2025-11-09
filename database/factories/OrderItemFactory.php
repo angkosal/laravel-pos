@@ -32,21 +32,21 @@ class OrderItemFactory extends Factory
 
     public function forOrder(Order $order): Factory|OrderItemFactory
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn(array $attributes): array => [
             'order_id' => $order->id,
         ]);
     }
 
     public function forUser(User $user): Factory|OrderItemFactory
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn(array $attributes): array => [
             'user_id' => $user->id,
         ]);
     }
 
     public function forProduct(Product $product): Factory|OrderItemFactory
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn(array $attributes): array => [
             'product_id' => $product->id,
             'price' => $product->price
         ]);

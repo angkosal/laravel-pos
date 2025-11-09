@@ -2,11 +2,39 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property int $id
+ * @property int|null $customer_id
+ * @property int $user_id
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read Customer|null $customer
+ * @property-read Collection<int, OrderItem> $items
+ * @property-read int|null $items_count
+ * @property-read Collection<int, Payment> $payments
+ * @property-read int|null $payments_count
+ * @property-read User $user
+ * @method static Builder<static>|Order byCustomer($customerId)
+ * @method static Builder<static>|Order dateRange($startDate, string $endDate)
+ * @method static \Database\Factories\OrderFactory factory($count = null, $state = [])
+ * @method static Builder<static>|Order newModelQuery()
+ * @method static Builder<static>|Order newQuery()
+ * @method static Builder<static>|Order query()
+ * @method static Builder<static>|Order whereCreatedAt($value)
+ * @method static Builder<static>|Order whereCustomerId($value)
+ * @method static Builder<static>|Order whereId($value)
+ * @method static Builder<static>|Order whereUpdatedAt($value)
+ * @method static Builder<static>|Order whereUserId($value)
+ * @mixin \Eloquent
+ */
 class Order extends Model
 {
     use HasFactory;
@@ -83,9 +111,7 @@ class Order extends Model
     public function receivedAmount(): float
     {
         if ($this->relationLoaded('payments')) {
-            return (float) $this->payments->sum(function($payment) {
-                return (float) $payment->amount;
-            });
+            return (float) $this->payments->sum(fn($payment): float => (float) $payment->amount);
         }
         return (float) $this->payments()->sum('amount');
     }
@@ -125,7 +151,7 @@ class Order extends Model
     /**
      * Scope for orders by date range.
      */
-    public function scopeDateRange($query, $startDate, $endDate)
+    public function scopeDateRange($query, $startDate, string $endDate)
     {
         return $query->whereBetween('created_at', [$startDate, $endDate . ' 23:59:59']);
     }

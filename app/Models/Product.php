@@ -2,11 +2,48 @@
 
 namespace App\Models;
 
+use Database\Factories\ProductFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property string|null $description
+ * @property string|null $image
+ * @property string $barcode
+ * @property numeric $price
+ * @property int $quantity
+ * @property bool $status
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read string $image_url
+ * @method static Builder<static>|Product active()
+ * @method static Builder<static>|Product bestSelling()
+ * @method static Builder<static>|Product currentMonthBestSelling()
+ * @method static ProductFactory factory($count = null, $state = [])
+ * @method static Builder<static>|Product lowStock()
+ * @method static Builder<static>|Product newModelQuery()
+ * @method static Builder<static>|Product newQuery()
+ * @method static Builder<static>|Product pastMonthsHotProducts()
+ * @method static Builder<static>|Product query()
+ * @method static Builder<static>|Product search($term)
+ * @method static Builder<static>|Product whereBarcode($value)
+ * @method static Builder<static>|Product whereCreatedAt($value)
+ * @method static Builder<static>|Product whereDescription($value)
+ * @method static Builder<static>|Product whereId($value)
+ * @method static Builder<static>|Product whereImage($value)
+ * @method static Builder<static>|Product whereName($value)
+ * @method static Builder<static>|Product wherePrice($value)
+ * @method static Builder<static>|Product whereQuantity($value)
+ * @method static Builder<static>|Product whereStatus($value)
+ * @method static Builder<static>|Product whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class Product extends Model
 {
     use HasFactory;
@@ -126,7 +163,7 @@ class Product extends Model
 
     public function scopeSearch($query, $term)
     {
-        return $query->when($term, function ($query, $term) {
+        return $query->when($term, function ($query, $term): void {
             $query->where('name', 'LIKE', "%{$term}%");
         });
     }

@@ -8,36 +8,32 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::table('order_items', function (Blueprint $table) {
+        Schema::table('order_items', function (Blueprint $table): void {
             $table->decimal('price', 14, 4)->change();
         });
-        Schema::table('payments', function (Blueprint $table) {
+        Schema::table('payments', function (Blueprint $table): void {
             $table->decimal('amount', 14, 4)->change();
         });
-        Schema::table('products', function (Blueprint $table) {
+        Schema::table('products', function (Blueprint $table): void {
             $table->decimal('price', 14, 2)->change();
         });
     }
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::table('order_items', function (Blueprint $table) {
+        Schema::table('order_items', function (Blueprint $table): void {
             //
         });
-        Schema::table('payments', function (Blueprint $table) {
+        Schema::table('payments', function (Blueprint $table): void {
             //
         });
-        Schema::table('products', function (Blueprint $table) {
+        Schema::table('products', function (Blueprint $table): void {
             //
         });
     }

@@ -29,14 +29,14 @@ class OrderFactory extends Factory
 
     public function forCustomer(Customer $customer): static
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn(array $attributes): array => [
             'customer_id' => $customer->id,
         ]);
     }
 
     public function forUser(User $user): static
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn(array $attributes): array => [
             'user_id' => $user->id,
         ]);
     }

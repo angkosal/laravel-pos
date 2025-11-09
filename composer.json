@@ -15,8 +15,11 @@
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.6.7",
+        "barryvdh/laravel-ide-helper": "^3.6",
+        "driftingly/rector-laravel": "^2.1",
         "fakerphp/faker": "^1.23",
         "kkomelin/laravel-translatable-string-exporter": "^1.23",
+        "larastan/larastan": "^3.0",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.13",
         "laravel/sail": "^1.41",
@@ -41,6 +44,8 @@
         }
     },
     "scripts": {
+        "stan": "./vendor/bin/phpstan analyse --memory-limit=2G",
+        "rector": "rector",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"

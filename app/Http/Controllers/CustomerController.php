@@ -5,16 +5,19 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Customer\CustomerStoreRequest;
 use App\Http\Requests\Customer\CustomerUpdateRequest;
 use App\Models\Customer;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 
 class CustomerController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): Response|View
     {
         if (request()->wantsJson()) {
             return response(
@@ -27,10 +30,8 @@ class CustomerController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(): View|Factory
     {
         return view('customers.create');
     }
@@ -38,8 +39,7 @@ class CustomerController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function store(CustomerStoreRequest $request)
     {
@@ -57,30 +57,17 @@ class CustomerController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Customer  $customer
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Customer $customer) {}
-
-    /**
      * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Customer  $customer
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\View\View
      */
-    public function edit(Customer $customer)
+    public function edit(Customer $customer): Factory|View
     {
-        return view('customers.edit', compact('customer'));
+        return view('customers.edit', ['customer' => $customer]);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Customer  $customer
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function update(CustomerUpdateRequest $request, Customer $customer)
     {
@@ -99,7 +86,7 @@ class CustomerController extends Controller
             ->with('success', __('customer.success_updating'));
     }
 
-    public function destroy(Customer $customer)
+    public function destroy(Customer $customer): JsonResponse
     {
         if ($customer->avatar) {
             Storage::disk('public')->delete($customer->avatar);

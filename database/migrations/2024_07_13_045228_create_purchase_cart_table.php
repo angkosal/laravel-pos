@@ -6,9 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 class CreatePurchaseCartTable extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::create('purchase_cart', function (Blueprint $table) {
+        Schema::create('purchase_cart', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
@@ -17,7 +17,7 @@ class CreatePurchaseCartTable extends Migration
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('purchase_cart');
     }

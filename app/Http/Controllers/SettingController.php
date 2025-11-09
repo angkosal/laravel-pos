@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 class SettingController extends Controller
 {
-    public function index()
+    public function index(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('settings.edit');
     }

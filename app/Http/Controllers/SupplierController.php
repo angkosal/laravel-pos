@@ -21,7 +21,7 @@ class SupplierController extends Controller
         return view('suppliers.index')->with('suppliers', $suppliers);
     }
 
-    public function create()
+    public function create(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('suppliers.create');
     }
@@ -38,16 +38,6 @@ class SupplierController extends Controller
 
         return redirect()->route('suppliers.index')
             ->with('success', __('supplier.success_creating'));
-    }
-
-    public function show(Supplier $supplier)
-    {
-        return view('suppliers.show', compact('supplier'));
-    }
-
-    public function edit(Supplier $supplier)
-    {
-        return view('suppliers.edit', compact('supplier'));
     }
 
     public function update(SupplierUpdateRequest $request, Supplier $supplier)

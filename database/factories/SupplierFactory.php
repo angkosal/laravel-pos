@@ -32,28 +32,28 @@ class SupplierFactory extends Factory
 
     public function withoutEmail(): static
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn(array $attributes): array => [
             'email' => null,
         ]);
     }
 
     public function withoutPhone(): static
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn(array $attributes): array => [
             'phone' => null,
         ]);
     }
 
     public function withoutAddress(): static
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn(array $attributes): array => [
             'address' => null,
         ]);
     }
 
     public function withoutAvatar(): static
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn(array $attributes): array => [
             'avatar' => null,
         ]);
     }

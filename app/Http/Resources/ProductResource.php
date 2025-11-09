@@ -5,6 +5,18 @@ namespace App\Http\Resources;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * @property-read int $id
+ * @property-read string $name
+ * @property-read string|null $description
+ * @property-read string|null $image
+ * @property-read string $barcode
+ * @property-read float $price
+ * @property-read int $quantity
+ * @property-read bool $status
+ * @property-read \Illuminate\Support\Carbon $created_at
+ * @method string getImageUrl()
+ */
 class ProductResource extends JsonResource
 {
     /**

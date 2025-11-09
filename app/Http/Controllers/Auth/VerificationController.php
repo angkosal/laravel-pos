@@ -23,10 +23,16 @@ class VerificationController extends Controller
 
     /**
      * Where to redirect users after verification.
+     */
+    protected string $redirectTo = '/admin';
+
+
+    /**
+     * The path to the "home" route for your application.
      *
      * @var string
      */
-    protected $redirectTo = RouteServiceProvider::HOME;
+    public const HOME = '/admin';
 
     /**
      * Create a new controller instance.

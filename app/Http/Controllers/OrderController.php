@@ -10,14 +10,14 @@ use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         $orders = Order::query()
             ->with(['items.product', 'payments', 'customer'])
-            ->when($request->input('start_date'), function ($query, $startDate) {
+            ->when($request->input('start_date'), function ($query, $startDate): void {
                 $query->where('created_at', '>=', $startDate);
             })
-            ->when($request->input('end_date'), function ($query, $endDate) {
+            ->when($request->input('end_date'), function ($query, string $endDate): void {
                 $query->where('created_at', '<=', $endDate . ' 23:59:59');
             })
             ->latest()
@@ -26,7 +26,7 @@ class OrderController extends Controller
         $total = $orders->sum(fn($order) => $order->total());
         $receivedAmount = $orders->sum(fn($order) => $order->receivedAmount());
 
-        return view('orders.index', compact('orders', 'total', 'receivedAmount'));
+        return view('orders.index', ['orders' => $orders, 'total' => $total, 'receivedAmount' => $receivedAmount]);
 
     }
 
@@ -89,7 +89,7 @@ class OrderController extends Controller
                 ->withErrors(__('order.amount_exceeds_balance'));
         }
 
-        DB::transaction(function () use ($order, $request) {
+        DB::transaction(function () use ($order, $request): void {
             $order->payments()->create([
                 'amount' => $request->amount,
                 'user_id' => auth()->id(),

@@ -12,20 +12,16 @@ class AppServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         //
     }
 
     /**
      * Bootstrap any application services.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         Schema::defaultStringLength(191);
 
@@ -33,9 +29,7 @@ class AppServiceProvider extends ServiceProvider
             // 'key' => 'value'
             $settings = Setting::all('key', 'value')
                 ->keyBy('key')
-                ->transform(function ($setting) {
-                    return $setting->value;
-                })
+                ->transform(fn($setting) => $setting->value)
                 ->toArray();
             config([
                'settings' => $settings

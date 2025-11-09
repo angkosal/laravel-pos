@@ -33,35 +33,35 @@ class CustomerFactory extends Factory
 
     public function withOutEmail(): CustomerFactory|Factory
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn(array $attributes): array => [
             'email' => null,
         ]);
     }
 
     public function withOutPhone(): CustomerFactory|Factory
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn(array $attributes): array => [
             'phone' => null,
         ]);
     }
 
     public function withOutAddress(): CustomerFactory|Factory
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn(array $attributes): array => [
             'address' => null,
         ]);
     }
 
     public function withOutAvatar(): CustomerFactory|Factory
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn(array $attributes): array => [
             'avatar' => null,
         ]);
     }
 
     public function forUser(User $user): CustomerFactory|Factory
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn(array $attributes): array => [
             'user_id' => $user->id,
         ]);
     }

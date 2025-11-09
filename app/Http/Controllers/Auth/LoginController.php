@@ -22,10 +22,19 @@ class LoginController extends Controller
 
     /**
      * Where to redirect users after login.
-     *
-     * @var string
      */
     protected string $redirectTo = '/admin';
+
+
+    public function redirectPath(): string
+    {
+        if (method_exists($this, 'redirectTo')) {
+            return $this->redirectTo();
+        }
+
+        return $this->redirectTo;
+    }
+
 
     /**
      * Create a new controller instance.
@@ -38,15 +47,4 @@ class LoginController extends Controller
         $this->middleware('auth')->only('logout');
     }
 
-
-    /**
-     * Get the post-login redirect path.
-     */
-    public function redirectPath(): string
-    {
-        if (method_exists($this, 'redirectTo')) {
-            return $this->redirectTo();
-        }
-        return property_exists($this, 'redirectTo') ? $this->redirectTo : '/admin';
-    }
 }

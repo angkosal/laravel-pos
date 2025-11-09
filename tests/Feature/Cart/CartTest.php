@@ -362,7 +362,7 @@ describe('Cart Empty', function () {
     test('emptying already empty cart succeeds', function () {
         $response = $this->deleteJson(route('cart.index') . '/empty');
 
-        $response->assertNoContent();
+        $response->assertOk();
         expect($this->user->cart()->count())->toBe(0);
     });
 

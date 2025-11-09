@@ -8,16 +8,16 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SupplierController;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
-Route::get('/', function () {
-    return redirect('/admin');
-});
+Route::get('/', fn(): Redirector|RedirectResponse => redirect('/admin'));
 
 Auth::routes();
 
-Route::prefix('admin')->middleware(['auth', 'locale'])->group(function () {
+Route::prefix('admin')->middleware(['auth', 'locale'])->group(function (): void {
     Route::get('/', HomeController::class)->name('home');
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingController::class, 'store'])->name('settings.store');

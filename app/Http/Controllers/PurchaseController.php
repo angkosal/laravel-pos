@@ -8,11 +8,11 @@ use Illuminate\Http\Request;
 
 class PurchaseController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         $products = Product::all();
         $suppliers = Supplier::all();
 
-        return view('purchase.index', compact('products', 'suppliers'));
+        return view('purchase.index', ['products' => $products, 'suppliers' => $suppliers]);
     }
 }

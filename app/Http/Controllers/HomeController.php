@@ -20,9 +20,9 @@ class HomeController extends Controller
 
         return view('home', [
             'orders_count' => $orders->count(),
-            'income' => $orders->sum(fn($order) => min($order->receivedAmount(), $order->total())),
+            'income' => $orders->sum(fn($order): float => min($order->receivedAmount(), $order->total())),
             'income_today' => $orders->where('created_at', '>=', today())
-                ->sum(fn($order) => min($order->receivedAmount(), $order->total())),
+                ->sum(fn($order): float => min($order->receivedAmount(), $order->total())),
             'customers_count' => Customer::count(),
             'low_stock_products' => Product::lowStock()->get(),
             'best_selling_products' => Product::bestSelling()->get(),

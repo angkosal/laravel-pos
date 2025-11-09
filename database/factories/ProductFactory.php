@@ -32,28 +32,28 @@ class ProductFactory extends Factory
 
     public function inactive(): ProductFactory|Factory
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn(array $attributes): array => [
             'status' => false,
         ]);
     }
 
     public function active(): ProductFactory|Factory
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn(array $attributes): array => [
             'status' => true,
         ]);
     }
 
     public function withOutImage(): ProductFactory|Factory
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn(array $attributes): array => [
             'image' => null,
         ]);
     }
 
     public function withOutDescription(): ProductFactory|Factory
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn(array $attributes): array => [
             'description' => null,
         ]);
     }

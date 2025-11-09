@@ -30,14 +30,14 @@ class PaymentFactory extends Factory
 
     public function forOrder(Order $order): static
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn(array $attributes): array => [
             'order_id' => $order->id
         ]);
     }
 
     public function forUser(User $user): static
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn(array $attributes): array => [
             'user_id' => $user->id
         ]);
     }
