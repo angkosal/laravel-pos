@@ -1,98 +1,218 @@
 <!-- Main Sidebar Container -->
-<aside class="main-sidebar sidebar-dark-primary elevation-4">
+<aside class="main-sidebar elevation-0">
     <!-- Brand Logo -->
-    <a href="{{route('home')}}" class="brand-link">
-        <img src="{{ asset('images/logo.png') }}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
-             style="opacity: .8">
-        <span class="brand-text font-weight-light">{{ config('app.name') }}</span>
+    <a href="{{ route('home') }}" class="brand-link">
+        <div class="pill">
+            <div class="top">Deeen</div>
+            <div class="sub">COFFEE</div>
+        </div>
     </a>
 
     <!-- Sidebar -->
     <div class="sidebar">
-        <!-- Sidebar user (optional) -->
-        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-            <div class="image">
-                <img src="{{ auth()->user()->getAvatar() }}" class="img-circle elevation-2" alt="User Image">
-            </div>
-            <div class="info">
-                <a href="#" class="d-block">{{ auth()->user()->getFullname() }}</a>
-            </div>
-        </div>
+        <!-- Sidebar Menu (VERTIKAL: ikon di atas, label di bawah) -->
+        <nav class="mt-4">
+            <ul class="nav flex-column align-items-center sidebar-menu">
 
-        <!-- Sidebar Menu -->
-        <nav class="mt-2">
-            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                <li class="nav-item has-treeview">
-                    <a href="{{route('home')}}" class="nav-link">
-                        <i class="nav-icon fas fa-tachometer-alt"></i>
-                        <p>{{ __('dashboard.title') }}</p>
-                    </a>
-                </li>
-                <li class="nav-item has-treeview">
-                    <a href="{{ route('products.index') }}" class="nav-link {{ activeSegment('products') }}">
-                        <i class="nav-icon fas fa-th-large"></i>
-                        <p>{{ __('product.title') }}</p>
-                    </a>
-                </li>
-                <li class="nav-item has-treeview">
-                    <a href="{{ route('cart.index') }}" class="nav-link {{ activeSegment('cart') }}">
-                        <i class="nav-icon fas fa-cart-plus"></i>
-                        <p>{{ __('cart.title') }}</p>
-                    </a>
-                </li>
-                <li class="nav-item has-treeview">
-                    <a href="{{ route('orders.index') }}" class="nav-link {{ activeSegment('orders') }}">
-                        <i class="nav-icon fas fa-cart-plus"></i>
-                        <p>{{ __('order.title') }}</p>
-                    </a>
-                </li>
-                <li class="nav-item has-treeview">
-                    <a href="{{ route('customers.index') }}" class="nav-link {{ activeSegment('customers') }}">
-                        <i class="nav-icon fas fa-users"></i>
-                        <p>{{ __('customer.title') }}</p>
-                    </a>
-                </li>
-                <li class="nav-item has-treeview">
-                    <a href="{{ route('suppliers.index') }}" class="nav-link {{ activeSegment('supplier') }}">
-                        <i class="nav-icon fas fa-users"></i>
-                        <p>{{ __('Supplier') }}</p>
-                    </a>
-                </li>
-                <li class="nav-item has-treeview">
-                    <a href="{{ route('settings.index') }}" class="nav-link {{ activeSegment('settings') }}">
-                        <i class="nav-icon fas fa-cogs"></i>
-                        <p>{{ __('settings.title') }}</p>
-                    </a>
-                </li>
-                
-                <!-- Menu Absensi -->
-                <li class="nav-item has-treeview">
-                    <a href="{{ route('absensi.index') }}" class="nav-link {{ activeSegment('absensi') }}">
-                        <i class="nav-icon fas fa-calendar-check"></i>
-                        <p>{{ __('Absensi') }}</p>
-                    </a>
-                </li>
-
-                <!-- Menu Laporan (Baru Ditambahkan) -->
-                <li class="nav-item has-treeview">
-                    <a href="{{ route('laporan.index') }}" class="nav-link {{ activeSegment('laporan') }}">
-                        <i class="nav-icon fas fa-file-alt"></i>
-                        <p>{{ __('Laporan') }}</p>
-                    </a>
-                </li>
-
+                <!-- Dashboard -->
                 <li class="nav-item">
+                    <a href="{{ route('home') }}" class="nav-link {{ activeSegment('') }}">
+                        <div class="menu-pill {{ activeSegment('') ? 'active' : '' }}">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- Products -->
+                <li class="nav-item">
+                    <a href="{{ route('products.index') }}" class="nav-link {{ activeSegment('products') }}">
+                        <div class="menu-pill {{ activeSegment('products') ? 'active' : '' }}">
+                            <i class="fas fa-th-large"></i>
+                            <span>Products</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- Cart -->
+                <li class="nav-item">
+                    <a href="{{ route('cart.index') }}" class="nav-link {{ activeSegment('cart') }}">
+                        <div class="menu-pill {{ activeSegment('cart') ? 'active' : '' }}">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>Cart</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- Orders -->
+                <li class="nav-item">
+                    <a href="{{ route('orders.index') }}" class="nav-link {{ activeSegment('orders') }}">
+                        <div class="menu-pill {{ activeSegment('orders') ? 'active' : '' }}">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>Orders</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- Customers -->
+                <li class="nav-item">
+                    <a href="{{ route('customers.index') }}" class="nav-link {{ activeSegment('customers') }}">
+                        <div class="menu-pill {{ activeSegment('customers') ? 'active' : '' }}">
+                            <i class="fas fa-user-friends"></i>
+                            <span>Customers</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- Suppliers -->
+                <li class="nav-item">
+                    <a href="{{ route('suppliers.index') }}" class="nav-link {{ activeSegment('supplier') }}">
+                        <div class="menu-pill {{ activeSegment('supplier') ? 'active' : '' }}">
+                            <i class="fas fa-truck"></i>
+                            <span>Suppliers</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- Settings -->
+                <li class="nav-item">
+                    <a href="{{ route('settings.index') }}" class="nav-link {{ activeSegment('settings') }}">
+                        <div class="menu-pill {{ activeSegment('settings') ? 'active' : '' }}">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- Absensi -->
+                <li class="nav-item">
+                    <a href="{{ route('absensi.index') }}" class="nav-link {{ activeSegment('absensi') }}">
+                        <div class="menu-pill {{ activeSegment('absensi') ? 'active' : '' }}">
+                            <i class="fas fa-user"></i>
+                            <span>Absensi</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- Laporan -->
+                <li class="nav-item">
+                    <a href="{{ route('laporan.index') }}" class="nav-link {{ activeSegment('laporan') }}">
+                        <div class="menu-pill {{ activeSegment('laporan') ? 'active' : '' }}">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Laporan</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- Logout -->
+                <li class="nav-item mt-3">
                     <a href="#" class="nav-link" onclick="document.getElementById('logout-form').submit()">
-                        <i class="nav-icon fas fa-sign-out-alt"></i>
-                        <p>{{ __('common.Logout') }}</p>
-                        <form action="{{route('logout')}}" method="POST" id="logout-form">
+                        <div class="menu-pill logout">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </div>
+                        <form action="{{ route('logout') }}" method="POST" id="logout-form" class="d-none">
                             @csrf
                         </form>
                     </a>
                 </li>
             </ul>
         </nav>
-        <!-- /.sidebar-menu -->
     </div>
-    <!-- /.sidebar -->
 </aside>
+
+<style>
+    :root {
+        --green: #1f3d34;
+        --green-hover: #294f3d;
+        --muted: #9aa5a0;
+        --light-bg: #f4f6f5;
+    }
+
+    .main-sidebar {
+        width: 100px;
+        background: #fff !important;
+        border-right: 1px solid #e9efec;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .brand-link {
+        background: #fff;
+        padding: 25px 0 !important;
+        text-align: center;
+        border-bottom: 1px solid #e9efec;
+    }
+
+    .pill {
+        background: var(--green);
+        color: #fff;
+        width: 130px;
+        border-radius: 20px;
+        padding: 10px 0;
+        line-height: 1;
+    }
+
+    .pill .top {
+        font-size: 22px;
+        font-weight: 700;
+    }
+
+    .pill .sub {
+        font-size: 10px;
+        letter-spacing: 3px;
+    }
+
+    .sidebar-menu {
+        margin-top: 20px;
+        padding-left: 0;
+        width: 100%;
+    }
+
+    .menu-pill {
+        background: var(--light-bg);
+        border-radius: 20px;
+        width: 70px;
+        height: 70px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        transition: all 0.3s ease;
+        margin: 0 auto 12px;
+    }
+
+    .menu-pill i {
+        font-size: 22px;
+        color: var(--muted);
+        margin-bottom: 5px;
+    }
+
+    .menu-pill span {
+        font-size: 11px;
+        color: var(--muted);
+        font-weight: 500;
+    }
+
+    .menu-pill:hover {
+        background: #e9efec;
+    }
+
+    .menu-pill.active {
+        background: var(--green);
+    }
+
+    .menu-pill.active i,
+    .menu-pill.active span {
+        color: #fff !important;
+    }
+
+    .logout {
+        background: #fdecea;
+    }
+
+    .logout:hover {
+        background: #f8d7da;
+    }
+</style>
