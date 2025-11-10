@@ -10,8 +10,8 @@
     --green-600:#245747;
     --surface:#ffffff;
     --ring:#e9efec;
-    --head:#e7e9ea;     /* bar "List Absensi Pegawai" */
-    --thead:#e8efe9;    /* header tabel */
+    --head:#e7e9ea;
+    --thead:#e8efe9;
   }
 
   .wrap{
@@ -22,7 +22,6 @@
     box-shadow:0 8px 20px rgba(0,0,0,.06);
   }
 
-  /* Title row */
   .page-head{ display:flex; align-items:center; gap:14px; margin-bottom:12px; }
   .page-head .icon-pill{
     width:44px; height:44px; border-radius:12px; background:var(--ring);
@@ -30,7 +29,6 @@
   }
   .page-head h1{ font-size:32px; font-weight:900; color:var(--green-900); margin:0; letter-spacing:.2px; }
 
-  /* Periode filter (ikon kalender + pill) */
   .filter-row{ display:flex; align-items:center; gap:10px; margin:6px 0 16px; }
   .filter-row .mini{
     width:32px; height:32px; border-radius:10px; background:var(--head);
@@ -41,22 +39,19 @@
     padding:8px 12px; font-weight:700;
   }
 
-  /* Head bar "List Absensi Pegawai" (judul saja) */
   .headbar{
     background:var(--head);
     border-radius:12px;
     padding:10px 12px;
-    display:flex; align-items:center; gap:12px; /* TIDAK space-between */
+    display:flex; align-items:center; gap:12px;
   }
   .headbar .title{ font-weight:800; color:#2c3b36; }
 
-  /* GARIS AKSI: Tambah Pegawai KIRI, Search KANAN */
   .actionline{
     display:flex; align-items:center; justify-content:space-between;
     gap:12px; margin:10px 0 6px;
   }
 
-  /* Button Tambah Pegawai (kiri) */
   .btn-add{
     background:var(--green-800); color:#fff; border:none; border-radius:14px;
     padding:10px 16px; display:inline-flex; align-items:center; gap:10px;
@@ -68,7 +63,6 @@
   }
   .btn-add:hover{ background:var(--green-600); }
 
-  /* Search (kanan) */
   .search{ position:relative; width:260px; }
   .search i{
     position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#98a8a2;
@@ -78,7 +72,6 @@
     padding-left:36px;
   }
 
-  /* Table */
   .table-soft{ width:100%; margin-top:10px; border-collapse:separate; border-spacing:0; }
   .table-soft thead th{
     background:var(--thead); color:var(--green-900);
@@ -88,12 +81,10 @@
   .table-soft tbody td{ padding:14px; border-bottom:1px solid #eef2f0; vertical-align:middle; }
   .table-soft tbody tr:hover{ background:#f7f9f8; }
 
-  /* Status badge */
   .badge-soft{ border-radius:999px; padding:6px 12px; font-weight:800; font-size:12px; }
   .badge-hadir{ background:#e5f5ec; color:#2c7a4b; }
   .badge-absen{ background:#fff4e5; color:#b26b00; }
 
-  /* Action buttons */
   .btn-aksi{ border:none; border-radius:10px; padding:8px 12px; font-weight:800; display:inline-flex; align-items:center; gap:8px; }
   .btn-edit{ background:#f9c76a; color:#4e3a07; }
   .btn-edit:hover{ background:#f3b94a; }
@@ -102,6 +93,7 @@
   .btn-det{ background:#e5e7ea; color:#59606a; }
   .btn-det:hover{ background:#d9dbe0; }
 
+  .pagination{ margin-bottom:0; }
   .pagination .page-link{ border-radius:10px; border:1px solid var(--ring); color:#2b2f2d; }
   .pagination .page-item.active .page-link{ background:var(--green-800); border-color:var(--green-800); color:#fff; }
 </style>
@@ -132,12 +124,12 @@
     </div>
   </div>
 
-  {{-- Headbar (judul saja) --}}
+  {{-- Headbar --}}
   <div class="headbar">
     <div class="title">List Absensi Pegawai</div>
   </div>
 
-  {{-- GARIS AKSI: Tambah Pegawai KIRI, Search KANAN --}}
+  {{-- Action line --}}
   <div class="actionline">
     <a href="{{ route('absensi.create') }}" class="btn-add">
       <span class="dot">+</span> Tambah Pegawai
@@ -156,7 +148,7 @@
       <thead>
         <tr>
           <th>NO</th>
-          <th>NAMA</th>
+          <th>ID ABSENSI</th> {{-- ganti header --}}
           <th>STATUS</th>
           <th>NO. HP</th>
           <th class="text-center">AKSI</th>
@@ -165,12 +157,12 @@
       <tbody>
         @forelse ($absensis as $absensi)
           @php
-            $nama = $absensi->pegawai->nama ?? $absensi->pegawai_nama ?? ('ID '.$absensi->pegawai_id);
-            $nohp = $absensi->pegawai->no_hp ?? $absensi->no_hp ?? '-';
+            $idAbsensi = $absensi->id_absensi;   // tampilkan ID Absensi di kolom kedua
+            $nohp      = $absensi->pegawai->no_hp ?? $absensi->no_hp ?? '-';
           @endphp
           <tr>
             <td>{{ $loop->iteration + ($absensis->currentPage() - 1) * $absensis->perPage() }}</td>
-            <td>{{ $nama }}</td>
+            <td>{{ $idAbsensi }}</td> {{-- ganti isi kolom --}}
             <td>
               @if(Str::lower($absensi->status) === 'hadir')
                 <span class="badge-soft badge-hadir">Hadir</span>
@@ -200,11 +192,32 @@
   </div>
 
   {{-- Pagination --}}
+  @php
+      $isPaginator = is_object($absensis) && method_exists($absensis,'currentPage');
+      $current = $isPaginator ? $absensis->currentPage() : 1;
+      $last    = $isPaginator ? $absensis->lastPage()    : 1;
+  @endphp
+
   <div class="d-flex justify-content-between align-items-center mt-3">
     <div class="text-muted">
-      Menampilkan {{ $absensis->firstItem() ?? 0 }} - {{ $absensis->lastItem() ?? 0 }} dari total {{ $absensis->total() }} data
+      Menampilkan {{ $absensis->firstItem() ?? 0 }} - {{ $absensis->lastItem() ?? 0 }} dari total {{ $absensis->total() ?? 0 }} data
     </div>
-    {{ $absensis->links('pagination::bootstrap-5') }}
+
+    <nav aria-label="Absensi pagination">
+      <ul class="pagination mb-0">
+        <li class="page-item {{ $current <= 1 ? 'disabled' : '' }}">
+          <a class="page-link" href="{{ $current <= 1 ? '#' : $absensis->previousPageUrl() }}">Previous</a>
+        </li>
+        @for($page = 1; $page <= $last; $page++)
+          <li class="page-item {{ $page == $current ? 'active' : '' }}">
+            <a class="page-link" href="{{ $absensis->url($page) }}">{{ $page }}</a>
+          </li>
+        @endfor
+        <li class="page-item {{ $current >= $last ? 'disabled' : '' }}">
+          <a class="page-link" href="{{ $current >= $last ? '#' : $absensis->nextPageUrl() }}">Next</a>
+        </li>
+      </ul>
+    </nav>
   </div>
 
 </div>

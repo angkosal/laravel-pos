@@ -24,66 +24,6 @@
                     </a>
                 </li>
 
-                <!-- Products -->
-                <li class="nav-item">
-                    <a href="{{ route('products.index') }}" class="nav-link {{ activeSegment('products') }}">
-                        <div class="menu-pill {{ activeSegment('products') ? 'active' : '' }}">
-                            <i class="fas fa-th-large"></i>
-                            <span>Products</span>
-                        </div>
-                    </a>
-                </li>
-
-                <!-- Cart -->
-                <li class="nav-item">
-                    <a href="{{ route('cart.index') }}" class="nav-link {{ activeSegment('cart') }}">
-                        <div class="menu-pill {{ activeSegment('cart') ? 'active' : '' }}">
-                            <i class="fas fa-shopping-cart"></i>
-                            <span>Cart</span>
-                        </div>
-                    </a>
-                </li>
-
-                <!-- Orders -->
-                <li class="nav-item">
-                    <a href="{{ route('orders.index') }}" class="nav-link {{ activeSegment('orders') }}">
-                        <div class="menu-pill {{ activeSegment('orders') ? 'active' : '' }}">
-                            <i class="fas fa-clipboard-list"></i>
-                            <span>Orders</span>
-                        </div>
-                    </a>
-                </li>
-
-                <!-- Customers -->
-                <li class="nav-item">
-                    <a href="{{ route('customers.index') }}" class="nav-link {{ activeSegment('customers') }}">
-                        <div class="menu-pill {{ activeSegment('customers') ? 'active' : '' }}">
-                            <i class="fas fa-user-friends"></i>
-                            <span>Customers</span>
-                        </div>
-                    </a>
-                </li>
-
-                <!-- Suppliers -->
-                <li class="nav-item">
-                    <a href="{{ route('suppliers.index') }}" class="nav-link {{ activeSegment('supplier') }}">
-                        <div class="menu-pill {{ activeSegment('supplier') ? 'active' : '' }}">
-                            <i class="fas fa-truck"></i>
-                            <span>Suppliers</span>
-                        </div>
-                    </a>
-                </li>
-
-                <!-- Settings -->
-                <li class="nav-item">
-                    <a href="{{ route('settings.index') }}" class="nav-link {{ activeSegment('settings') }}">
-                        <div class="menu-pill {{ activeSegment('settings') ? 'active' : '' }}">
-                            <i class="fas fa-cog"></i>
-                            <span>Settings</span>
-                        </div>
-                    </a>
-                </li>
-
                 <!-- Absensi -->
                 <li class="nav-item">
                     <a href="{{ route('absensi.index') }}" class="nav-link {{ activeSegment('absensi') }}">
