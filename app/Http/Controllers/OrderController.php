@@ -27,7 +27,6 @@ class OrderController extends Controller
         $receivedAmount = $orders->sum(fn($order) => $order->receivedAmount());
 
         return view('orders.index', ['orders' => $orders, 'total' => $total, 'receivedAmount' => $receivedAmount]);
-
     }
 
     public function store(OrderStoreRequest $request): \Illuminate\Http\JsonResponse
@@ -70,7 +69,6 @@ class OrderController extends Controller
                 'message' => __('order.created_successfully'),
                 'order_id' => $order->id,
             ], 201);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
