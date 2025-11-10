@@ -38,15 +38,28 @@ class LoginController extends Controller
         $this->middleware('auth')->only('logout');
     }
 
+    /**
+     * Show the application's login form.
+     * Use the custom Blade view: resources/views/auth/login.blade.php
+     */
+    public function showLoginForm()
+    {
+        return view('auth.login');
+    }
 
     /**
      * Get the post-login redirect path.
+     *
+     * @return string
      */
     public function redirectPath(): string
     {
         if (method_exists($this, 'redirectTo')) {
             return $this->redirectTo();
         }
-        return property_exists($this, 'redirectTo') ? $this->redirectTo : '/admin';
+
+        return property_exists($this, 'redirectTo')
+            ? $this->redirectTo
+            : '/admin';
     }
 }

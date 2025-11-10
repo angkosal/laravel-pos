@@ -34,18 +34,16 @@ Route::prefix('admin')->middleware(['auth', 'locale'])->group(function () {
 
     // --- Laporan ---
     Route::prefix('laporan')->group(function () {
-    Route::get('/', [LaporanController::class, 'index'])->name('laporan.index');
-    Route::get('/filter/{periode}', [LaporanController::class, 'filter'])->name('laporan.filter');
-    Route::post('/import', [LaporanController::class, 'import'])->name('laporan.import');
-    Route::post('/store', [LaporanController::class, 'store'])->name('laporan.store');
-    Route::get('/{id}', [LaporanController::class, 'show'])->name('laporan.show'); // <-- Tambahkan ini
-    Route::get('/{id}/edit', [LaporanController::class, 'edit'])->name('laporan.edit');
-    Route::put('/{id}', [LaporanController::class, 'update'])->name('laporan.update');
-    Route::delete('/{id}', [LaporanController::class, 'destroy'])->name('laporan.destroy');
-    Route::put('/laporan/{id}', [LaporanController::class, 'update'])->name('laporan.update');
-});
-
-
+        Route::get('/', [LaporanController::class, 'index'])->name('laporan.index');
+        Route::get('/filter/{periode}', [LaporanController::class, 'filter'])->name('laporan.filter');
+        Route::post('/import', [LaporanController::class, 'import'])->name('laporan.import');
+        Route::post('/store', [LaporanController::class, 'store'])->name('laporan.store');
+        Route::get('/{id}', [LaporanController::class, 'show'])->name('laporan.show'); // <-- Tambahkan ini
+        Route::get('/{id}/edit', [LaporanController::class, 'edit'])->name('laporan.edit');
+        Route::put('/{id}', [LaporanController::class, 'update'])->name('laporan.update');
+        Route::delete('/{id}', [LaporanController::class, 'destroy'])->name('laporan.destroy');
+        Route::put('/laporan/{id}', [LaporanController::class, 'update'])->name('laporan.update');
+    });
 
     // --- Cart ---
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
