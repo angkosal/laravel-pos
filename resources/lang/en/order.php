@@ -34,6 +34,8 @@ return [
     'Partial'           => 'Partial',
     'Paid'              => 'Paid',
     'Change'            => 'Change',
-    'Actions'           => 'Actions'
+    'Actions'           => 'Actions',
 
+    'partial_payment_success' => 'Partial payment success',
+    'amount_exceeds_balance' => 'Amount exceeds balance',
 ];
