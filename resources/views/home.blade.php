@@ -34,6 +34,9 @@
   .card-soft{ border:0; border-radius:20px; box-shadow:0 2px 10px rgba(0,0,0,.06); }
 </style>
 
+{{-- Tambah link Bootstrap Icons agar ikon kalender tampil --}}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
 @php
   $periode = request('periode','week');
   $labelPeriode = [
@@ -77,7 +80,8 @@
   {{-- ======== FILTER + BUTTON BAR ======== --}}
   <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
     <div class="filter-bar">
-      <div class="mini-icon"><i class="bi bi-grid"></i></div>
+      {{-- Tambahkan ikon kalender --}}
+      <div class="mini-icon"><i class="bi bi-calendar-event"></i></div>
 
       {{-- Dropdown pill ala Figma --}}
       <div class="dropdown">
