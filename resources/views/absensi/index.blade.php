@@ -148,7 +148,7 @@
       <thead>
         <tr>
           <th>NO</th>
-          <th>ID ABSENSI</th> {{-- ganti header --}}
+          <th>ID ABSENSI</th>
           <th>STATUS</th>
           <th>NO. HP</th>
           <th class="text-center">AKSI</th>
@@ -157,12 +157,12 @@
       <tbody>
         @forelse ($absensis as $absensi)
           @php
-            $idAbsensi = $absensi->id_absensi;   // tampilkan ID Absensi di kolom kedua
+            $idAbsensi = $absensi->id_absensi;
             $nohp      = $absensi->pegawai->no_hp ?? $absensi->no_hp ?? '-';
           @endphp
           <tr>
             <td>{{ $loop->iteration + ($absensis->currentPage() - 1) * $absensis->perPage() }}</td>
-            <td>{{ $idAbsensi }}</td> {{-- ganti isi kolom --}}
+            <td>{{ $idAbsensi }}</td>
             <td>
               @if(Str::lower($absensi->status) === 'hadir')
                 <span class="badge-soft badge-hadir">Hadir</span>
@@ -173,12 +173,19 @@
             <td>{{ $nohp }}</td>
             <td class="text-center">
               <a href="{{ route('absensi.edit', $absensi->id) }}" class="btn-aksi btn-edit"><i class="fas fa-pen"></i> Ubah</a>
-              <form action="{{ route('absensi.destroy', $absensi->id) }}" method="POST" class="d-inline">
-                @csrf @method('DELETE')
-                <button type="submit" class="btn-aksi btn-del" onclick="return confirm('Yakin ingin menghapus data ini?')">
+
+              {{-- Hapus (SweetAlert) --}}
+              <form action="{{ route('absensi.destroy', $absensi->id) }}"
+                    method="POST"
+                    class="d-inline js-delete-absensi"
+                    data-idabsensi="{{ $idAbsensi }}">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn-aksi btn-del">
                   <i class="fas fa-trash"></i> Hapus
                 </button>
               </form>
+
               <a href="{{ route('absensi.show', $absensi->id) }}" class="btn-aksi btn-det"><i class="fas fa-info-circle"></i> Detail</a>
             </td>
           </tr>
@@ -221,4 +228,35 @@
   </div>
 
 </div>
+@endsection
+
+@section('js')
+<script>
+  // Konfirmasi hapus (SweetAlert) — sama seperti di halaman Laporan
+  document.addEventListener('click', function(e){
+    const form = e.target.closest('.js-delete-absensi');
+    if(!form) return;
+
+    e.preventDefault();
+
+    const idAbsensi = form.getAttribute('data-idabsensi') || '';
+    Swal.fire({
+      title: 'Yakin menghapus data?',
+      html: `Klik <b>Hapus</b> di bawah ini jika Anda yakin ingin menghapus data Absensi <b>"${idAbsensi}"</b>.`,
+      icon: 'warning',
+      showCancelButton: true,
+      reverseButtons: true,
+      focusCancel: true,
+      confirmButtonText: 'Hapus',
+      cancelButtonText: 'Batal',
+      customClass: {
+        confirmButton: 'btn btn swal2-confirm',
+        cancelButton: 'btn swal2-cancel'
+      },
+      buttonsStyling: false
+    }).then((result) => {
+      if (result.isConfirmed) form.submit();
+    });
+  }, false);
+</script>
 @endsection

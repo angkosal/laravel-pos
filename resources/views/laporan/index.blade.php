@@ -19,7 +19,7 @@
     border:0; background:#bfbfbf; color:#fff; font-weight:700;
     border-radius:12px; padding:8px 14px; display:inline-flex; gap:8px; align-items:center;
   }
-  .dropdown-toggle::after{ display:none; } /* kita pakai caret custom */
+  .dropdown-toggle::after{ display:none; } /* caret custom */
   .caret{
     display:inline-block; width:0; height:0; border-left:5px solid transparent; border-right:5px solid transparent;
     border-top:6px solid #ffffff; transform:translateY(1px);
@@ -59,7 +59,7 @@
   tbody tr td:first-child{ border-left:1px solid #ececec; border-radius:10px 0 0 10px; width:60px; }
   tbody tr td:last-child{ border-right:1px solid #ececec; border-radius:0 10px 10px 0; }
 
-  /* Buttons (disamakan feel dengan Absensi) */
+  /* Buttons */
   .btn-pill{ border-radius:12px; padding:8px 12px; border:0; font-weight:700; display:inline-flex; align-items:center; gap:8px; }
   .btn-ubah{ background:#f9c76a; color:#4e3a07; }   .btn-ubah:hover{ background:#f3b94a; }
   .btn-hapus{ background:#f25f57; color:#fff; }     .btn-hapus:hover{ background:#e5483e; }
@@ -87,7 +87,7 @@
 <div class="container laporan-wrap mt-3">
   <h2 class="fw-bold mb-3" style="color:#143a31;">Dashboard</h2>
 
-  <!-- ====== TOP FILTER BAR: kalender + pill range ====== -->
+  <!-- ====== TOP FILTER BAR ====== -->
   <div class="toolbar mb-3">
     <div class="iconbox"><i class="fas fa-calendar-alt"></i></div>
     <div class="dropdown">
@@ -159,11 +159,13 @@
                     <i class="fas fa-pen"></i> Ubah
                   </a>
 
-                  <form action="{{ route('laporan.destroy', $laporan->id_laporan) }}" method="POST" class="d-inline">
+                  <form action="{{ route('laporan.destroy', $laporan->id_laporan) }}"
+                        method="POST"
+                        class="d-inline js-delete-laporan"
+                        data-kode="{{ $kode }}">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-sm btn-pill btn-hapus"
-                            onclick="return confirm('Yakin ingin menghapus laporan ini?')">
+                    <button type="submit" class="btn btn-sm btn-pill btn-hapus">
                       <i class="fas fa-trash"></i> Hapus
                     </button>
                   </form>
@@ -214,4 +216,35 @@
     </div> <!-- /.section-body -->
   </div> <!-- /.section-card -->
 </div>
+@endsection
+
+@section('js')
+<script>
+  // Dialog konfirmasi hapus (SweetAlert)
+  document.addEventListener('click', function(e){
+    const form = e.target.closest('.js-delete-laporan');
+    if(!form) return;
+
+    e.preventDefault();
+
+    const kode = form.getAttribute('data-kode') || '';
+    Swal.fire({
+      title: 'Yakin menghapus data?',
+      html: `Klik <b>Hapus</b> di bawah ini jika Anda yakin ingin menghapus data Laporan <b>"${kode}"</b>.`,
+      icon: 'warning',
+      showCancelButton: true,
+      reverseButtons: true,
+      focusCancel: true,
+      confirmButtonText: 'Hapus',
+      cancelButtonText: 'Batal',
+      customClass: {
+        confirmButton: 'btn btn swal2-confirm btn', // styled in layout
+        cancelButton: 'btn swal2-cancel btn'
+      },
+      buttonsStyling: false
+    }).then((result) => {
+      if (result.isConfirmed) form.submit();
+    });
+  }, false);
+</script>
 @endsection

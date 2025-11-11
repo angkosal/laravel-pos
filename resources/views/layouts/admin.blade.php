@@ -27,10 +27,8 @@
             --muted:#9aa5a0;
             --ring:#e9efec;
 
-            /* ==== UBAH LEBAR SIDEBAR DI SINI ==== */
-            /* 96px untuk sidebar slim (ikon di atas, label di bawah) */
-            /* 250px untuk sidebar lebar klasik */
-            --sidebar-width: 96px;
+            /* ==== LEBAR SIDEBAR ==== */
+            --sidebar-width: 96px; /* 96px (slim) / 250px (lebar) */
         }
 
         body{
@@ -39,7 +37,7 @@
             color:#2b2b2b;
         }
 
-        /* ====== Sidebar putih + logo pill ====== */
+        /* Sidebar putih + logo pill */
         .main-sidebar{
             background:#fff !important;
             color:#111;
@@ -59,13 +57,13 @@
         .brand-link .pill .top{font-weight:700; font-size:16px; letter-spacing:.3px}
         .brand-link .pill .sub{font-size:8px; letter-spacing:3px; opacity:.95}
 
-        /* ====== Sinkron margin konten dgn lebar sidebar ====== */
+        /* Sinkron margin konten dengan lebar sidebar */
         .main-header, .content-wrapper, .main-footer{
             margin-left: var(--sidebar-width) !important;
             transition: margin .2s ease;
         }
 
-        /* ====== MENU VERTIKAL (ikon di atas, label di bawah) ====== */
+        /* Menu vertikal (ikon di atas, label di bawah) */
         .nav-sidebar.vertical .nav-link{
             background:transparent !important; border:0;
             margin:8px 10px; padding:8px 6px;
@@ -87,11 +85,11 @@
         }
         .nav-sidebar.vertical .nav-link.active .menu-label{color:#fff}
 
-        /* Sembunyikan style horizontal default saat memakai layout vertikal */
+        /* Sembunyikan style horizontal default */
         .nav-sidebar.vertical .nav-link .nav-icon,
         .nav-sidebar.vertical .nav-link p{display:none !important}
 
-        /* ===== Content area ===== */
+        /* Konten */
         .content-wrapper{
             background:#f3f5f4;
             border-radius:20px 0 0 0;
@@ -104,7 +102,22 @@
             margin:0;
         }
 
-        /* Responsif: kecilkan margin saat layar kecil */
+        /* SweetAlert2 theme agar serasi */
+        .swal2-popup{ border-radius:18px !important; }
+        .swal2-actions .btn{ border-radius:10px; font-weight:600; padding:.45rem 1rem; }
+        .swal2-confirm.btn{
+            background: var(--green);
+            color:#fff;
+            border:none;
+        }
+        .swal2-confirm.btn:hover{ filter: brightness(0.95); }
+        .swal2-cancel.btn{
+            background:#b0b7b3;
+            color:#fff;
+            border:none;
+        }
+        .swal2-cancel.btn:hover{ filter: brightness(0.95); }
+
         @media (max-width: 991.98px){
             .main-header, .content-wrapper, .main-footer{ margin-left: 0 !important; }
         }
@@ -148,6 +161,8 @@
 
 <!-- Bootstrap JS Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- SweetAlert2 (untuk konfirmasi hapus yang modern) -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 @yield('js')
 @yield('model')
