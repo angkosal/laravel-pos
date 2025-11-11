@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
@@ -12,23 +14,22 @@ class LoginController extends Controller
     | Login Controller
     |--------------------------------------------------------------------------
     |
-    | This controller handles authenticating users for the application and
-    | redirecting them to your home screen. The controller uses a trait
-    | to conveniently provide its functionality to your applications.
+    | Controller ini menangani proses autentikasi pengguna dan mengarahkan
+    | mereka ke halaman admin setelah berhasil login.
     |
     */
 
     use AuthenticatesUsers;
 
     /**
-     * Where to redirect users after login.
+     * Ke mana pengguna diarahkan setelah login.
      *
      * @var string
      */
     protected $redirectTo = '/admin';
 
     /**
-     * Create a new controller instance.
+     * Membuat instance controller baru.
      *
      * @return void
      */
@@ -39,8 +40,9 @@ class LoginController extends Controller
     }
 
     /**
-     * Show the application's login form.
-     * Use the custom Blade view: resources/views/auth/login.blade.php
+     * Menampilkan form login kustom.
+     *
+     * @return \Illuminate\View\View
      */
     public function showLoginForm()
     {
@@ -48,7 +50,36 @@ class LoginController extends Controller
     }
 
     /**
-     * Get the post-login redirect path.
+     * Menangani proses login.
+     * Jika gagal, kirim pesan error kustom ke halaman login.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Http\JsonResponse
+     */
+    public function login(Request $request)
+    {
+        // Validasi sederhana (jangan ubah logika utamanya)
+        $request->validate([
+            'email' => 'required|string',
+            'password' => 'required|string',
+        ]);
+
+        $credentials = $request->only('email', 'password');
+
+        // Coba login
+        if (Auth::attempt($credentials, $request->filled('remember'))) {
+            $request->session()->regenerate();
+            return redirect()->intended($this->redirectPath());
+        }
+
+        // Jika gagal, kembalikan ke login dengan error seperti di desain
+        return back()
+            ->withInput($request->only('email'))
+            ->with('error', 'Username & Password are incorrect');
+    }
+
+    /**
+     * Mengembalikan path redirect setelah login berhasil.
      *
      * @return string
      */

@@ -21,11 +21,9 @@
         font-family: "Poppins", sans-serif;
     }
 
-    .login-container {
-        text-align: center;
-    }
+    .login-container { text-align: center; }
 
-    /* Logo Pill */
+    /* Logo */
     .logo-box {
         background-color: var(--green-dark);
         color: white;
@@ -35,22 +33,10 @@
         margin: 0 auto 30px auto;
         box-shadow: var(--shadow);
     }
+    .logo-box h1 { font-size: 42px; font-weight: 700; margin: 0; letter-spacing: 1px; }
+    .logo-box span { display: block; font-size: 13px; letter-spacing: 3px; margin-top: 5px; }
 
-    .logo-box h1 {
-        font-size: 42px;
-        font-weight: 700;
-        margin: 0;
-        letter-spacing: 1px;
-    }
-
-    .logo-box span {
-        display: block;
-        font-size: 13px;
-        letter-spacing: 3px;
-        margin-top: 5px;
-    }
-
-    /* Login Card */
+    /* Box */
     .login-box {
         background: rgba(255, 255, 255, 0.85);
         border: 1px solid #dfe6e2;
@@ -61,28 +47,10 @@
         text-align: left;
         backdrop-filter: blur(6px);
     }
+    .login-box h2 { text-align: center; font-weight: 700; margin-bottom: 5px; color: var(--green-dark); }
+    .login-box p  { text-align: center; font-size: 13px; color: #444; margin-bottom: 25px; }
 
-    .login-box h2 {
-        text-align: center;
-        font-weight: 700;
-        margin-bottom: 5px;
-        color: var(--green-dark);
-    }
-
-    .login-box p {
-        text-align: center;
-        font-size: 13px;
-        color: #444;
-        margin-bottom: 25px;
-    }
-
-    label {
-        font-weight: 600;
-        color: var(--green-dark);
-        font-size: 13px;
-        display: block;
-        margin-bottom: 6px;
-    }
+    label { font-weight: 600; color: var(--green-dark); font-size: 13px; display: block; margin-bottom: 6px; }
 
     .form-control {
         width: 100%;
@@ -94,12 +62,27 @@
         transition: all 0.2s ease;
         background: #f8f9f8;
     }
-
     .form-control:focus {
         border-color: var(--green-dark);
         background: white;
         outline: none;
         box-shadow: 0 0 0 3px rgba(31, 61, 52, 0.1);
+    }
+
+    /* Error state */
+    .form-control.is-error{
+        border: 2px solid #e74c3c !important;
+        background: #fff7f7 !important;
+    }
+
+    /* Inline message */
+    .error-inline{
+        margin-top: 2px;
+        margin-bottom: 12px;
+        text-align: center;
+        font-size: 13px;
+        font-weight: 600;
+        color: #e74c3c;
     }
 
     .btn-login {
@@ -113,39 +96,24 @@
         cursor: pointer;
         transition: 0.3s;
     }
+    .btn-login:hover { background-color: #244f43; }
 
-    .btn-login:hover {
-        background-color: #244f43;
-    }
-
-    .register-link {
-        text-align: center;
-        margin-top: 18px;
-        font-size: 13px;
-    }
-
-    .register-link a {
-        color: var(--green-dark);
-        font-weight: 600;
-        text-decoration: none;
-        transition: 0.2s;
-    }
-
-    .register-link a:hover {
-        text-decoration: underline;
-    }
-
-    .invalid-feedback {
-        display: block;
-        font-size: 12px;
-        color: #d9534f;
-        margin-top: -8px;
-        margin-bottom: 10px;
-    }
+    .register-link { text-align: center; margin-top: 18px; font-size: 13px; }
+    .register-link a { color: var(--green-dark); font-weight: 600; text-decoration: none; transition: 0.2s; }
+    .register-link a:hover { text-decoration: underline; }
 </style>
 @endsection
 
 @section('content')
+@php
+    // Pesan error jika username/password salah
+    $loginError = session('error') ?? (
+        ($errors->has('email') || $errors->has('password'))
+            ? 'Username & Password are required'
+            : null
+    );
+@endphp
+
 <div class="login-container">
     <!-- Logo -->
     <div class="logo-box">
@@ -163,24 +131,26 @@
 
             <label for="email">Username</label>
             <input type="email" name="email" id="email"
-                class="form-control @error('email') is-invalid @enderror"
-                value="{{ old('email') }}" required autocomplete="email" autofocus>
-            @error('email')
-                <span class="invalid-feedback">{{ $message }}</span>
-            @enderror
+                class="form-control {{ $loginError ? 'is-error' : '' }}"
+                value="{{ old('email') }}" autocomplete="email" autofocus>
 
             <label for="password">Password</label>
             <input type="password" name="password" id="password"
-                class="form-control @error('password') is-invalid @enderror"
-                required autocomplete="current-password">
-            @error('password')
-                <span class="invalid-feedback">{{ $message }}</span>
-            @enderror
+                class="form-control {{ $loginError ? 'is-error' : '' }}"
+                autocomplete="current-password">
+
+            {{-- Error message --}}
+            @if($loginError)
+                <div class="error-inline">
+                    {{ $loginError == 'Username & Password are required'
+                        ? $loginError
+                        : 'Username & Password are incorrect' }}
+                </div>
+            @endif
 
             <button type="submit" class="btn-login">Login</button>
         </form>
 
-        <!-- Register Link -->
         @if (Route::has('register'))
         <div class="register-link">
             Belum punya akun?
