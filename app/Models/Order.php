@@ -16,12 +16,12 @@ use Illuminate\Support\Carbon;
  * @property int $user_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Customer|null $customer
- * @property-read Collection<int, OrderItem> $items
+ * @property-read \App\Models\Customer|null $customer
+ * @property-read Collection<int, \App\Models\OrderItem> $items
  * @property-read int|null $items_count
- * @property-read Collection<int, Payment> $payments
+ * @property-read Collection<int, \App\Models\Payment> $payments
  * @property-read int|null $payments_count
- * @property-read User $user
+ * @property-read \App\Models\User $user
  * @method static Builder<static>|Order byCustomer($customerId)
  * @method static Builder<static>|Order dateRange($startDate, string $endDate)
  * @method static \Database\Factories\OrderFactory factory($count = null, $state = [])

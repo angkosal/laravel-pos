@@ -15,8 +15,8 @@ use Illuminate\Support\Carbon;
  * @property int $product_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Order $order
- * @property-read Product $product
+ * @property-read \App\Models\Order $order
+ * @property-read \App\Models\Product $product
  * @method static Builder<static>|OrderItem newModelQuery()
  * @method static Builder<static>|OrderItem newQuery()
  * @method static Builder<static>|OrderItem query()

@@ -14,8 +14,8 @@ use Illuminate\Support\Carbon;
  * @property int $user_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Order $order
- * @property-read User $user
+ * @property-read \App\Models\Order $order
+ * @property-read \App\Models\User $user
  * @method static Builder<static>|Payment newModelQuery()
  * @method static Builder<static>|Payment newQuery()
  * @method static Builder<static>|Payment query()

@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Storage;
  * @property Carbon|null $updated_at
  * @property-read string $avatar_url
  * @property-read string $full_name
- * @method static SupplierFactory factory($count = null, $state = [])
+ * @method static \Database\Factories\SupplierFactory factory($count = null, $state = [])
  * @method static Builder<static>|Supplier newModelQuery()
  * @method static Builder<static>|Supplier newQuery()
  * @method static Builder<static>|Supplier query()

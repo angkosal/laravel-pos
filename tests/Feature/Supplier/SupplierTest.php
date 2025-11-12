@@ -44,7 +44,7 @@ describe('Supplier Index', function () {
         $response = $this->get(route('suppliers.index'));
 
         $response->assertViewHas('suppliers', function ($suppliers) {
-            return $suppliers->count() === 10;
+            return $suppliers->count() === 15;
         });
         $response->assertOk();
     });

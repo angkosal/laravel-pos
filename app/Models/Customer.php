@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Storage;
  * @property-read string $avatar_url
  * @property-read string $full_name
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer byUser($userId)
- * @method static CustomerFactory factory($count = null, $state = [])
+ * @method static \Database\Factories\CustomerFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer query()

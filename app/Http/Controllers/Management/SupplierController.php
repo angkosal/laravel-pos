@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Management;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Supplier\SupplierStoreRequest;
 use App\Http\Requests\Supplier\SupplierUpdateRequest;
 use App\Models\Supplier;
@@ -10,15 +11,16 @@ use Illuminate\Support\Facades\Storage;
 
 class SupplierController extends Controller
 {
-    public function index()
+
+    public function index(Request $request)
     {
-        if (request()->wantsJson()) {
-            return response(
-                Supplier::paginate()
-            );
+        $suppliers = Supplier::latest()->paginate();
+
+        if ($request->wantsJson()) {
+            return response()->json($suppliers);
         }
-        $suppliers = Supplier::latest()->paginate(10);
-        return view('suppliers.index')->with('suppliers', $suppliers);
+
+        return view('suppliers.index', compact('suppliers'));
     }
 
     public function create(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
