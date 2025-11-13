@@ -14,7 +14,7 @@
             font-family: 'Courier New', monospace;
             font-size: 11px;
             line-height: 1.4;
-            width: 80mm;
+            width: 70mm;
             padding: 5mm;
         }
 
