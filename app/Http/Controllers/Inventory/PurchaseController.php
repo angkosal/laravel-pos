@@ -71,6 +71,9 @@ class PurchaseController extends Controller
 
             DB::commit();
 
+            // Clear purchase cart
+            $request->user()->purchaseCart()->detach();
+
             return redirect()->route('purchases.index')
                 ->with('success', __('Purchase created successfully!'));
 
