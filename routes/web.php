@@ -27,24 +27,19 @@ Route::prefix('admin')->middleware(['auth', 'locale'])->group(function (): void 
     Route::resource('orders', OrderController::class);
     Route::resource('suppliers', SupplierController::class);
 
+    // POS Cart
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart', [CartController::class, 'store'])->name('cart.store');
     Route::post('/cart/change-qty', [CartController::class, 'changeQty']);
     Route::delete('/cart/delete', [CartController::class, 'delete']);
     Route::delete('/cart/empty', [CartController::class, 'empty']);
 
-    Route::get('/purchase', [PurchaseController::class, 'index'])->name('purchase.cart.index');
-    Route::post('/orders/partial-payment', [OrderController::class, 'partialPayment'])->name('orders.partial-payment');
-
-    Route::get('/locale/{type}', function ($type) {
-        $translations = trans($type);
-        return response()->json($translations);
-    });
-
-    // Purchases
+    Route::get('/purchases/data', [PurchaseController::class, 'data'])->name('purchases.data');
+    Route::get('/purchases/{purchase}/receipt', [PurchaseController::class, 'receipt'])->name('purchases.receipt');
     Route::resource('purchases', PurchaseController::class);
 
-    Route::prefix('purchase-cart')->name('purchase-cart.')->group(function () {
+    // Purchase Cart API
+    Route::prefix('purchase-cart')->name('purchase-cart.')->group(function (): void {
         Route::get('/', [PurchaseCartController::class, 'index'])->name('index');
         Route::post('/', [PurchaseCartController::class, 'store'])->name('store');
         Route::post('/change-qty', [PurchaseCartController::class, 'changeQty'])->name('change-qty');
@@ -53,6 +48,16 @@ Route::prefix('admin')->middleware(['auth', 'locale'])->group(function (): void 
         Route::delete('/empty', [PurchaseCartController::class, 'empty'])->name('empty');
     });
 
+    // Orders
+    Route::post('/orders/partial-payment', [OrderController::class, 'partialPayment'])->name('orders.partial-payment');
+
+    // Translations
+    Route::get('/locale/{type}', function ($type) {
+        $translations = trans($type);
+        return response()->json($translations);
+    });
+
+    // Language Switch
     Route::get('/lang-switch/{lang}', function ($lang) {
         $supportedLocales = ['en', 'es'];
 

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\PurchaseScopes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,12 +24,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase bySupplier(int $supplierId)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase completed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase dateRange(?string $from = null, ?string $to = null)
  * @method static \Database\Factories\PurchaseFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase filter(array $filters)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase pending()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase recent(int $days = 30)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase search(?string $search = null)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase status(string $status)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase whereId($value)
@@ -44,6 +48,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Purchase extends Model
 {
     use HasFactory;
+    use PurchaseScopes;
 
     protected $fillable = [
         'supplier_id',
@@ -62,6 +67,7 @@ class Purchase extends Model
         ];
     }
 
+    // Relationships
     public function user(): BelongsTo
     {
         return $this->belongsTo(related: User::class, foreignKey: 'user_id');
@@ -75,33 +81,5 @@ class Purchase extends Model
     public function items(): HasMany
     {
         return $this->hasMany(related: PurchaseItem::class, foreignKey: 'purchase_id');
-    }
-
-    public function scopeStatus($query, string $status)
-    {
-        return $query->where('status', $status);
-    }
-
-    public function scopeBySupplier($query, int $supplierId)
-    {
-        return $query->where('supplier_id', $supplierId);
-    }
-
-
-    public function scopeRecent($query, int $days = 30)
-    {
-        return $query->where('purchase_date', '>=', now()->subDays($days));
-    }
-
-
-    public function scopeCompleted($query)
-    {
-        return $query->where('status', 'completed');
-    }
-
-
-    public function scopePending($query)
-    {
-        return $query->where('status', 'pending');
     }
 }

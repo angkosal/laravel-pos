@@ -20,7 +20,7 @@ class SupplierController extends Controller
             return response()->json($suppliers);
         }
 
-        return view('suppliers.index', compact('suppliers'));
+        return view('suppliers.index', ['suppliers' => $suppliers]);
     }
 
     public function create(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View

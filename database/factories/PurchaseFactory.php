@@ -37,7 +37,7 @@ class PurchaseFactory extends Factory
      */
     public function pending(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'status' => 'pending',
         ]);
     }
@@ -47,9 +47,9 @@ class PurchaseFactory extends Factory
      */
     public function completed(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'status' => 'completed',
-            'purchase_date' => now()->subDays(rand(1, 30)),
+            'purchase_date' => now()->subDays(random_int(1, 30)),
         ]);
     }
 
@@ -58,7 +58,7 @@ class PurchaseFactory extends Factory
      */
     public function cancelled(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'status' => 'cancelled',
         ]);
     }
@@ -68,7 +68,7 @@ class PurchaseFactory extends Factory
      */
     public function forSupplier(Supplier $supplier): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'supplier_id' => $supplier->id,
         ]);
     }
@@ -78,7 +78,7 @@ class PurchaseFactory extends Factory
      */
     public function byUser(User $user): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'user_id' => $user->id,
         ]);
     }
