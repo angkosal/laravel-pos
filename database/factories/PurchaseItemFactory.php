@@ -34,7 +34,7 @@ class PurchaseItemFactory extends Factory
      */
     public function forPurchase(Purchase $purchase): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'purchase_id' => $purchase->id,
         ]);
     }
@@ -44,7 +44,7 @@ class PurchaseItemFactory extends Factory
      */
     public function forProduct(Product $product): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'product_id' => $product->id,
             'purchase_price' => $product->purchase_price ?? fake()->randomFloat(2, 5, 500),
         ]);
