@@ -88,12 +88,12 @@ Rename or copy `.env.example` file to `.env` 1.`php artisan key:generate` to gen
 - [x] Add/Edit supplier info (name, phone, email, ...)
 - [ ] View purchase/order history by supplier
 
-#### 📥 Purchase 
-- [x] Add purchase form (select supplier, date, invoice number) — by [Emre Dikmen](https://github.com/fabyo0)
-- [x] Add purchased items with quantity and cost — by [Emre Dikmen](https://github.com/fabyo0)
-- [x] Update product stock automatically on purchase — by [Emre Dikmen](https://github.com/fabyo0)
-- [ ] View list of purchases with filters (supplier, date)
-- [ ] Generate printable purchase receipt (80mm)
+#### 📥 Purchase — by [Emre Dikmen](https://github.com/fabyo0)
+- [x] Add purchase form (select supplier, date, invoice number)
+- [x] Add purchased items with quantity and cost
+- [x] Update product stock automatically on purchase
+- [x] View list of purchases with filters (supplier, date)
+- [x] Generate printable purchase receipt (80mm)
 
 #### ⚙️ Settings
 - [x] Store settings (name, currency)
