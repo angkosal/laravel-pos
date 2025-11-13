@@ -15,8 +15,6 @@ class PurchaseCartController extends Controller
 {
     /**
      * Get purchase cart items
-     *
-     * @return JsonResponse
      */
     public function index(Request $request): JsonResponse
     {
@@ -25,7 +23,7 @@ class PurchaseCartController extends Controller
 
         $cart = $user->purchaseCart()->get();
 
-        $formattedCart = $cart->map(function ($item) {
+        $formattedCart = $cart->map(function ($item): array {
             assert($item instanceof Product);
 
             return [
@@ -47,9 +45,6 @@ class PurchaseCartController extends Controller
 
     /**
      * Add product to purchase cart
-     *
-     * @param AddToPurchaseCartRequest $request
-     * @return JsonResponse
      */
     public function store(AddToPurchaseCartRequest $request): JsonResponse
     {
@@ -89,9 +84,6 @@ class PurchaseCartController extends Controller
 
     /**
      * Change quantity in purchase cart
-     *
-     * @param ChangePurchaseCartQtyRequest $request
-     * @return JsonResponse
      */
     public function changeQty(ChangePurchaseCartQtyRequest $request): JsonResponse
     {
@@ -109,9 +101,6 @@ class PurchaseCartController extends Controller
 
     /**
      * Change purchase price in cart
-     *
-     * @param Request $request
-     * @return JsonResponse
      */
     public function changePrice(Request $request): JsonResponse
     {
@@ -134,9 +123,6 @@ class PurchaseCartController extends Controller
 
     /**
      * Remove product from purchase cart
-     *
-     * @param Request $request
-     * @return JsonResponse
      */
     public function delete(Request $request): JsonResponse
     {
@@ -156,9 +142,6 @@ class PurchaseCartController extends Controller
 
     /**
      * Empty purchase cart
-     *
-     * @param Request $request
-     * @return JsonResponse
      */
     public function empty(Request $request): JsonResponse
     {
