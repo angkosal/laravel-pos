@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
+use App\Traits\ProductScopes;
 use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Storage;
  * @property string|null $image
  * @property string $barcode
  * @property numeric $price
+ * @property string|null $purchase_price
  * @property int $quantity
  * @property bool $status
  * @property Carbon|null $created_at
@@ -25,7 +26,7 @@ use Illuminate\Support\Facades\Storage;
  * @method static Builder<static>|Product active()
  * @method static Builder<static>|Product bestSelling()
  * @method static Builder<static>|Product currentMonthBestSelling()
- * @method static ProductFactory factory($count = null, $state = [])
+ * @method static \Database\Factories\ProductFactory factory($count = null, $state = [])
  * @method static Builder<static>|Product lowStock()
  * @method static Builder<static>|Product newModelQuery()
  * @method static Builder<static>|Product newQuery()
@@ -39,6 +40,7 @@ use Illuminate\Support\Facades\Storage;
  * @method static Builder<static>|Product whereImage($value)
  * @method static Builder<static>|Product whereName($value)
  * @method static Builder<static>|Product wherePrice($value)
+ * @method static Builder<static>|Product wherePurchasePrice($value)
  * @method static Builder<static>|Product whereQuantity($value)
  * @method static Builder<static>|Product whereStatus($value)
  * @method static Builder<static>|Product whereUpdatedAt($value)
@@ -47,6 +49,7 @@ use Illuminate\Support\Facades\Storage;
 class Product extends Model
 {
     use HasFactory;
+    use ProductScopes;
 
     protected $fillable = [
         'name',
@@ -64,6 +67,7 @@ class Product extends Model
         'status' => 'boolean',
     ];
 
+    protected $appends = ['image_url'];
     /**
      * Get the product image URL.
      */
@@ -74,97 +78,5 @@ class Product extends Model
         }
 
         return asset('images/img-placeholder.jpg');
-    }
-
-    /**
-     * Check if product is low stock.
-     */
-    public function isLowStock(): bool
-    {
-        return $this->quantity < 10;
-    }
-
-    /**
-     * Check if product is out of stock.
-     */
-    public function isOutOfStock(): bool
-    {
-        return $this->quantity === 0;
-    }
-
-    /**
-     * Scope for active products.
-     */
-    public function scopeActive($query)
-    {
-        return $query->where('status', true);
-    }
-
-    /**
-     * Scope for low stock products.
-     */
-    public function scopeLowStock($query)
-    {
-        return $query->where('quantity', '<', 10);
-    }
-
-    /**
-     * Scope for best selling products (total sold > 10).
-     */
-    public function scopeBestSelling($query)
-    {
-        return $query->select(
-            'products.*',
-            DB::raw('SUM(order_items.quantity) as total_sold')
-        )
-            ->join('order_items', 'order_items.product_id', '=', 'products.id')
-            ->groupBy('products.id')
-            ->having('total_sold', '>', 10)
-            ->orderByDesc('total_sold')
-            ->limit(10);
-    }
-
-    /**
-     * Scope for current month best selling products.
-     */
-    public function scopeCurrentMonthBestSelling($query)
-    {
-        return $query->select(
-            'products.*',
-            DB::raw('SUM(order_items.quantity) as total_sold')
-        )
-            ->join('order_items', 'order_items.product_id', '=', 'products.id')
-            ->join('orders', 'orders.id', '=', 'order_items.order_id')
-            ->whereYear('orders.created_at', now()->year)
-            ->whereMonth('orders.created_at', now()->month)
-            ->groupBy('products.id')
-            ->having('total_sold', '>', 500)
-            ->orderByDesc('total_sold')
-            ->limit(10);
-    }
-
-    /**
-     * Scope for past months hot products (6 months).
-     */
-    public function scopePastMonthsHotProducts($query)
-    {
-        return $query->select(
-            'products.*',
-            DB::raw('SUM(order_items.quantity) as total_sold')
-        )
-            ->join('order_items', 'order_items.product_id', '=', 'products.id')
-            ->join('orders', 'orders.id', '=', 'order_items.order_id')
-            ->where('orders.created_at', '>=', now()->subMonths(6))
-            ->groupBy('products.id')
-            ->having('total_sold', '>', 1000)
-            ->orderByDesc('total_sold')
-            ->limit(10);
-    }
-
-    public function scopeSearch($query, $term)
-    {
-        return $query->when($term, function ($query, $term): void {
-            $query->where('name', 'LIKE', "%{$term}%");
-        });
     }
 }

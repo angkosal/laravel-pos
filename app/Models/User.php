@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
@@ -24,13 +25,15 @@ use Illuminate\Support\Carbon;
  * @property string|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Collection<int, Product> $cart
+ * @property-read Collection<int, \App\Models\Product> $cart
  * @property-read int|null $cart_count
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
- * @property-read Collection<int, Product> $purchaseCart
+ * @property-read Collection<int, \App\Models\Purchase> $purchase
+ * @property-read int|null $purchase_count
+ * @property-read Collection<int, \App\Models\Product> $purchaseCart
  * @property-read int|null $purchase_cart_count
- * @method static UserFactory factory($count = null, $state = [])
+ * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
  * @method static Builder<static>|User newModelQuery()
  * @method static Builder<static>|User newQuery()
  * @method static Builder<static>|User query()
@@ -82,13 +85,18 @@ class User extends Authenticatable
 
     public function cart()
     {
-        return $this->belongsToMany(Product::class, 'user_cart')->withPivot('quantity');
+        return $this->belongsToMany(related: Product::class, table: 'user_cart')->withPivot('quantity');
+    }
+
+    public function purchase(): HasMany
+    {
+        return $this->hasMany(related: Purchase::class);
     }
 
     public function purchaseCart(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class, 'purchase_cart')
-            ->withPivot('quantity')
+        return $this->belongsToMany(related: Product::class, table: 'user_purchase_cart')
+            ->withPivot(['quantity', 'purchase_price'])
             ->withTimestamps();
     }
 

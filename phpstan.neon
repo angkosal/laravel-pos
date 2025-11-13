@@ -10,6 +10,9 @@ parameters:
     level: 5
 
     ignoreErrors:
+        - '#Access to an undefined property.*\:\:\$pivot#'
+        - '#Access to an undefined property Illuminate\\Database\\Eloquent\\Relations\\Pivot#'
+
 #        - '#PHPDoc tag @var#'
 #
 #    excludePaths:
