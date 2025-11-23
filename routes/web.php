@@ -36,13 +36,22 @@ Route::prefix('admin')->middleware(['auth', 'locale'])->group(function () {
     Route::prefix('laporan')->group(function () {
         Route::get('/', [LaporanController::class, 'index'])->name('laporan.index');
         Route::get('/filter/{periode}', [LaporanController::class, 'filter'])->name('laporan.filter');
-        Route::post('/import', [LaporanController::class, 'import'])->name('laporan.import');
+
+        // 🆕 Import CSV Transaksi
+        Route::post('/import-csv', [LaporanController::class, 'importCSV'])->name('laporan.import.csv');
+
+        // 🆕 Generate Laporan dari Transaksi
+        Route::post('/generate', [LaporanController::class, 'generateFromTransaksi'])->name('laporan.generate');
+
+        // 🆕 Export Excel Manual (Tanpa Composer)
+        Route::get('/export-excel-manual', [LaporanController::class, 'exportExcelManual'])->name('laporan.export.excel.manual');
+
+        // Existing CRUD
         Route::post('/store', [LaporanController::class, 'store'])->name('laporan.store');
-        Route::get('/{id}', [LaporanController::class, 'show'])->name('laporan.show'); // <-- Tambahkan ini
+        Route::get('/{id}', [LaporanController::class, 'show'])->name('laporan.show');
         Route::get('/{id}/edit', [LaporanController::class, 'edit'])->name('laporan.edit');
         Route::put('/{id}', [LaporanController::class, 'update'])->name('laporan.update');
         Route::delete('/{id}', [LaporanController::class, 'destroy'])->name('laporan.destroy');
-        Route::put('/laporan/{id}', [LaporanController::class, 'update'])->name('laporan.update');
     });
 
     // --- Cart ---

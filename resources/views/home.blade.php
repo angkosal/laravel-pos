@@ -28,7 +28,6 @@
 
   /* Buttons */
   .btn-blue{ background:#0d6efd; color:#fff; border-radius:12px; font-weight:600; }
-  .btn-orange{ background:#f9b72d; color:#fff; border-radius:12px; font-weight:600; }
   .btn-gray{ background:#bfbfbf; color:#fff; border-radius:12px; font-weight:600; }
 
   .card-soft{ border:0; border-radius:20px; box-shadow:0 2px 10px rgba(0,0,0,.06); }
@@ -80,10 +79,8 @@
   {{-- ======== FILTER + BUTTON BAR ======== --}}
   <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
     <div class="filter-bar">
-      {{-- Tambahkan ikon kalender --}}
       <div class="mini-icon"><i class="bi bi-calendar-event"></i></div>
 
-      {{-- Dropdown pill ala Figma --}}
       <div class="dropdown">
         <button class="pill dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
           {{ $labelPeriode }}
@@ -97,10 +94,9 @@
       </div>
     </div>
 
-    {{-- Tombol Aksi (kanan sejajar) --}}
+    {{-- Tombol lainnya tetap ada, KECUALI Import --}}
     <div class="d-flex gap-2">
       <button class="btn btn-blue" data-bs-toggle="modal" data-bs-target="#modalTambah">Tambah Laporan</button>
-      <button class="btn btn-orange" data-bs-toggle="modal" data-bs-target="#modalImport">Import Data CSV</button>
       <a href="{{ route('laporan.index') }}" class="btn btn-gray">Tampil Semua</a>
     </div>
   </div>
@@ -159,7 +155,7 @@
   @endif
 </div>
 
-{{-- ======== MODALS ======== --}}
+{{-- ======== MODAL Tambah Laporan tetap ada ======== --}}
 <div class="modal fade" id="modalTambah" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content rounded-4 border-0 shadow-sm">
@@ -174,24 +170,6 @@
           <div class="text-end">
             <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
             <button type="submit" class="btn btn-primary">Simpan</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal fade" id="modalImport" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content rounded-4 border-0 shadow-sm">
-      <div class="modal-body">
-        <h6 class="mb-3">Import CSV</h6>
-        <form action="{{ route('laporan.import') }}" method="POST" enctype="multipart/form-data">
-          @csrf
-          <input type="file" name="csv_file" class="form-control mb-3" accept=".csv" required>
-          <div class="text-end">
-            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
-            <button type="submit" class="btn btn-warning text-white">Import</button>
           </div>
         </form>
       </div>
