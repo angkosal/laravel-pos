@@ -27,30 +27,46 @@ class LaporanController extends Controller
         return view('laporan.index', compact('laporans', 'transactions'));
     }
 
-    // 🆕 Generate laporan berdasarkan transaksi (Akumulasi per pegawai)
     public function generateFromTransaksi()
-    {
-        $transaksis = Transaksi::all();
+{
+    // Ambil bulan & tahun dari transaksi terbaru
+    $periodeAktif = Transaksi::orderBy('Tanggal_Transaksi', 'desc')->first();
 
-        foreach ($transaksis as $transaksi) {
-            if (!$transaksi->Nama_Pegawai) continue;
-
-            $laporan = Laporan::where('nama_pegawai', $transaksi->Nama_Pegawai)->first();
-
-            if ($laporan) {
-                $laporan->total_gaji += $transaksi->Total_Harga * 0.10;
-                $laporan->save();
-            } else {
-                Laporan::create([
-                    'nama_pegawai'  => $transaksi->Nama_Pegawai,
-                    'tanggal_cetak' => $transaksi->Tanggal_Transaksi ?? now(),
-                    'total_gaji'    => $transaksi->Total_Harga * 0.10,
-                ]);
-            }
-        }
-
-        return back()->with('success', 'Laporan berhasil digenerate dari transaksi!');
+    if (!$periodeAktif) {
+        return back()->with('error', 'Tidak ada data transaksi.');
     }
+
+    $bulan = date('m', strtotime($periodeAktif->Tanggal_Transaksi));
+    $tahun = date('Y', strtotime($periodeAktif->Tanggal_Transaksi));
+
+    // Hapus hanya laporan untuk periode ini (bulan + tahun yang sama)
+    Laporan::whereMonth('tanggal_cetak', $bulan)
+           ->whereYear('tanggal_cetak', $tahun)
+           ->delete();
+
+    // Ambil transaksi untuk periode ini
+    $transaksis = Transaksi::whereMonth('Tanggal_Transaksi', $bulan)
+                           ->whereYear('Tanggal_Transaksi', $tahun)
+                           ->get();
+
+    // Group transaksi berdasarkan Pegawai untuk periode bulan ini
+    $grouped = $transaksis->groupBy('Nama_Pegawai');
+
+    foreach ($grouped as $namaPegawai => $items) {
+        $totalBonus = $items->sum(fn($t) => $t->Total_Harga * 0.10);
+        $tanggalTerakhir = $items->sortByDesc('Tanggal_Transaksi')->first()->Tanggal_Transaksi;
+
+        Laporan::create([
+            'nama_pegawai'  => $namaPegawai,
+            'tanggal_cetak' => $tanggalTerakhir,
+            'total_gaji'    => $totalBonus,
+        ]);
+    }
+
+    return back()->with('success', 'Laporan berhasil digenerate khusus bulan ' . date('F Y', strtotime($periodeAktif->Tanggal_Transaksi)) . '!');
+}
+
+
 
     // 🆕 Export Excel Manual (Tanpa Composer)
     public function exportExcelManual()
@@ -85,34 +101,48 @@ class LaporanController extends Controller
         exit;
     }
 
-    // 🆕 Import CSV (Tanpa Composer) – Sesuai format file kamu
-    public function importCSV(Request $request)
-    {
-        $request->validate([
-            'file' => 'required|mimes:csv,txt|max:2048',
-        ]);
+   public function importCSV(Request $request)
+{
+    $request->validate([
+        'file' => 'required|mimes:csv,txt|max:2048',
+    ]);
 
-        $file = $request->file('file')->getRealPath();
+    $file = $request->file('file')->getRealPath();
 
-        if (($handle = fopen($file, 'r')) !== false) {
+    if (($handle = fopen($file, 'r')) !== false) {
+        fgetcsv($handle, 1000, ','); // Skip header
 
-            fgetcsv($handle, 1000, ','); // Skip header
+        while (($data = fgetcsv($handle, 1000, ',')) !== false) {
 
-            while (($data = fgetcsv($handle, 1000, ',')) !== false) {
-                Transaksi::create([
-                    'Nama_Pegawai'      => $data[0] ?? null,
-                    'Nama_Produk'       => $data[1] ?? null,
-                    'Total_Pesanan'     => $data[2] ?? 0,
-                    'Harga_Satuan'      => $data[3] ?? 0,
-                    'Tanggal_Transaksi' => $data[4] ?? null,
-                    'Total_Harga'       => ($data[2] ?? 0) * ($data[3] ?? 0),
-                ]);
+            // 🔹 Konversi tanggal dari CSV (1/1/2025) → MySQL (2025-01-01)
+            $tanggal = null;
+            if (!empty($data[4])) {
+                try {
+                    $tanggal = \Carbon\Carbon::createFromFormat('d/m/Y', $data[4])->format('Y-m-d');
+                } catch (\Exception $e) {
+                    try {
+                        $tanggal = \Carbon\Carbon::createFromFormat('m/d/Y', $data[4])->format('Y-m-d');
+                    } catch (\Exception $e) {
+                        $tanggal = null; // Jika gagal tetap null
+                    }
+                }
             }
-            fclose($handle);
-        }
 
-        return back()->with('success', 'Data transaksi berhasil diimport tanpa Composer!');
+            Transaksi::create([
+                'Nama_Pegawai'      => $data[0] ?? null,
+                'Nama_Produk'       => $data[1] ?? null,
+                'Total_Pesanan'     => $data[2] ?? 0,
+                'Harga_Satuan'      => $data[3] ?? 0,
+                'Tanggal_Transaksi' => $tanggal,
+                'Total_Harga'       => ($data[2] ?? 0) * ($data[3] ?? 0),
+            ]);
+        }
+        fclose($handle);
     }
+
+    return back()->with('success', 'Data transaksi berhasil diimport!');
+}
+
 
     public function destroy($id)
     {
