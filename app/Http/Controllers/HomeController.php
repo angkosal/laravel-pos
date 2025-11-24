@@ -6,43 +6,39 @@ use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     */
     public function __construct()
     {
         $this->middleware('auth');
     }
 
-    /**
-     * Show the application dashboard.
-     */
     public function index()
     {
-        // Hitung jumlah pegawai
-        $pegawai_count = DB::table('pegawais')->count();
+        // Total pendapatan (Income) dari transaksi
+        $income = DB::table('transaksis')->sum('Total_Harga');
 
-        // Total transaksi (jumlah baris)
-        $total_transaksi = DB::table('transaksis')->count();
+        // Pengeluaran (Outcome) — belum ada tabel, tetap 0
+        $outcome = 0;
 
-        // Total pendapatan dari transaksi
-        $total_pendapatan = DB::table('transaksis')->sum('total_harga');
+        // Jumlah transaksi (total baris)
+        $transactions = DB::table('transaksis')->count();
 
-        // Total transaksi hari ini
-        $pendapatan_hari_ini = DB::table('transaksis')
-            ->whereDate('tanggal_transaksi', date('Y-m-d'))
-            ->sum('total_harga');
+        // Data grafik income per bulan
+        $chartData = DB::table('transaksis')
+            ->select(DB::raw("DATE_FORMAT(Tanggal_Transaksi, '%d-%m-%Y') as tanggal"), DB::raw('SUM(Total_Harga) as total'))
+            ->whereNotNull('Tanggal_Transaksi')
+            ->groupBy('tanggal')
+            ->orderBy('tanggal', 'asc')
+            ->pluck('total', 'tanggal')
+            ->toArray();
 
-        // Total gaji belum dibayar
-        $gaji_pending = DB::table('gajis')->where('status_pembayaran', 'pending')->count();
+        // Hapus key kosong "" agar tidak merusak grafik
+        unset($chartData[""]);
 
-
-        return view('home', [
-            'pegawai_count' => $pegawai_count,
-            'total_transaksi' => $total_transaksi,
-            'total_pendapatan' => $total_pendapatan,
-            'pendapatan_hari_ini' => $pendapatan_hari_ini,
-            'gaji_pending' => $gaji_pending,
-        ]);
+        return view('home', compact(
+            'income',
+            'outcome',
+            'transactions',
+            'chartData'
+        ));
     }
 }

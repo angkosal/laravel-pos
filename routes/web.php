@@ -23,9 +23,11 @@ Route::prefix('admin')->middleware(['auth', 'locale'])->group(function () {
 
     Route::get('/', [HomeController::class, 'index'])->name('home');
 
+    // --- Settings ---
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingController::class, 'store'])->name('settings.store');
 
+    // --- Resources ---
     Route::resource('products', ProductController::class);
     Route::resource('customers', CustomerController::class);
     Route::resource('orders', OrderController::class);
@@ -35,19 +37,17 @@ Route::prefix('admin')->middleware(['auth', 'locale'])->group(function () {
     // --- Laporan ---
     Route::prefix('laporan')->group(function () {
         Route::get('/', [LaporanController::class, 'index'])->name('laporan.index');
-        Route::get('/filter/{periode}', [LaporanController::class, 'filter'])->name('laporan.filter');
 
-        // 🆕 Import CSV Transaksi
+        // Import CSV Transaksi
         Route::post('/import-csv', [LaporanController::class, 'importCSV'])->name('laporan.import.csv');
 
-        // 🆕 Generate Laporan dari Transaksi
-        Route::post('/generate', [LaporanController::class, 'generate'])->name('laporan.generate');
+        // Generate laporan per bulan (🔄 Reset & Hitung Ulang dari Transaksi)
+        Route::post('/generate', [LaporanController::class, 'generateFromTransaksi'])->name('laporan.generate');
 
-        // 🆕 Export Excel Manual (Tanpa Composer)
+        // Export Excel Manual (Tanpa Composer)
         Route::get('/export-excel-manual', [LaporanController::class, 'exportExcelManual'])->name('laporan.export.excel.manual');
 
-        // Existing CRUD
-        Route::post('/store', [LaporanController::class, 'store'])->name('laporan.store');
+        // CRUD laporan
         Route::get('/{id}', [LaporanController::class, 'show'])->name('laporan.show');
         Route::get('/{id}/edit', [LaporanController::class, 'edit'])->name('laporan.edit');
         Route::put('/{id}', [LaporanController::class, 'update'])->name('laporan.update');

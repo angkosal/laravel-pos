@@ -26,9 +26,7 @@
             --green:#1f3d34;
             --muted:#9aa5a0;
             --ring:#e9efec;
-
-            /* ==== LEBAR SIDEBAR ==== */
-            --sidebar-width: 96px; /* 96px (slim) / 250px (lebar) */
+            --sidebar-width: 96px;
         }
 
         body{
@@ -37,7 +35,6 @@
             color:#2b2b2b;
         }
 
-        /* Sidebar putih + logo pill */
         .main-sidebar{
             background:#fff !important;
             color:#111;
@@ -57,13 +54,11 @@
         .brand-link .pill .top{font-weight:700; font-size:16px; letter-spacing:.3px}
         .brand-link .pill .sub{font-size:8px; letter-spacing:3px; opacity:.95}
 
-        /* Sinkron margin konten dengan lebar sidebar */
         .main-header, .content-wrapper, .main-footer{
             margin-left: var(--sidebar-width) !important;
             transition: margin .2s ease;
         }
 
-        /* Menu vertikal (ikon di atas, label di bawah) */
         .nav-sidebar.vertical .nav-link{
             background:transparent !important; border:0;
             margin:8px 10px; padding:8px 6px;
@@ -79,17 +74,16 @@
         }
         .menu-icon-pill i{font-size:20px}
         .menu-label{font-size:11px; line-height:1; color:#9aa5a0}
+
         .nav-sidebar.vertical .nav-link:hover{background:#f4f6f5 !important}
         .nav-sidebar.vertical .nav-link.active .menu-icon-pill{
             background:var(--green); color:#fff; box-shadow:0 8px 18px rgba(31,61,52,.25);
         }
         .nav-sidebar.vertical .nav-link.active .menu-label{color:#fff}
 
-        /* Sembunyikan style horizontal default */
         .nav-sidebar.vertical .nav-link .nav-icon,
         .nav-sidebar.vertical .nav-link p{display:none !important}
 
-        /* Konten */
         .content-wrapper{
             background:#f3f5f4;
             border-radius:20px 0 0 0;
@@ -102,7 +96,6 @@
             margin:0;
         }
 
-        /* SweetAlert2 theme agar serasi */
         .swal2-popup{ border-radius:18px !important; }
         .swal2-actions .btn{ border-radius:10px; font-weight:600; padding:.45rem 1rem; }
         .swal2-confirm.btn{
@@ -161,10 +154,14 @@
 
 <!-- Bootstrap JS Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<!-- SweetAlert2 (untuk konfirmasi hapus yang modern) -->
+<!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 @yield('js')
 @yield('model')
+
+{{-- 🔥 WAJIB agar script Chart.js dan grafik bisa muncul --}}
+@stack('scripts')
+
 </body>
 </html>

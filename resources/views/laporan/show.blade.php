@@ -8,24 +8,23 @@
         <table class="table">
             <tr>
                 <th>ID Laporan</th>
-                <td>{{ $laporan->id_gaji }}</td>
+                <td>{{ $laporan->id_laporan }}</td>
             </tr>
             <tr>
                 <th>Tanggal Cetak</th>
                 <td>{{ $laporan->tanggal_cetak ? \Carbon\Carbon::parse($laporan->tanggal_cetak)->format('d/m/Y') : '-' }}</td>
             </tr>
             <tr>
-                <th>Pegawai</th>
-                <td>{{ $laporan->pegawai->nama ?? '-' }}</td>
+                <th>Nama Pegawai</th>
+                <td>{{ $laporan->nama_pegawai ?? '-' }}</td>
             </tr>
             <tr>
                 <th>Total Gaji</th>
                 <td>Rp {{ number_format($laporan->total_gaji ?? 0, 0, ',', '.') }}</td>
             </tr>
-            <!-- Tambahkan field lain jika ada -->
         </table>
 
-        <a href="{{ route('laporan.index') }}" class="btn btn-secondary mt-3">Cetak Laporan</a>
+        <a href="{{ route('laporan.index') }}" class="btn btn-secondary mt-3">Kembali</a>
     </div>
 </div>
 @endsection

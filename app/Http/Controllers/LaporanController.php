@@ -14,62 +14,126 @@ class LaporanController extends Controller
     {
         $query = Laporan::query();
 
-        if ($request->has('search') && $request->search != '') {
+        if ($request->has('search') && $request->search !== '') {
             $query->where(function ($q) use ($request) {
-                $q->where('id_laporan', 'like', '%' . $request->search . '%')
-                  ->orWhere('nama_pegawai', 'like', '%' . $request->search . '%');
+                $q->where('nama_pegawai', 'like', '%' . $request->search . '%')
+                  ->orWhere('id_laporan', 'like', '%' . $request->search . '%');
             });
         }
 
-        $laporans = $query->orderBy('created_at', 'desc')->paginate(10);
-        $transactions = $laporans->count();
+        if ($request->filled('month')) {
+            $query->whereMonth('tanggal_cetak', $request->month);
+        }
+        if ($request->filled('year')) {
+            $query->whereYear('tanggal_cetak', $request->year);
+        }
 
-        // ambil history import
+        $laporans = $query->orderBy('tanggal_cetak', 'desc')->paginate(10);
         $histories = ImportCSVHistory::orderBy('imported_at', 'desc')->limit(20)->get();
 
-        return view('laporan.index', compact('laporans', 'transactions', 'histories'));
+        return view('laporan.index', compact('laporans', 'histories'));
     }
 
-    // Generate laporan per bulan (reset tiap bulan)
     public function generateFromTransaksi()
     {
-        $periodeAktif = Transaksi::orderBy('Tanggal_Transaksi', 'desc')->first();
-
-        if (!$periodeAktif) {
-            return back()->with('error', 'Tidak ada data transaksi.');
-        }
-
-        $bulan = date('m', strtotime($periodeAktif->Tanggal_Transaksi));
-        $tahun = date('Y', strtotime($periodeAktif->Tanggal_Transaksi));
-
-        // Hapus laporan bulan ini terlebih dahulu
-        Laporan::whereMonth('tanggal_cetak', $bulan)
-            ->whereYear('tanggal_cetak', $tahun)
-            ->delete();
-
-        // Ambil transaksi khusus bulan ini
-        $transaksis = Transaksi::whereMonth('Tanggal_Transaksi', $bulan)
-            ->whereYear('Tanggal_Transaksi', $tahun)
+        $periodes = Transaksi::selectRaw('YEAR(Tanggal_Transaksi) as tahun, MONTH(Tanggal_Transaksi) as bulan')
+            ->groupBy('tahun', 'bulan')
+            ->orderBy('tahun')
+            ->orderBy('bulan')
             ->get();
 
-        // Group by nama pegawai
-        $grouped = $transaksis->groupBy('Nama_Pegawai');
+        foreach ($periodes as $periode) {
+            $bulan = $periode->bulan;
+            $tahun = $periode->tahun;
 
-        foreach ($grouped as $namaPegawai => $items) {
-            $totalBonus = $items->sum(fn($t) => $t->Total_Harga * 0.10);
-            $tanggalTerakhir = $items->sortByDesc('Tanggal_Transaksi')->first()->Tanggal_Transaksi;
+            Laporan::whereMonth('tanggal_cetak', $bulan)
+                ->whereYear('tanggal_cetak', $tahun)
+                ->delete();
 
-            Laporan::create([
-                'nama_pegawai'  => $namaPegawai,
-                'tanggal_cetak' => $tanggalTerakhir,
-                'total_gaji'    => $totalBonus,
-            ]);
+            $transaksis = Transaksi::whereMonth('Tanggal_Transaksi', $bulan)
+                ->whereYear('Tanggal_Transaksi', $tahun)
+                ->get();
+
+            $grouped = $transaksis->groupBy('Nama_Pegawai');
+
+            foreach ($grouped as $namaPegawai => $items) {
+                $totalBonus = $items->sum(fn($t) => $t->Total_Harga * 0.10);
+                $tanggalTerakhir = $items->sortByDesc('Tanggal_Transaksi')->first()->Tanggal_Transaksi;
+
+                Laporan::create([
+                    'nama_pegawai'  => $namaPegawai,
+                    'tanggal_cetak' => $tanggalTerakhir,
+                    'total_gaji'    => $totalBonus,
+                ]);
+            }
         }
 
-        return back()->with('success', 'Laporan berhasil digenerate untuk bulan ' . date('F Y', strtotime($periodeAktif->Tanggal_Transaksi)) . '!');
+        return back()->with('success', 'Laporan berhasil digenerate dari data transaksi!');
     }
 
-    // Export Excel Manual (Tanpa Composer)
+    // =============== FINAL IMPORT CSV (PAKAI CSV FORMATMU) ===============
+    public function importCSV(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:csv,txt|max:4096',
+        ]);
+
+        $file = $request->file('file');
+        $path = $file->getRealPath();
+        $count = 0;
+
+        if (($handle = fopen($path, 'r')) !== false) {
+
+            // Baca header dulu
+            $header = fgets($handle);
+
+            while (($line = fgets($handle)) !== false) {
+
+            // Hilangkan spasi dan tanda kutip di awal/akhir
+            $line = trim($line);
+            $line = trim($line, "\"");
+
+            // Pecah data secara manual (karena format CSV-mu tidak standar)
+            $data = explode(',', $line);
+
+            // Skip jika kolom kurang dari 7
+            if (count($data) < 7) continue;
+
+            // Konversi tanggal
+            $tanggal = null;
+            try {
+                $tanggal = Carbon::createFromFormat('d/m/Y', trim($data[6]))->format('Y-m-d');
+            } catch (\Exception $e) {
+                $tanggal = null;
+            }
+
+            // Simpan ke database
+            Transaksi::create([
+                'Nama_Pegawai'      => $data[2] ?? null,
+                'Nama_Produk'       => $data[3] ?? null,
+                'Total_Pesanan'     => (int)($data[4] ?? 0),
+                'Harga_Satuan'      => (int)($data[5] ?? 0),
+                'Tanggal_Transaksi' => $tanggal,
+                'Total_Harga'       => ((int)($data[4] ?? 0)) * ((int)($data[5] ?? 0)),
+            ]);
+
+            $count++;
+}
+
+            fclose($handle);
+        }
+
+        ImportCSVHistory::create([
+            'file_name'   => $file->getClientOriginalName(),
+            'row_count'   => $count,
+            'imported_at' => now(),
+        ]);
+
+    return back()->with('success', "Import berhasil! Total $count data tersimpan.");
+    }
+
+
+    // ========================= EXPORT EXCEL =========================
     public function exportExcelManual()
     {
         $laporans = Laporan::all();
@@ -97,56 +161,8 @@ class LaporanController extends Controller
                 <td>Rp" . number_format($laporan->total_gaji ?? 0, 0, ',', '.') . "</td>
             </tr>";
         }
-
         echo "</table>";
         exit;
-    }
-
-    // Import CSV tanpa composer (final)
-    public function importCSV(Request $request)
-    {
-        $request->validate([
-            'file' => 'required|mimes:csv,txt|max:2048',
-        ]);
-
-        $file = $request->file('file');
-        $path = $file->getRealPath();
-
-        $count = 0;
-
-        if (($handle = fopen($path, 'r')) !== false) {
-            fgetcsv($handle, 1000, ','); // Skip header
-
-            while (($data = fgetcsv($handle, 1000, ',')) !== false) {
-                // Konversi format tanggal dari CSV ke MySQL
-                $tanggal = null;
-                if (!empty($data[4])) {
-                    $tanggal = Carbon::createFromFormat('d/m/Y', $data[4])->format('Y-m-d');
-                }
-
-                Transaksi::create([
-                    'Nama_Pegawai'      => $data[0] ?? null,
-                    'Nama_Produk'       => $data[1] ?? null,
-                    'Total_Pesanan'     => $data[2] ?? 0,
-                    'Harga_Satuan'      => $data[3] ?? 0,
-                    'Tanggal_Transaksi' => $tanggal,
-                    'Total_Harga'       => ($data[2] ?? 0) * ($data[3] ?? 0),
-                ]);
-
-                $count++;
-            }
-
-            fclose($handle);
-        }
-
-        // simpan history import
-        ImportCSVHistory::create([
-            'file_name'  => $file->getClientOriginalName(),
-            'row_count'  => $count,
-            'imported_at'=> now(),
-        ]);
-
-        return back()->with('success', 'Data transaksi berhasil diimport tanpa Composer!');
     }
 
     public function destroy($id)

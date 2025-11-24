@@ -60,6 +60,7 @@
   .btn-detail{ background:#e5e7ea; color:#59606a; } .btn-detail:hover{ background:#d9dbe0; }
   .btn-import{ background:#5cb85c; color:#fff; } .btn-import:hover{ background:#4cae4c; }
   .btn-export{ background:#28a745; color:#fff; } .btn-export:hover{ background:#218838; }
+  .btn-filter{ background:#007bff; color:#fff; } .btn-filter:hover{ background:#0062cc; }
 
   .pagination .page-link{ border:0; border-radius:10px; padding:8px 12px; color:#555; }
   .pagination .page-item.active .page-link{ background:#1b4a3f; color:#fff; }
@@ -68,34 +69,31 @@
   .text-money{ white-space:nowrap; }
 </style>
 
-@php
-  $range = request('range', 'week');
-  $label = [
-    'today' => 'Hari Ini',
-    'week'  => 'Minggu Ini',
-    'month' => 'Bulan Ini',
-    'year'  => 'Tahun Ini',
-  ][$range] ?? 'Minggu Ini';
-@endphp
-
 <div class="container laporan-wrap mt-3">
   <h2 class="fw-bold mb-3" style="color:#143a31;">Dashboard</h2>
 
-  <!-- FILTER BAR -->
-  <div class="toolbar mb-3">
-    <div class="iconbox"><i class="fas fa-calendar-alt"></i></div>
-    <div class="dropdown">
-      <button class="pill-select dropdown-toggle" type="button" data-bs-toggle="dropdown">
-        {{ $label }} <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="{{ route('laporan.index', request()->except('page') + ['range'=>'today']) }}">Hari Ini</a></li>
-        <li><a class="dropdown-item" href="{{ route('laporan.index', request()->except('page') + ['range'=>'week']) }}">Minggu Ini</a></li>
-        <li><a class="dropdown-item" href="{{ route('laporan.index', request()->except('page') + ['range'=>'month']) }}">Bulan Ini</a></li>
-        <li><a class="dropdown-item" href="{{ route('laporan.index', request()->except('page') + ['range'=>'year']) }}">Tahun Ini</a></li>
-      </ul>
-    </div>
-  </div>
+  <!-- FILTER BULAN & TAHUN -->
+  <form method="GET" action="{{ route('laporan.index') }}" class="d-flex gap-2 mb-3">
+    <select name="month" class="form-control" style="max-width: 180px" onchange="this.form.submit()">
+      <option value="">-- Pilih Bulan --</option>
+      @for ($m = 1; $m <= 12; $m++)
+        <option value="{{ $m }}" {{ request('month') == $m ? 'selected' : '' }}>
+          {{ DateTime::createFromFormat('!m', $m)->format('F') }}
+        </option>
+      @endfor
+    </select>
+
+    <select name="year" class="form-control" style="max-width: 130px" onchange="this.form.submit()">
+      <option value="">-- Pilih Tahun --</option>
+      @foreach(range(date('Y'), date('Y') - 5) as $y)
+        <option value="{{ $y }}" {{ request('year') == $y ? 'selected' : '' }}>
+          {{ $y }}
+        </option>
+      @endforeach
+    </select>
+
+    <a href="{{ route('laporan.index') }}" class="btn btn-filter">Reset</a>
+  </form>
 
   <div class="section-card">
     <div class="section-head d-flex justify-content-between align-items-center">
@@ -103,12 +101,10 @@
 
       <div class="d-flex gap-2">
 
-        <!-- 🎯 TOMBOL IMPORT CSV -->
         <button class="btn btn-sm btn-pill btn-import" data-bs-toggle="modal" data-bs-target="#modalImport">
           <i class="fas fa-file-import"></i> Import CSV
         </button>
 
-        <!-- 🆕 🎯 TOMBOL GENERATE LAPORAN DARI TRANSAKSI -->
         <form action="{{ route('laporan.generate') }}" method="POST" class="d-inline">
           @csrf
           <button type="submit" class="btn btn-sm btn-pill btn-warning text-white">
@@ -116,19 +112,16 @@
           </button>
         </form>
 
-        <!-- 🆕 🎯 TOMBOL EXPORT EXCEL (Tanpa Composer) -->
         <a href="{{ route('laporan.export.excel.manual') }}" class="btn btn-sm btn-pill btn-success text-white">
           <i class="fas fa-file-excel"></i> Export Excel
         </a>
-
       </div>
     </div>
 
     <div class="section-body">
-      <!-- SEARCH FORM -->
+
       <div class="search-line">
         <form action="{{ route('laporan.index') }}" method="GET" class="form-search">
-          <input type="hidden" name="range" value="{{ $range }}">
           <label for="search">Search:</label>
           <input type="text" id="search" name="search" class="search-input"
                  placeholder="Cari berdasarkan Kode/ID Laporan…"
@@ -161,8 +154,7 @@
                 <td class="text-center">
                   <a href="{{ route('laporan.edit', $laporan->id_laporan) }}" class="btn btn-sm btn-pill btn-ubah"><i class="fas fa-pen"></i> Ubah</a>
                   <form action="{{ route('laporan.destroy', $laporan->id_laporan) }}" method="POST" class="d-inline js-delete-laporan" data-kode="{{ $laporan->id_laporan }}">
-                    @csrf
-                    @method('DELETE')
+                    @csrf @method('DELETE')
                     <button type="submit" class="btn btn-sm btn-pill btn-hapus"><i class="fas fa-trash"></i> Hapus</button>
                   </form>
                   <a href="{{ route('laporan.show', $laporan->id_laporan) }}" class="btn btn-sm btn-pill btn-detail"><i class="fas fa-info-circle"></i> Detail</a>
@@ -177,7 +169,6 @@
         </table>
       </div>
 
-      <!-- PAGINATION -->
       <div class="d-flex justify-content-between align-items-center mt-3 pb-1">
         <div class="text-muted">
           Menampilkan {{ $laporans->firstItem() ?? 0 }} - {{ $laporans->lastItem() ?? 0 }} dari total {{ $laporans->total() }} data
@@ -188,7 +179,7 @@
   </div>
 </div>
 
-<!-- 📥 MODAL IMPORT CSV -->
+<!-- MODAL IMPORT CSV -->
 <div class="modal fade" id="modalImport" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content rounded-4 border-0 shadow-sm">
@@ -206,35 +197,7 @@
     </div>
   </div>
 </div>
-@endsection
 
-@section('js')
-<script>
-  document.addEventListener('click', function(e){
-    const form = e.target.closest('.js-delete-laporan');
-    if(!form) return;
-    e.preventDefault();
-    const kode = form.getAttribute('data-kode') || '';
-    Swal.fire({
-      title: 'Yakin menghapus data?',
-      html: `Klik <b>Hapus</b> untuk menghapus data Laporan <b>"${kode}"</b>.`,
-      icon: 'warning',
-      showCancelButton: true,
-      reverseButtons: true,
-      confirmButtonText: 'Hapus',
-      cancelButtonText: 'Batal',
-      customClass: {
-        confirmButton: 'btn swal2-confirm',
-        cancelButton: 'btn swal2-cancel'
-      },
-      buttonsStyling: false
-    }).then((result) => {
-      if (result.isConfirmed) form.submit();
-    });
-  });
-</script>
-
-<!-- 📜 HISTORY IMPORT CSV -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="historyImport">
   <div class="offcanvas-header">
     <h5 class="offcanvas-title">History Import CSV</h5>
@@ -257,8 +220,13 @@
     @endif
   </div>
 </div>
-<button class="btn btn-light border rounded-circle" data-bs-toggle="offcanvas" data-bs-target="#historyImport">
-  <i class="bi bi-list"></i>
+
+
+<!-- 🕘 🎯 TOMBOL HISTORY IMPORT -->
+<button type="button" class="btn btn-sm btn-pill btn-secondary text-white"
+        data-bs-toggle="offcanvas" data-bs-target="#historyImport">
+    <i class="fas fa-history"></i> History Import
 </button>
+
 
 @endsection
