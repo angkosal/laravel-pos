@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\Transaksi;
 use Illuminate\Support\Facades\DB;
+use App\Models\ImportCSVHistory;
 
 class LaporanController extends Controller
 {
@@ -24,81 +25,57 @@ class LaporanController extends Controller
         $laporans = $query->orderBy('created_at', 'desc')->paginate(10);
         $transactions = $laporans->count();
 
-        return view('laporan.index', compact('laporans', 'transactions'));
+        // ✅ ambil history import
+        $histories = ImportCSVHistory::orderBy('imported_at','desc')->limit(20)->get();
+
+        return view('laporan.index', compact('laporans', 'transactions', 'histories'));
     }
 
-    // 🆕 Generate laporan berdasarkan transaksi (Akumulasi per pegawai)
-    public function generateFromTransaksi()
+    public function generate(Request $request)
     {
-        $transaksis = Transaksi::all();
+        $transaksi = Transaksi::all();
 
-        foreach ($transaksis as $transaksi) {
-            if (!$transaksi->Nama_Pegawai) continue;
-
-            $laporan = Laporan::where('nama_pegawai', $transaksi->Nama_Pegawai)->first();
-
-            if ($laporan) {
-                $laporan->total_gaji += $transaksi->Total_Harga * 0.10;
-                $laporan->save();
-            } else {
-                Laporan::create([
-                    'nama_pegawai'  => $transaksi->Nama_Pegawai,
-                    'tanggal_cetak' => $transaksi->Tanggal_Transaksi ?? now(),
-                    'total_gaji'    => $transaksi->Total_Harga * 0.10,
-                ]);
-            }
+        if ($transaksi->count() == 0) {
+            return redirect()->back()->with('error', 'Tidak ada data transaksi untuk digenerate');
         }
 
-        return back()->with('success', 'Laporan berhasil digenerate dari transaksi!');
+        $totalPendapatan = $transaksi->sum('Total_Harga');
+        $totalTransaksi = $transaksi->count();
+
+        // contoh logika gaji: 10% dari penjualan
+        $totalGaji = $totalPendapatan * 0.10;
+
+        Laporan::create([
+            'nama_pegawai'      => 'Semua Pegawai',
+            'total_transaksi'   => $totalTransaksi,
+            'total_pendapatan'  => $totalPendapatan,
+            'total_gaji'        => $totalGaji,
+            'tanggal_cetak'     => now(),
+        ]);
+
+        return redirect()->back()->with('success', 'Laporan berhasil digenerate dari transaksi');
     }
 
-    // 🆕 Export Excel Manual (Tanpa Composer)
-    public function exportExcelManual()
-    {
-        $laporans = Laporan::all();
 
-        header("Content-Type: application/vnd.ms-excel");
-        header("Content-Disposition: attachment; filename=laporan.xls");
-        header("Pragma: no-cache");
-        header("Expires: 0");
 
-        echo "<table border='1'>
-            <tr>
-                <th>No</th>
-                <th>Nama Pegawai</th>
-                <th>Tanggal Cetak</th>
-                <th>Total Gaji (Bonus 10%)</th>
-            </tr>";
 
-        $no = 1;
-        foreach ($laporans as $laporan) {
-            echo "
-            <tr>
-                <td>" . $no++ . "</td>
-                <td>" . ($laporan->nama_pegawai ?? '-') . "</td>
-                <td>" . ($laporan->tanggal_cetak ?? '-') . "</td>
-                <td>Rp" . number_format($laporan->total_gaji ?? 0, 0, ',', '.') . "</td>
-            </tr>";
-        }
-
-        echo "</table>";
-        exit;
-    }
-
-    // 🆕 Import CSV (Tanpa Composer) – Sesuai format file kamu
     public function importCSV(Request $request)
     {
         $request->validate([
             'file' => 'required|mimes:csv,txt|max:2048',
         ]);
 
-        $file = $request->file('file')->getRealPath();
+        $file = $request->file('file');
+        $path = $file->getRealPath();
 
-        if (($handle = fopen($file, 'r')) !== false) {
+        $count = 0;
 
-            fgetcsv($handle, 1000, ','); // Skip header
+        if (($handle = fopen($path, 'r')) !== false) {
+
+            fgetcsv($handle, 1000, ',');
 
             while (($data = fgetcsv($handle, 1000, ',')) !== false) {
+
                 Transaksi::create([
                     'Nama_Pegawai'      => $data[0] ?? null,
                     'Nama_Produk'       => $data[1] ?? null,
@@ -107,9 +84,19 @@ class LaporanController extends Controller
                     'Tanggal_Transaksi' => $data[4] ?? null,
                     'Total_Harga'       => ($data[2] ?? 0) * ($data[3] ?? 0),
                 ]);
+
+                $count++;
             }
+
             fclose($handle);
         }
+
+        // ✅ simpan history import
+        ImportCSVHistory::create([
+            'file_name'  => $file->getClientOriginalName(),
+            'row_count'  => $count,
+            'imported_at'=> now(),
+        ]);
 
         return back()->with('success', 'Data transaksi berhasil diimport tanpa Composer!');
     }

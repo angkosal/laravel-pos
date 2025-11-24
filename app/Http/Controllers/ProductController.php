@@ -6,16 +6,12 @@ use App\Http\Requests\ProductStoreRequest;
 use App\Http\Requests\ProductUpdateRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
+use App\Models\ImportCSVHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(Request $request)
     {
         $products = new Product();
@@ -26,25 +22,18 @@ class ProductController extends Controller
         if (request()->wantsJson()) {
             return ProductResource::collection($products);
         }
-        return view('products.index')->with('products', $products);
+
+        // ✅ kirim history ke view jika halaman laporan memakai index
+        $importHistory = ImportCSVHistory::orderBy('imported_at', 'desc')->get();
+
+        return view('products.index', compact('products', 'importHistory'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         return view('products.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(ProductStoreRequest $request)
     {
         $image_path = '';
@@ -69,35 +58,16 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', __('product.success_creating'));
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
-     */
     public function show(Product $product)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
-     */
     public function edit(Product $product)
     {
         return view('products.edit')->with('product', $product);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
-     */
     public function update(ProductUpdateRequest $request, Product $product)
     {
         $product->name = $request->name;
@@ -108,13 +78,11 @@ class ProductController extends Controller
         $product->status = $request->status;
 
         if ($request->hasFile('image')) {
-            // Delete old image
             if ($product->image) {
                 Storage::delete($product->image);
             }
-            // Store image
+
             $image_path = $request->file('image')->store('products', 'public');
-            // Save to Database
             $product->image = $image_path;
         }
 
@@ -124,12 +92,6 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', __('product.success_updating'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Product $product)
     {
         if ($product->image) {
@@ -140,5 +102,42 @@ class ProductController extends Controller
         return response()->json([
             'success' => true
         ]);
+    }
+
+    /**
+     * ✅ IMPORT CSV + SAVE HISTORY
+     */
+    public function importCSV(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:csv,txt'
+        ]);
+
+        $file = $request->file('file');
+        $fileName = $file->getClientOriginalName();
+
+        $data = array_map('str_getcsv', file($file->getPathname()));
+        $header = array_shift($data);
+
+        foreach ($data as $row) {
+            Product::updateOrCreate(
+                ['barcode' => $row[0]],
+                [
+                    'name' => $row[1],
+                    'price' => $row[2],
+                    'quantity' => $row[3],
+                    'status' => 'active',
+                ]
+            );
+        }
+
+        // ✅ Simpan history import
+        ImportCSVHistory::create([
+            'file_name' => $fileName,
+            'row_count' => count($data),
+            'imported_at' => now(),
+        ]);
+
+        return back()->with('success', 'Import CSV berhasil!');
     }
 }
