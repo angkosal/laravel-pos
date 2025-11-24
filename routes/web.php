@@ -41,7 +41,7 @@ Route::prefix('admin')->middleware(['auth', 'locale'])->group(function () {
         Route::post('/import-csv', [LaporanController::class, 'importCSV'])->name('laporan.import.csv');
 
         // 🆕 Generate Laporan dari Transaksi
-        Route::post('/generate', [LaporanController::class, 'generateFromTransaksi'])->name('laporan.generate');
+        Route::post('/generate', [LaporanController::class, 'generate'])->name('laporan.generate');
 
         // 🆕 Export Excel Manual (Tanpa Composer)
         Route::get('/export-excel-manual', [LaporanController::class, 'exportExcelManual'])->name('laporan.export.excel.manual');

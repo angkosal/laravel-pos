@@ -233,4 +233,32 @@
     });
   });
 </script>
+
+<!-- 📜 HISTORY IMPORT CSV -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="historyImport">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title">History Import CSV</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+  </div>
+
+  <div class="offcanvas-body">
+    @if(isset($histories) && $histories->count() > 0)
+      @foreach($histories as $h)
+        <div class="border rounded p-2 mb-2">
+          <div><b>{{ $h->file_name }}</b></div>
+          <div>{{ $h->row_count }} baris</div>
+          <div class="text-muted" style="font-size:12px">
+            {{ \Carbon\Carbon::parse($h->imported_at)->format('d/m/Y H:i') }}
+          </div>
+        </div>
+      @endforeach
+    @else
+      <div class="text-muted text-center">Belum ada history import.</div>
+    @endif
+  </div>
+</div>
+<button class="btn btn-light border rounded-circle" data-bs-toggle="offcanvas" data-bs-target="#historyImport">
+  <i class="bi bi-list"></i>
+</button>
+
 @endsection
