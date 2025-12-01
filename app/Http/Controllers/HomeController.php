@@ -13,16 +13,16 @@ class HomeController extends Controller
 
     public function index()
     {
-        // Total pendapatan (Income) dari transaksi
+        // Total pendapatan (Income)
         $income = DB::table('transaksis')->sum('Total_Harga');
 
-        // Pengeluaran (Outcome) — belum ada tabel, tetap 0
+        // Pengeluaran (Outcome) — masih tetap 0
         $outcome = 0;
 
         // Jumlah transaksi (total baris)
         $transactions = DB::table('transaksis')->count();
 
-        // Data grafik income per bulan
+        // Data grafik income berdasarkan tanggal transaksi
         $chartData = DB::table('transaksis')
             ->select(DB::raw("DATE_FORMAT(Tanggal_Transaksi, '%d-%m-%Y') as tanggal"), DB::raw('SUM(Total_Harga) as total'))
             ->whereNotNull('Tanggal_Transaksi')
@@ -31,14 +31,22 @@ class HomeController extends Controller
             ->pluck('total', 'tanggal')
             ->toArray();
 
-        // Hapus key kosong "" agar tidak merusak grafik
-        unset($chartData[""]);
+        unset($chartData[""]); // Buang key kosong jika ada
+
+        // 🔹 Data grafik transaksi per pegawai (Bar Chart)
+        $pegawaiTransaksi = DB::table('transaksis')
+            ->select('Nama_Pegawai', DB::raw('COUNT(*) as total_transaksi'))
+            ->groupBy('Nama_Pegawai')
+            ->orderBy('total_transaksi', 'desc')
+            ->pluck('total_transaksi', 'Nama_Pegawai')
+            ->toArray();
 
         return view('home', compact(
             'income',
             'outcome',
             'transactions',
-            'chartData'
+            'chartData',
+            'pegawaiTransaksi'
         ));
     }
 }
