@@ -1,39 +1,87 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="container">
-    <h2>Edit Data Absensi</h2>
+<style>
+    .edit-wrap {
+        background:#ffffff;
+        border-radius:18px;
+        padding:24px;
+        box-shadow:0 6px 20px rgba(0,0,0,0.08);
+        max-width:700px;
+        margin:auto;
+    }
+    .edit-title {
+        font-size:28px;
+        font-weight:900;
+        color:#143a31;
+        margin-bottom:18px;
+    }
+    .form-label {
+        font-weight:700;
+        color:#1b4a3f;
+    }
+    .form-control, select.form-control {
+        border-radius:12px;
+        padding:10px 12px;
+        border:1px solid #dce2df;
+    }
+    .btn-submit {
+        background:#1b4a3f;
+        color:#fff;
+        font-weight:700;
+        border-radius:12px;
+        padding:10px 18px;
+    }
+    .btn-submit:hover { background:#245747; }
+
+    .btn-back {
+        border-radius:12px;
+        padding:10px 18px;
+        font-weight:700;
+    }
+</style>
+
+<div class="edit-wrap mt-4">
+
+    <h2 class="edit-title">Edit Data Absensi</h2>
+
     <form action="{{ route('absensi.update', $absensi->id) }}" method="POST">
         @csrf
         @method('PUT')
 
-        <div class="form-group">
-            <label>ID Absensi</label>
+        {{-- ID Absensi --}}
+        <div class="mb-3">
+            <label class="form-label">ID Absensi</label>
             <input type="text" name="id_absensi" value="{{ $absensi->id_absensi }}" class="form-control" required>
         </div>
 
-        <div class="form-group">
-            <label>Pegawai ID</label>
+        {{-- Pegawai ID --}}
+        <div class="mb-3">
+            <label class="form-label">Pegawai ID</label>
             <input type="number" name="pegawai_id" value="{{ $absensi->pegawai_id }}" class="form-control" required>
         </div>
 
-        <div class="form-group">
-            <label>Tanggal</label>
+        {{-- Tanggal --}}
+        <div class="mb-3">
+            <label class="form-label">Tanggal</label>
             <input type="date" name="tanggal" value="{{ $absensi->tanggal }}" class="form-control" required>
         </div>
 
-        <div class="form-group">
-            <label>Jam Masuk</label>
+        {{-- Jam Masuk --}}
+        <div class="mb-3">
+            <label class="form-label">Jam Masuk</label>
             <input type="time" name="jam_masuk" value="{{ $absensi->jam_masuk }}" class="form-control">
         </div>
 
-        <div class="form-group">
-            <label>Jam Keluar</label>
+        {{-- Jam Keluar --}}
+        <div class="mb-3">
+            <label class="form-label">Jam Keluar</label>
             <input type="time" name="jam_keluar" value="{{ $absensi->jam_keluar }}" class="form-control">
         </div>
 
-        <div class="form-group">
-            <label>Shift</label>
+        {{-- Shift --}}
+        <div class="mb-3">
+            <label class="form-label">Shift</label>
             <select name="shift" class="form-control">
                 <option value="">-- Pilih Shift --</option>
                 <option value="Pagi" {{ $absensi->shift == 'Pagi' ? 'selected' : '' }}>Pagi</option>
@@ -42,8 +90,9 @@
             </select>
         </div>
 
-        <div class="form-group">
-            <label>Status</label>
+        {{-- Status --}}
+        <div class="mb-3">
+            <label class="form-label">Status</label>
             <select name="status" class="form-control" required>
                 <option value="hadir" {{ $absensi->status == 'hadir' ? 'selected' : '' }}>Hadir</option>
                 <option value="izin" {{ $absensi->status == 'izin' ? 'selected' : '' }}>Izin</option>
@@ -52,8 +101,13 @@
             </select>
         </div>
 
-        <button type="submit" class="btn btn-primary mt-3">Update</button>
-        <a href="{{ route('absensi.index') }}" class="btn btn-secondary mt-3">Batal</a>
+        {{-- Tombol --}}
+        <div class="mt-4 d-flex gap-2">
+            <button type="submit" class="btn-submit">Update</button>
+            <a href="{{ route('absensi.index') }}" class="btn btn-back btn-secondary">Batal</a>
+        </div>
+
     </form>
 </div>
+
 @endsection

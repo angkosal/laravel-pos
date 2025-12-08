@@ -24,6 +24,7 @@ class LaporanController extends Controller
         if ($request->filled('month')) {
             $query->whereMonth('tanggal_cetak', $request->month);
         }
+
         if ($request->filled('year')) {
             $query->whereYear('tanggal_cetak', $request->year);
         }
@@ -34,6 +35,11 @@ class LaporanController extends Controller
         return view('laporan.index', compact('laporans', 'histories'));
     }
 
+
+
+    // =============================================================
+    //   GENERATE LAPORAN BULANAN DARI TABEL TRANSAKSI
+    // =============================================================
     public function generateFromTransaksi()
     {
         $periodes = Transaksi::selectRaw('YEAR(Tanggal_Transaksi) as tahun, MONTH(Tanggal_Transaksi) as bulan')
@@ -46,10 +52,12 @@ class LaporanController extends Controller
             $bulan = $periode->bulan;
             $tahun = $periode->tahun;
 
+            // Hapus laporan duplikat untuk periode ini
             Laporan::whereMonth('tanggal_cetak', $bulan)
                 ->whereYear('tanggal_cetak', $tahun)
                 ->delete();
 
+            // Ambil transaksi bulan tersebut
             $transaksis = Transaksi::whereMonth('Tanggal_Transaksi', $bulan)
                 ->whereYear('Tanggal_Transaksi', $tahun)
                 ->get();
@@ -57,7 +65,11 @@ class LaporanController extends Controller
             $grouped = $transaksis->groupBy('Nama_Pegawai');
 
             foreach ($grouped as $namaPegawai => $items) {
+
+                // Hitung total bonus 10%
                 $totalBonus = $items->sum(fn($t) => $t->Total_Harga * 0.10);
+
+                // Ambil tanggal transaksi terakhir
                 $tanggalTerakhir = $items->sortByDesc('Tanggal_Transaksi')->first()->Tanggal_Transaksi;
 
                 Laporan::create([
@@ -71,7 +83,11 @@ class LaporanController extends Controller
         return back()->with('success', 'Laporan berhasil digenerate dari data transaksi!');
     }
 
-    // =============== FINAL IMPORT CSV (PAKAI CSV FORMATMU) ===============
+
+
+    // =============================================================
+    //   IMPORT CSV (FORMAT KHUSUS SESUAI DATA KAMU)
+    // =============================================================
     public function importCSV(Request $request)
     {
         $request->validate([
@@ -84,41 +100,38 @@ class LaporanController extends Controller
 
         if (($handle = fopen($path, 'r')) !== false) {
 
-            // Baca header dulu
+            // Baca header CSV
             $header = fgets($handle);
 
             while (($line = fgets($handle)) !== false) {
 
-            // Hilangkan spasi dan tanda kutip di awal/akhir
-            $line = trim($line);
-            $line = trim($line, "\"");
+                $line = trim($line);
+                $line = trim($line, "\"");
 
-            // Pecah data secara manual (karena format CSV-mu tidak standar)
-            $data = explode(',', $line);
+                $data = explode(',', $line);
 
-            // Skip jika kolom kurang dari 7
-            if (count($data) < 7) continue;
+                // Skip jika data tidak lengkap
+                if (count($data) < 7) continue;
 
-            // Konversi tanggal
-            $tanggal = null;
-            try {
-                $tanggal = Carbon::createFromFormat('d/m/Y', trim($data[6]))->format('Y-m-d');
-            } catch (\Exception $e) {
-                $tanggal = null;
+                // Konversi tanggal
+                try {
+                    $tanggal = Carbon::createFromFormat('d/m/Y', trim($data[6]))->format('Y-m-d');
+                } catch (\Exception $e) {
+                    $tanggal = null;
+                }
+
+                // Simpan transaksi
+                Transaksi::create([
+                    'Nama_Pegawai'      => $data[2] ?? null,
+                    'Nama_Produk'       => $data[3] ?? null,
+                    'Total_Pesanan'     => (int)($data[4] ?? 0),
+                    'Harga_Satuan'      => (int)($data[5] ?? 0),
+                    'Tanggal_Transaksi' => $tanggal,
+                    'Total_Harga'       => ((int)($data[4] ?? 0)) * ((int)($data[5] ?? 0)),
+                ]);
+
+                $count++;
             }
-
-            // Simpan ke database
-            Transaksi::create([
-                'Nama_Pegawai'      => $data[2] ?? null,
-                'Nama_Produk'       => $data[3] ?? null,
-                'Total_Pesanan'     => (int)($data[4] ?? 0),
-                'Harga_Satuan'      => (int)($data[5] ?? 0),
-                'Tanggal_Transaksi' => $tanggal,
-                'Total_Harga'       => ((int)($data[4] ?? 0)) * ((int)($data[5] ?? 0)),
-            ]);
-
-            $count++;
-}
 
             fclose($handle);
         }
@@ -129,11 +142,14 @@ class LaporanController extends Controller
             'imported_at' => now(),
         ]);
 
-    return back()->with('success', "Import berhasil! Total $count data tersimpan.");
+        return back()->with('success', "Import berhasil! Total $count data tersimpan.");
     }
 
 
-    // ========================= EXPORT EXCEL =========================
+
+    // =============================================================
+    //   EXPORT EXCEL MANUAL
+    // =============================================================
     public function exportExcelManual()
     {
         $laporans = Laporan::all();
@@ -161,10 +177,16 @@ class LaporanController extends Controller
                 <td>Rp" . number_format($laporan->total_gaji ?? 0, 0, ',', '.') . "</td>
             </tr>";
         }
+
         echo "</table>";
         exit;
     }
 
+
+
+    // =============================================================
+    //   DELETE LAPORAN
+    // =============================================================
     public function destroy($id)
     {
         $laporan = Laporan::findOrFail($id);
@@ -173,9 +195,49 @@ class LaporanController extends Controller
         return redirect()->route('laporan.index')->with('success', 'Laporan berhasil dihapus.');
     }
 
+
+
+    // =============================================================
+    //   SHOW DETAIL LAPORAN
+    // =============================================================
     public function show($id)
     {
         $laporan = Laporan::findOrFail($id);
         return view('laporan.show', compact('laporan'));
+    }
+
+
+
+    // =============================================================
+    //   EDIT LAPORAN
+    // =============================================================
+    public function edit($id)
+    {
+        $laporan = Laporan::findOrFail($id);
+        return view('laporan.edit', compact('laporan'));
+    }
+
+
+
+    // =============================================================
+    //   UPDATE LAPORAN
+    // =============================================================
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'nama_pegawai'  => 'nullable|string|max:255',
+            'tanggal_cetak' => 'nullable|date',
+            'total_gaji'    => 'nullable|numeric',
+        ]);
+
+        $laporan = Laporan::findOrFail($id);
+
+        $laporan->update([
+            'nama_pegawai'  => $request->nama_pegawai,
+            'tanggal_cetak' => $request->tanggal_cetak,
+            'total_gaji'    => $request->total_gaji,
+        ]);
+
+        return redirect()->route('laporan.index')->with('success', 'Laporan berhasil diperbarui!');
     }
 }

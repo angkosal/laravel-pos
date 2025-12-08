@@ -57,11 +57,11 @@
     padding:10px 16px; display:inline-flex; align-items:center; gap:10px;
     font-weight:800;
   }
+
   .btn-add .dot{
     width:26px; height:26px; border-radius:999px; background:#fff; color:var(--green-800);
     display:inline-grid; place-items:center; font-weight:900; line-height:1;
   }
-  .btn-add:hover{ background:var(--green-600); }
 
   .search{ position:relative; width:260px; }
   .search i{
@@ -78,12 +78,18 @@
     border:none; text-transform:uppercase; font-size:13px; font-weight:800;
     letter-spacing:.35px; padding:12px 14px;
   }
+
   .table-soft tbody td{ padding:14px; border-bottom:1px solid #eef2f0; vertical-align:middle; }
   .table-soft tbody tr:hover{ background:#f7f9f8; }
 
   .badge-soft{ border-radius:999px; padding:6px 12px; font-weight:800; font-size:12px; }
   .badge-hadir{ background:#e5f5ec; color:#2c7a4b; }
   .badge-absen{ background:#fff4e5; color:#b26b00; }
+
+  /* SHIFT BADGES */
+  .badge-pagi  { background:#d4f8d4; color:#1b6b1b; }
+  .badge-siang { background:#dceaff; color:#1b3f8f; }
+  .badge-malam { background:#f0d9ff; color:#6a1b9a; }
 
   .btn-aksi{ border:none; border-radius:10px; padding:8px 12px; font-weight:800; display:inline-flex; align-items:center; gap:8px; }
   .btn-edit{ background:#f9c76a; color:#4e3a07; }
@@ -93,7 +99,6 @@
   .btn-det{ background:#e5e7ea; color:#59606a; }
   .btn-det:hover{ background:#d9dbe0; }
 
-  .pagination{ margin-bottom:0; }
   .pagination .page-link{ border-radius:10px; border:1px solid var(--ring); color:#2b2f2d; }
   .pagination .page-item.active .page-link{ background:var(--green-800); border-color:var(--green-800); color:#fff; }
 </style>
@@ -108,18 +113,18 @@
     <h1>Absensi</h1>
   </div>
 
-  {{-- Periode --}}
+  {{-- Filter Periode --}}
   <div class="filter-row">
     <div class="mini"><i class="fas fa-calendar-day"></i></div>
     <div class="dropdown">
-      <button class="pill dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-        {{ ['today'=>'Hari Ini','week'=>'Minggu Ini','month'=>'Bulan Ini','year'=>'Tahun Ini'][request('range','today')] ?? 'Hari Ini' }}
+      <button class="pill dropdown-toggle" type="button" data-bs-toggle="dropdown">
+        {{ ['today'=>'Hari Ini','week'=>'Minggu Ini','month'=>'Bulan Ini','year'=>'Tahun Ini'][request('range','today')] }}
       </button>
       <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="{{ route('absensi.index', request()->except('page') + ['range'=>'today']) }}"><i class="fas fa-sun me-2 text-muted"></i>Hari Ini</a></li>
-        <li><a class="dropdown-item" href="{{ route('absensi.index', request()->except('page') + ['range'=>'week']) }}"><i class="fas fa-calendar-week me-2 text-muted"></i>Minggu Ini</a></li>
-        <li><a class="dropdown-item" href="{{ route('absensi.index', request()->except('page') + ['range'=>'month']) }}"><i class="fas fa-calendar-alt me-2 text-muted"></i>Bulan Ini</a></li>
-        <li><a class="dropdown-item" href="{{ route('absensi.index', request()->except('page') + ['range'=>'year']) }}"><i class="fas fa-calendar me-2 text-muted"></i>Tahun Ini</a></li>
+        <li><a class="dropdown-item" href="{{ route('absensi.index', request()->except('page') + ['range'=>'today']) }}">Hari Ini</a></li>
+        <li><a class="dropdown-item" href="{{ route('absensi.index', request()->except('page') + ['range'=>'week']) }}">Minggu Ini</a></li>
+        <li><a class="dropdown-item" href="{{ route('absensi.index', request()->except('page') + ['range'=>'month']) }}">Bulan Ini</a></li>
+        <li><a class="dropdown-item" href="{{ route('absensi.index', request()->except('page') + ['range'=>'year']) }}">Tahun Ini</a></li>
       </ul>
     </div>
   </div>
@@ -129,20 +134,22 @@
     <div class="title">List Absensi Pegawai</div>
   </div>
 
-  {{-- Action line --}}
+  {{-- Action --}}
   <div class="actionline">
     <a href="{{ route('absensi.create') }}" class="btn-add">
       <span class="dot">+</span> Tambah Pegawai
     </a>
 
-    <form action="{{ route('absensi.index') }}" method="GET" class="search" role="search">
-      @if(request('range')) <input type="hidden" name="range" value="{{ request('range') }}"> @endif
+    <form action="{{ route('absensi.index') }}" method="GET" class="search">
+      @if(request('range'))
+        <input type="hidden" name="range" value="{{ request('range') }}">
+      @endif
       <i class="fas fa-search"></i>
       <input type="text" class="form-control" name="search" placeholder="Search..." value="{{ request('search') }}" oninput="this.form.submit()">
     </form>
   </div>
 
-  {{-- Tabel --}}
+  {{-- Table --}}
   <div class="table-responsive">
     <table class="table-soft table">
       <thead>
@@ -150,19 +157,18 @@
           <th>NO</th>
           <th>ID ABSENSI</th>
           <th>STATUS</th>
-          <th>NO. HP</th>
+          <th>SHIFT</th>
           <th class="text-center">AKSI</th>
         </tr>
       </thead>
+
       <tbody>
         @forelse ($absensis as $absensi)
-          @php
-            $idAbsensi = $absensi->id_absensi;
-            $nohp      = $absensi->pegawai->no_hp ?? $absensi->no_hp ?? '-';
-          @endphp
           <tr>
             <td>{{ $loop->iteration + ($absensis->currentPage() - 1) * $absensis->perPage() }}</td>
-            <td>{{ $idAbsensi }}</td>
+            <td>{{ $absensi->id_absensi }}</td>
+
+            {{-- STATUS --}}
             <td>
               @if(Str::lower($absensi->status) === 'hadir')
                 <span class="badge-soft badge-hadir">Hadir</span>
@@ -170,93 +176,82 @@
                 <span class="badge-soft badge-absen">{{ ucfirst($absensi->status) }}</span>
               @endif
             </td>
-            <td>{{ $nohp }}</td>
+
+            {{-- SHIFT --}}
+            <td>
+              @php
+                $shift = strtolower($absensi->shift);
+              @endphp
+
+              @if($shift === 'pagi')
+                <span class="badge-soft badge-pagi">Pagi</span>
+              @elseif($shift === 'siang')
+                <span class="badge-soft badge-siang">Siang</span>
+              @elseif($shift === 'malam')
+                <span class="badge-soft badge-malam">Malam</span>
+              @else
+                -
+              @endif
+            </td>
+
+            {{-- Aksi --}}
             <td class="text-center">
               <a href="{{ route('absensi.edit', $absensi->id) }}" class="btn-aksi btn-edit"><i class="fas fa-pen"></i> Ubah</a>
 
-              {{-- Hapus (SweetAlert) --}}
-              <form action="{{ route('absensi.destroy', $absensi->id) }}"
-                    method="POST"
+              <form action="{{ route('absensi.destroy', $absensi->id) }}" method="POST"
                     class="d-inline js-delete-absensi"
-                    data-idabsensi="{{ $idAbsensi }}">
+                    data-idabsensi="{{ $absensi->id_absensi }}">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="btn-aksi btn-del">
-                  <i class="fas fa-trash"></i> Hapus
-                </button>
+                <button type="submit" class="btn-aksi btn-del"><i class="fas fa-trash"></i> Hapus</button>
               </form>
 
-              <a href="{{ route('absensi.show', $absensi->id) }}" class="btn-aksi btn-det"><i class="fas fa-info-circle"></i> Detail</a>
+              <a href="{{ route('absensi.show', $absensi->id) }}" class="btn-aksi btn-det">
+                <i class="fas fa-info-circle"></i> Detail
+              </a>
             </td>
           </tr>
+
         @empty
           <tr>
             <td colspan="5" class="text-center text-muted py-4">Data tidak ditemukan.</td>
           </tr>
         @endforelse
       </tbody>
+
     </table>
   </div>
 
-  {{-- Pagination --}}
-  @php
-      $isPaginator = is_object($absensis) && method_exists($absensis,'currentPage');
-      $current = $isPaginator ? $absensis->currentPage() : 1;
-      $last    = $isPaginator ? $absensis->lastPage()    : 1;
-  @endphp
-
-  <div class="d-flex justify-content-between align-items-center mt-3">
-    <div class="text-muted">
-      Menampilkan {{ $absensis->firstItem() ?? 0 }} - {{ $absensis->lastItem() ?? 0 }} dari total {{ $absensis->total() ?? 0 }} data
-    </div>
-
-    <nav aria-label="Absensi pagination">
-      <ul class="pagination mb-0">
-        <li class="page-item {{ $current <= 1 ? 'disabled' : '' }}">
-          <a class="page-link" href="{{ $current <= 1 ? '#' : $absensis->previousPageUrl() }}">Previous</a>
-        </li>
-        @for($page = 1; $page <= $last; $page++)
-          <li class="page-item {{ $page == $current ? 'active' : '' }}">
-            <a class="page-link" href="{{ $absensis->url($page) }}">{{ $page }}</a>
-          </li>
-        @endfor
-        <li class="page-item {{ $current >= $last ? 'disabled' : '' }}">
-          <a class="page-link" href="{{ $current >= $last ? '#' : $absensis->nextPageUrl() }}">Next</a>
-        </li>
-      </ul>
-    </nav>
-  </div>
-
-</div>
 @endsection
 
 @section('js')
 <script>
-  // Konfirmasi hapus (SweetAlert) — sama seperti di halaman Laporan
+  // SweetAlert Delete Confirmation
   document.addEventListener('click', function(e){
     const form = e.target.closest('.js-delete-absensi');
     if(!form) return;
 
     e.preventDefault();
+    const idAbsensi = form.getAttribute('data-idabsensi');
 
-    const idAbsensi = form.getAttribute('data-idabsensi') || '';
     Swal.fire({
       title: 'Yakin menghapus data?',
-      html: `Klik <b>Hapus</b> di bawah ini jika Anda yakin ingin menghapus data Absensi <b>"${idAbsensi}"</b>.`,
+      html: `Klik <b>Hapus</b> untuk menghapus Absensi <b>"${idAbsensi}"</b>.`,
       icon: 'warning',
       showCancelButton: true,
-      reverseButtons: true,
-      focusCancel: true,
       confirmButtonText: 'Hapus',
       cancelButtonText: 'Batal',
-      customClass: {
-        confirmButton: 'btn btn swal2-confirm',
-        cancelButton: 'btn swal2-cancel'
-      },
-      buttonsStyling: false
-    }).then((result) => {
-      if (result.isConfirmed) form.submit();
+      reverseButtons: true,
+      buttonsStyling: false,
+      customClass:{
+        confirmButton:'btn btn-delete',
+        cancelButton:'btn btn-cancel'
+      }
+    }).then(result=>{
+      if(result.isConfirmed){
+        form.submit();
+      }
     });
-  }, false);
+  });
 </script>
 @endsection

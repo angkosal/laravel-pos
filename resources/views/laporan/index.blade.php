@@ -1,6 +1,7 @@
 @extends('layouts.admin')
 
 @section('content')
+@section('css')
 <style>
   body{ background:#efefef; }
   .laporan-wrap{ max-width:1100px; }
@@ -67,7 +68,34 @@
   .pagination .page-item.disabled .page-link{ color:#bcbcbc; }
 
   .text-money{ white-space:nowrap; }
+
+  /* SweetAlert custom buttons */
+  .swal2-popup {
+      border-radius: 18px !important;
+  }
+  .swal2-title {
+      font-weight:800 !important;
+      color: #143a31 !important;
+  }
+  .swal2-html-container {
+      color:#4f5a56 !important;
+  }
+  .btn-swal-cancel {
+      background:#d0d5d2 !important;
+      color:#4b4f4d !important;
+      padding:8px 14px !important;
+      border-radius:10px !important;
+      font-weight:700 !important;
+  }
+  .btn-swal-confirm {
+      background:#1b4a3f !important;
+      color:#fff !important;
+      padding:8px 16px !important;
+      border-radius:10px !important;
+      font-weight:800 !important;
+  }
 </style>
+@endsection
 
 <div class="container laporan-wrap mt-3">
   <h2 class="fw-bold mb-3" style="color:#143a31;">Dashboard</h2>
@@ -152,12 +180,22 @@
                 <td class="text-money">Rp{{ number_format($laporan->total_gaji ?? 0, 0, ',', '.') }}</td>
 
                 <td class="text-center">
-                  <a href="{{ route('laporan.edit', $laporan->id_laporan) }}" class="btn btn-sm btn-pill btn-ubah"><i class="fas fa-pen"></i> Ubah</a>
-                  <form action="{{ route('laporan.destroy', $laporan->id_laporan) }}" method="POST" class="d-inline js-delete-laporan" data-kode="{{ $laporan->id_laporan }}">
-                    @csrf @method('DELETE')
-                    <button type="submit" class="btn btn-sm btn-pill btn-hapus"><i class="fas fa-trash"></i> Hapus</button>
+                  <a href="{{ route('laporan.edit', $laporan->id_laporan) }}" class="btn btn-sm btn-pill btn-ubah">
+                    <i class="fas fa-pen"></i> Ubah
+                  </a>
+
+                  <form action="{{ route('laporan.destroy', $laporan->id_laporan) }}" method="POST"
+                        class="d-inline js-delete-laporan" data-kode="{{ $laporan->id_laporan }}">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-sm btn-pill btn-hapus">
+                      <i class="fas fa-trash"></i> Hapus
+                    </button>
                   </form>
-                  <a href="{{ route('laporan.show', $laporan->id_laporan) }}" class="btn btn-sm btn-pill btn-detail"><i class="fas fa-info-circle"></i> Detail</a>
+
+                  <a href="{{ route('laporan.show', $laporan->id_laporan) }}" class="btn btn-sm btn-pill btn-detail">
+                    <i class="fas fa-info-circle"></i> Detail
+                  </a>
                 </td>
               </tr>
             @empty
@@ -221,12 +259,42 @@
   </div>
 </div>
 
-
 <!-- 🕘 🎯 TOMBOL HISTORY IMPORT -->
 <button type="button" class="btn btn-sm btn-pill btn-secondary text-white"
         data-bs-toggle="offcanvas" data-bs-target="#historyImport">
     <i class="fas fa-history"></i> History Import
 </button>
 
+@endsection
 
+@section('js')
+<script>
+  // SweetAlert delete confirmation for laporan
+  document.addEventListener('click', function(e){
+    const form = e.target.closest('.js-delete-laporan');
+    if(!form) return;
+
+    e.preventDefault();
+    const kode = form.getAttribute('data-kode') || '';
+
+    Swal.fire({
+      icon: 'warning',
+      title: 'Yakin menghapus data?',
+      html: `Klik <b>Hapus</b> untuk menghapus Laporan <b>"${kode}"</b>.`,
+      showCancelButton: true,
+      confirmButtonText: 'Hapus',
+      cancelButtonText: 'Batal',
+      reverseButtons: true,
+      buttonsStyling: false,
+      customClass: {
+        confirmButton: 'btn-swal-confirm',
+        cancelButton: 'btn-swal-cancel'
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        form.submit();
+      }
+    });
+  });
+</script>
 @endsection

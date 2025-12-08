@@ -13,27 +13,31 @@ class HomeController extends Controller
 
     public function index()
     {
-        // Total pendapatan (Income)
+        // Total pendapatan
         $income = DB::table('transaksis')->sum('Total_Harga');
 
-        // Pengeluaran (Outcome) — masih tetap 0
+        // Pengeluaran (manual)
         $outcome = 0;
 
-        // Jumlah transaksi (total baris)
+        // Jumlah transaksi
         $transactions = DB::table('transaksis')->count();
 
-        // Data grafik income berdasarkan tanggal transaksi
+        // Grafik pendapatan per tanggal
         $chartData = DB::table('transaksis')
-            ->select(DB::raw("DATE_FORMAT(Tanggal_Transaksi, '%d-%m-%Y') as tanggal"), DB::raw('SUM(Total_Harga) as total'))
+            ->select(
+                DB::raw("DATE_FORMAT(Tanggal_Transaksi, '%d-%m-%Y') as tanggal"),
+                DB::raw('SUM(Total_Harga) as total')
+            )
             ->whereNotNull('Tanggal_Transaksi')
             ->groupBy('tanggal')
             ->orderBy('tanggal', 'asc')
             ->pluck('total', 'tanggal')
             ->toArray();
 
-        unset($chartData[""]); // Buang key kosong jika ada
+        unset($chartData[""]); // buang key kosong
 
-        // 🔹 Data grafik transaksi per pegawai (Bar Chart)
+
+        // Grafik transaksi per pegawai
         $pegawaiTransaksi = DB::table('transaksis')
             ->select('Nama_Pegawai', DB::raw('COUNT(*) as total_transaksi'))
             ->groupBy('Nama_Pegawai')
@@ -41,12 +45,33 @@ class HomeController extends Controller
             ->pluck('total_transaksi', 'Nama_Pegawai')
             ->toArray();
 
-        return view('home', compact(
-            'income',
-            'outcome',
-            'transactions',
-            'chartData',
-            'pegawaiTransaksi'
-        ));
+
+        // 🔹 PRODUK TERAKHIR TERJUAL
+        // Cari berdasarkan Tanggal_Transaksi terbaru
+        $lastProduct = DB::table('transaksis')
+            ->whereNotNull('Nama_Produk')
+            ->orderBy('Tanggal_Transaksi', 'desc')
+            ->value('Nama_Produk');
+
+
+        // 🔹 TOP PRODUK PALING LARIS
+        $topProducts = DB::table('transaksis')
+            ->select('Nama_Produk', DB::raw('COUNT(*) as total'))
+            ->whereNotNull('Nama_Produk')
+            ->groupBy('Nama_Produk')
+            ->orderByDesc('total')
+            ->limit(5)
+            ->get();
+
+
+        return view('home', [
+            'income' => $income,
+            'outcome' => $outcome,
+            'transactions' => $transactions,
+            'chartData' => $chartData,
+            'pegawaiTransaksi' => $pegawaiTransaksi,
+            'lastProduct' => $lastProduct ?? '-',
+            'topProducts' => $topProducts,
+        ]);
     }
 }
