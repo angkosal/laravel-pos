@@ -94,6 +94,103 @@
       border-radius:10px !important;
       font-weight:800 !important;
   }
+  /* ===============================
+   RESPONSIVE FIX ONLY (AMAN)
+   TIDAK UBAH ISI HALAMAN
+   =============================== */
+
+  /* TABLE: biar HP & tablet bisa scroll */
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* ===============================
+    TABLET
+    =============================== */
+  @media (max-width: 991px) {
+
+    .laporan-wrap {
+      max-width: 100%;
+      padding-left: 12px;
+      padding-right: 12px;
+    }
+
+    .section-head {
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .section-head > div {
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    table.table {
+      min-width: 900px;
+    }
+  }
+
+  /* ===============================
+    MOBILE (HP)
+    =============================== */
+  @media (max-width: 575px) {
+
+    /* filter bulan & tahun turun ke bawah */
+    form.d-flex.gap-2 {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    form.d-flex.gap-2 select,
+    form.d-flex.gap-2 a {
+      width: 100%;
+    }
+
+    /* tombol di header */
+    .section-head {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .section-head > div {
+      width: 100%;
+    }
+
+    .section-head button,
+    .section-head a,
+    .section-head form button {
+      width: 100%;
+      justify-content: center;
+    }
+
+    /* search */
+    .form-search {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 6px;
+    }
+
+    /* tombol aksi di tabel */
+    td.text-center {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    td.text-center a,
+    td.text-center button {
+      width: 100%;
+      justify-content: center;
+      font-size: 13px;
+    }
+
+    /* pagination */
+    .pagination {
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+  }
 </style>
 @endsection
 

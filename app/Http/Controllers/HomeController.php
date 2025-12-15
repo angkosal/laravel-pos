@@ -51,7 +51,9 @@ class HomeController extends Controller
         $lastProduct = DB::table('transaksis')
             ->whereNotNull('Nama_Produk')
             ->orderBy('Tanggal_Transaksi', 'desc')
+            ->orderBy('ID_Transaksi', 'desc')
             ->value('Nama_Produk');
+
 
 
         // 🔹 TOP PRODUK PALING LARIS

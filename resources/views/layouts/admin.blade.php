@@ -40,49 +40,13 @@
             color:#111;
             width:var(--sidebar-width) !important;
         }
-        .brand-link{
-            background:#fff;
-            border-bottom:1px solid var(--ring);
-            padding:22px 0 !important;
-            text-align:center;
-        }
-        .brand-link .pill{
-            background:var(--green); color:#fff; width:64px; margin:0 auto;
-            border-radius:18px; padding:8px 0; line-height:1.05;
-            box-shadow:0 6px 14px rgba(0,0,0,.12);
-        }
-        .brand-link .pill .top{font-weight:700; font-size:16px; letter-spacing:.3px}
-        .brand-link .pill .sub{font-size:8px; letter-spacing:3px; opacity:.95}
 
-        .main-header, .content-wrapper, .main-footer{
+        .main-header,
+        .content-wrapper,
+        .main-footer{
             margin-left: var(--sidebar-width) !important;
             transition: margin .2s ease;
         }
-
-        .nav-sidebar.vertical .nav-link{
-            background:transparent !important; border:0;
-            margin:8px 10px; padding:8px 6px;
-            display:flex; flex-direction:column; align-items:center; gap:6px;
-            width: calc(var(--sidebar-width) - 20px);
-            text-align:center; color:#98a29d !important;
-            border-radius:14px; transition:.15s; font-weight:500;
-        }
-        .menu-icon-pill{
-            width:56px; height:56px; border-radius:14px;
-            display:flex; align-items:center; justify-content:center;
-            background:#ecefed; color:#9aa5a0;
-        }
-        .menu-icon-pill i{font-size:20px}
-        .menu-label{font-size:11px; line-height:1; color:#9aa5a0}
-
-        .nav-sidebar.vertical .nav-link:hover{background:#f4f6f5 !important}
-        .nav-sidebar.vertical .nav-link.active .menu-icon-pill{
-            background:var(--green); color:#fff; box-shadow:0 8px 18px rgba(31,61,52,.25);
-        }
-        .nav-sidebar.vertical .nav-link.active .menu-label{color:#fff}
-
-        .nav-sidebar.vertical .nav-link .nav-icon,
-        .nav-sidebar.vertical .nav-link p{display:none !important}
 
         .content-wrapper{
             background:#f3f5f4;
@@ -90,31 +54,28 @@
             padding:20px;
             min-height:100vh;
         }
-        .content-header h1{
-            font-weight:700;
-            color:var(--green);
-            margin:0;
-        }
 
-        .swal2-popup{ border-radius:18px !important; }
-        .swal2-actions .btn{ border-radius:10px; font-weight:600; padding:.45rem 1rem; }
-        .swal2-confirm.btn{
-            background: var(--green);
-            color:#fff;
-            border:none;
-        }
-        .swal2-confirm.btn:hover{ filter: brightness(0.95); }
-        .swal2-cancel.btn{
-            background:#b0b7b3;
-            color:#fff;
-            border:none;
-        }
-        .swal2-cancel.btn:hover{ filter: brightness(0.95); }
-
+        /* =======================
+        🔥 MOBILE & TABLET FIX
+        ======================= */
         @media (max-width: 991.98px){
-            .main-header, .content-wrapper, .main-footer{ margin-left: 0 !important; }
+            .main-header,
+            .content-wrapper,
+            .main-footer{
+                margin-left: 0 !important;
+            }
+
+            .content-wrapper{
+                padding:12px;
+                border-radius:0;
+            }
+
+            h1{
+                font-size:20px;
+            }
         }
     </style>
+
 </head>
 
 <body class="hold-transition sidebar-mini">
