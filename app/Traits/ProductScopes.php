@@ -91,10 +91,19 @@ trait ProductScopes
             ->limit(10);
     }
 
+    /**
+     * Search by product name (contains) or barcode (exact or starts-with).
+     * LIKE wildcards in the term are escaped so they match literally.
+     */
     public function scopeSearch($query, $term)
     {
         return $query->when($term, function ($query, $term): void {
-            $query->where('name', 'LIKE', "%{$term}%");
+            $escaped = str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $term);
+
+            $query->where(function ($query) use ($escaped): void {
+                $query->whereRaw("name LIKE ? ESCAPE '!'", ["%{$escaped}%"])
+                    ->orWhereRaw("barcode LIKE ? ESCAPE '!'", ["{$escaped}%"]);
+            });
         });
     }
 }

@@ -17,6 +17,8 @@ class Cart extends Component {
             translations: {},
         };
 
+        this.barcodeInput = React.createRef();
+
         this.loadCart = this.loadCart.bind(this);
         this.handleOnChangeBarcode = this.handleOnChangeBarcode.bind(this);
         this.handleScanBarcode = this.handleScanBarcode.bind(this);
@@ -69,7 +71,7 @@ class Cart extends Component {
     }
 
     loadProducts(search = "") {
-        const query = !!search ? `?search=${search}` : "";
+        const query = !!search ? `?search=${encodeURIComponent(search)}` : "";
         axios.get(`/admin/products${query}`, {
             headers: {
                 'Accept': 'application/json',
@@ -103,20 +105,37 @@ class Cart extends Component {
             this.setState({ cart: [] });
         });
     }
+    focusBarcodeInput() {
+        if (this.barcodeInput.current) {
+            this.barcodeInput.current.focus();
+        }
+    }
+
     handleScanBarcode(event) {
         event.preventDefault();
-        const { barcode } = this.state;
-        if (!!barcode) {
-            axios
-                .post("/admin/cart", { barcode })
-                .then((res) => {
-                    this.loadCart();
-                    this.setState({ barcode: "" });
-                })
-                .catch((err) => {
-                    Swal.fire("Error!", err.response.data.message, "error");
-                });
+        const barcode = this.state.barcode.trim();
+        if (!barcode) {
+            this.setState({ barcode: "" });
+            this.focusBarcodeInput();
+            return;
         }
+        axios
+            .post("/admin/cart", { barcode })
+            .then((res) => {
+                this.loadCart();
+                this.setState({ barcode: "" });
+                this.focusBarcodeInput();
+            })
+            .catch((err) => {
+                // 422 = barcode not found; clear it so the next scan starts fresh.
+                const notFound = err.response?.status === 422;
+                Swal.fire("Error!", err.response?.data?.message, "error").then(() => {
+                    if (notFound) {
+                        this.setState({ barcode: "" });
+                    }
+                    this.focusBarcodeInput();
+                });
+            });
     }
     handleChangeQty(product_id, qty) {
         const cart = this.state.cart.map((c) => {
@@ -177,7 +196,10 @@ class Cart extends Component {
                             c.id === product.id &&
                             product.quantity > c.pivot.quantity
                         ) {
-                            c.pivot.quantity = c.pivot.quantity + 1;
+                            return {
+                                ...c,
+                                pivot: { ...c.pivot, quantity: c.pivot.quantity + 1 },
+                            };
                         }
                         return c;
                     }),
@@ -200,10 +222,14 @@ class Cart extends Component {
             axios
                 .post("/admin/cart", { barcode })
                 .then((res) => {
-                    // this.loadCart();
+                    this.focusBarcodeInput();
                 })
                 .catch((err) => {
-                    Swal.fire("Error!", err.response.data.message, "error");
+                    // Server rejected the add; drop the optimistic update.
+                    this.loadCart();
+                    Swal.fire("Error!", err.response?.data?.message, "error").then(() =>
+                        this.focusBarcodeInput()
+                    );
                 });
         }
     }
@@ -250,6 +276,7 @@ class Cart extends Component {
                         <div className="col">
                             <form onSubmit={this.handleScanBarcode}>
                                 <input
+                                    ref={this.barcodeInput}
                                     type="text"
                                     className="form-control"
                                     placeholder={translations["scan_barcode"] || "Scan Barcode"}

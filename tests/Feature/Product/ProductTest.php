@@ -23,6 +23,116 @@ beforeEach(function () {
     ];
 });
 
+describe('Product Search', function () {
+    test('search matches product name containing the term', function () {
+        $match = Product::factory()->create(['name' => 'Green Apple Juice', 'barcode' => '1000000000001', 'status' => true]);
+        Product::factory()->create(['name' => 'Orange Soda', 'barcode' => '1000000000002', 'status' => true]);
+
+        $this->getJson(route('products.index', ['search' => 'Apple']))
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.id', $match->id);
+    });
+
+    test('search matches exact barcode', function () {
+        $match = Product::factory()->create(['name' => 'Milk', 'barcode' => '5901234123457', 'status' => true]);
+        Product::factory()->create(['name' => 'Bread', 'barcode' => '4006381333931', 'status' => true]);
+
+        $this->getJson(route('products.index', ['search' => '5901234123457']))
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.id', $match->id);
+    });
+
+    test('search matches barcode prefix', function () {
+        $first = Product::factory()->create(['name' => 'Milk', 'barcode' => '5901234000001', 'status' => true]);
+        $second = Product::factory()->create(['name' => 'Bread', 'barcode' => '5901234000002', 'status' => true]);
+        Product::factory()->create(['name' => 'Eggs', 'barcode' => '4006381333931', 'status' => true]);
+
+        $ids = collect($this->getJson(route('products.index', ['search' => '5901234']))
+            ->assertOk()
+            ->json('data'))->pluck('id');
+
+        expect($ids)->toHaveCount(2)
+            ->and($ids->all())->toEqualCanonicalizing([$first->id, $second->id]);
+    });
+
+    test('search does not match barcode in the middle', function () {
+        Product::factory()->create(['name' => 'Milk', 'barcode' => '5901234123457', 'status' => true]);
+
+        $this->getJson(route('products.index', ['search' => '1234123']))
+            ->assertOk()
+            ->assertJsonCount(0, 'data');
+    });
+
+    test('search can match name of one product and barcode of another', function () {
+        $byName = Product::factory()->create(['name' => 'Pack 777 Snacks', 'barcode' => '1000000000001', 'status' => true]);
+        $byBarcode = Product::factory()->create(['name' => 'Water', 'barcode' => '7770000000001', 'status' => true]);
+        Product::factory()->create(['name' => 'Tea', 'barcode' => '1000000000002', 'status' => true]);
+
+        $ids = collect($this->getJson(route('products.index', ['search' => '777']))->json('data'))->pluck('id');
+
+        expect($ids->all())->toEqualCanonicalizing([$byName->id, $byBarcode->id]);
+    });
+
+    test('search returns empty data when nothing matches', function () {
+        Product::factory()->create(['name' => 'Milk', 'barcode' => '5901234123457', 'status' => true]);
+
+        $this->getJson(route('products.index', ['search' => 'no-such-product']))
+            ->assertOk()
+            ->assertJsonCount(0, 'data');
+    });
+
+    test('empty search returns all products paginated', function () {
+        Product::factory()->count(12)->create(['status' => true]);
+
+        $this->getJson(route('products.index', ['search' => '']))
+            ->assertOk()
+            ->assertJsonCount(10, 'data')
+            ->assertJsonPath('total', 12);
+    });
+
+    test('percent sign in search is matched literally', function () {
+        $match = Product::factory()->create(['name' => 'Promo 50% Off', 'barcode' => '1000000000001', 'status' => true]);
+        Product::factory()->create(['name' => 'Plain Item', 'barcode' => '1000000000002', 'status' => true]);
+
+        $this->getJson(route('products.index', ['search' => '%']))
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.id', $match->id);
+    });
+
+    test('underscore in search is matched literally', function () {
+        $match = Product::factory()->create(['name' => 'snake_case item', 'barcode' => '1000000000001', 'status' => true]);
+        Product::factory()->create(['name' => 'snakeXcase item', 'barcode' => '1000000000002', 'status' => true]);
+
+        $this->getJson(route('products.index', ['search' => 'e_c']))
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.id', $match->id);
+    });
+
+    test('escape character in search is matched literally', function () {
+        $match = Product::factory()->create(['name' => 'Wow! Chips', 'barcode' => '1000000000001', 'status' => true]);
+        Product::factory()->create(['name' => 'Plain Chips', 'barcode' => '1000000000002', 'status' => true]);
+
+        $this->getJson(route('products.index', ['search' => '!']))
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.id', $match->id);
+    });
+
+    test('url-encoded special characters reach the search intact', function () {
+        $match = Product::factory()->create(['name' => 'Salt & Pepper #1', 'barcode' => '1000000000001', 'status' => true]);
+        Product::factory()->create(['name' => 'Salt', 'barcode' => '1000000000002', 'status' => true]);
+
+        $this->getJson('/admin/products?search=' . rawurlencode('Salt & Pepper #1'))
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.id', $match->id);
+    });
+});
+
 describe('Product Index', function () {
     test('authenticated users can view products index', function () {
         $this->actingAs($this->user)

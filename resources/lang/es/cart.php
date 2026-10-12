@@ -25,6 +25,14 @@ return [
     'outstock'  => 'Producto agotado',
 
     //==========================================
+    // Mensajes de validación
+    //==========================================
+    'validation' => [
+        'barcode_required'  => 'Escanee o ingrese un código de barras.',
+        'barcode_not_found' => 'No se encontró ningún producto con este código de barras.',
+    ],
+
+    //==========================================
     // Mensajes generales
     //==========================================
     'scan_barcode'      => 'Escanear código de barras...',

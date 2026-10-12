@@ -25,6 +25,14 @@ return [
     'outstock'  => 'Product out of stock',
 
     //==========================================
+    // Validation messages
+    //==========================================
+    'validation' => [
+        'barcode_required'  => 'Please scan or enter a barcode.',
+        'barcode_not_found' => 'No product found with this barcode.',
+    ],
+
+    //==========================================
     // General messages
     //==========================================
     'scan_barcode'      => 'Scan Barcode...',

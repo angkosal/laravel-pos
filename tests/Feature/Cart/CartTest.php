@@ -159,6 +159,51 @@ describe('Cart Store', function () {
             ->and($user2->cart()->first()->id)->toBe($product->id);
     });
 
+    test('unknown barcode returns a translated message, not the raw key', function () {
+        $response = $this->postJson(route('cart.store'), [
+            'barcode' => 'non-existent-barcode',
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonPath('errors.barcode.0', 'No product found with this barcode.');
+
+        expect($response->json('message'))->not->toContain('cart.validation.');
+    });
+
+    test('empty barcode returns a translated message, not the raw key', function () {
+        $response = $this->postJson(route('cart.store'), [
+            'barcode' => '',
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonPath('errors.barcode.0', 'Please scan or enter a barcode.');
+
+        expect($response->json('message'))->not->toContain('cart.validation.');
+    });
+
+    test('unknown barcode message is translated in spanish', function () {
+        $response = $this->withSession(['locale' => 'es'])
+            ->postJson(route('cart.store'), [
+                'barcode' => 'non-existent-barcode',
+            ]);
+
+        $response->assertStatus(422)
+            ->assertJsonPath('errors.barcode.0', 'No se encontró ningún producto con este código de barras.');
+    });
+
+    test('barcode with surrounding whitespace is added to cart', function () {
+        $product = Product::factory()->create([
+            'barcode' => '1234567890',
+            'quantity' => 10,
+            'status' => true,
+        ]);
+
+        $this->postJson(route('cart.store'), ['barcode' => '  1234567890  '])
+            ->assertOk();
+
+        expect($this->user->cart()->first()->id)->toBe($product->id);
+    });
+
     test('authenticated users can change product quantity in cart', function () {
         $product = Product::factory()->create([
             'quantity' => 10
