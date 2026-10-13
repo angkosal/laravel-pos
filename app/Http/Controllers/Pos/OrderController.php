@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Pos;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\OrderStoreRequest;
 use App\Models\Order;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -48,8 +49,8 @@ class OrderController extends Controller
 
                 // Create order items and update product quantities
                 foreach ($cartItems as $item) {
-                    $this->createOrderItem($order, $item);
                     $this->reduceProductStock($item);
+                    $this->createOrderItem($order, $item);
                 }
 
                 // Clear cart
@@ -114,9 +115,21 @@ class OrderController extends Controller
 
     /**
      * Reduce product stock based on cart quantity.
+     *
+     * The stock check and decrement run as a single conditional UPDATE, so
+     * concurrent checkouts cannot sell more than the current stock. Throwing
+     * here rolls back the surrounding checkout transaction.
      */
     private function reduceProductStock($item): void
     {
-        $item->decrement('quantity', $item->pivot->quantity);
+        $updated = Product::whereKey($item->id)
+            ->where('quantity', '>=', $item->pivot->quantity)
+            ->decrement('quantity', $item->pivot->quantity);
+
+        if ($updated === 0) {
+            $available = (int) Product::whereKey($item->id)->value('quantity');
+
+            throw new \Exception(__('cart.available', ['quantity' => $available]));
+        }
     }
 }

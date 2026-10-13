@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use App\Models\Customer;
 use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\Payment;
 use App\Models\Product;
 use App\Models\User;
 
@@ -128,6 +130,125 @@ describe('Order Store', function () {
         ]);
 
         expect(Order::latest()->first()->customer_id)->toBeNull();
+    });
+});
+
+describe('Order Stock Recheck', function () {
+    test('checkout fails when cart quantity exceeds stock', function () {
+        $product = Product::factory()->create(['price' => 50, 'quantity' => 2, 'status' => true]);
+        $this->user->cart()->attach($product->id, ['quantity' => 3]);
+
+        $this->postJson(route('orders.store'), ['customer_id' => null, 'amount' => 150])
+            ->assertStatus(400)
+            ->assertJson(['success' => false]);
+
+        expect(Order::count())->toBe(0)
+            ->and(OrderItem::count())->toBe(0)
+            ->and(Payment::count())->toBe(0)
+            ->and($product->refresh()->quantity)->toBe(2)
+            ->and($this->user->cart()->first()->pivot->quantity)->toBe(3);
+    });
+
+    test('checkout rechecks stock that changed after adding to cart', function () {
+        $product = Product::factory()->create(['price' => 50, 'quantity' => 10, 'status' => true]);
+        $this->user->cart()->attach($product->id, ['quantity' => 3]);
+
+        $product->update(['quantity' => 1]);
+
+        $this->postJson(route('orders.store'), ['customer_id' => null, 'amount' => 150])
+            ->assertStatus(400)
+            ->assertJson(['success' => false]);
+
+        expect($product->refresh()->quantity)->toBe(1)
+            ->and(Order::count())->toBe(0);
+    });
+
+    test('checkout rolls back earlier items when a later item has insufficient stock', function () {
+        $first = Product::factory()->create(['price' => 10, 'quantity' => 10, 'status' => true]);
+        $second = Product::factory()->create(['price' => 20, 'quantity' => 1, 'status' => true]);
+        $this->user->cart()->attach($first->id, ['quantity' => 2]);
+        $this->user->cart()->attach($second->id, ['quantity' => 3]);
+
+        $this->postJson(route('orders.store'), ['customer_id' => null, 'amount' => 80])
+            ->assertStatus(400)
+            ->assertJson(['success' => false]);
+
+        expect($first->refresh()->quantity)->toBe(10)
+            ->and($second->refresh()->quantity)->toBe(1)
+            ->and(Order::count())->toBe(0)
+            ->and(OrderItem::count())->toBe(0)
+            ->and(Payment::count())->toBe(0)
+            ->and($this->user->cart()->count())->toBe(2);
+    });
+
+    test('checkout succeeds when cart quantity equals available stock', function () {
+        $product = Product::factory()->create(['price' => 50, 'quantity' => 3, 'status' => true]);
+        $this->user->cart()->attach($product->id, ['quantity' => 3]);
+
+        $this->postJson(route('orders.store'), ['customer_id' => null, 'amount' => 150])
+            ->assertCreated()
+            ->assertJson(['success' => true]);
+
+        expect($product->refresh()->quantity)->toBe(0)
+            ->and(Order::count())->toBe(1)
+            ->and($this->user->cart()->count())->toBe(0);
+    });
+
+    test('checkout fails when a cart product has zero stock', function () {
+        $product = Product::factory()->create(['price' => 50, 'quantity' => 0, 'status' => true]);
+        $this->user->cart()->attach($product->id, ['quantity' => 1]);
+
+        $this->postJson(route('orders.store'), ['customer_id' => null, 'amount' => 50])
+            ->assertStatus(400)
+            ->assertJson(['success' => false]);
+
+        expect($product->refresh()->quantity)->toBe(0)
+            ->and(Order::count())->toBe(0);
+    });
+
+    test('second checkout competing for the same stock fails without going negative', function () {
+        // Sequential requests: verifies the conditional decrement logic, not true parallel execution.
+        $product = Product::factory()->create(['price' => 50, 'quantity' => 5, 'status' => true]);
+        $first = User::factory()->create();
+        $second = User::factory()->create();
+        $first->cart()->attach($product->id, ['quantity' => 3]);
+        $second->cart()->attach($product->id, ['quantity' => 3]);
+
+        $this->actingAs($first)
+            ->postJson(route('orders.store'), ['customer_id' => null, 'amount' => 150])
+            ->assertCreated();
+
+        $this->actingAs($second)
+            ->postJson(route('orders.store'), ['customer_id' => null, 'amount' => 150])
+            ->assertStatus(400)
+            ->assertJson(['success' => false]);
+
+        expect($product->refresh()->quantity)->toBe(2)
+            ->and(Order::count())->toBe(1)
+            ->and($second->cart()->count())->toBe(1);
+    });
+
+    test('insufficient stock message uses the cart.available translation', function () {
+        $product = Product::factory()->create(['price' => 50, 'quantity' => 2, 'status' => true]);
+        $this->user->cart()->attach($product->id, ['quantity' => 3]);
+
+        $response = $this->postJson(route('orders.store'), ['customer_id' => null, 'amount' => 150]);
+
+        $response->assertStatus(400)
+            ->assertJsonPath('message', __('cart.available', ['quantity' => 2]));
+
+        expect($response->json('message'))
+            ->not->toBeEmpty()
+            ->not->toContain('cart.');
+    });
+
+    test('empty cart checkout still returns 400 and creates no order', function () {
+        $this->postJson(route('orders.store'), ['customer_id' => null, 'amount' => 0])
+            ->assertStatus(400)
+            ->assertJson(['success' => false]);
+
+        expect(Order::count())->toBe(0)
+            ->and(Payment::count())->toBe(0);
     });
 });
 
